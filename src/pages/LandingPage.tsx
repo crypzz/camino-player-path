@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, BarChart3, Shield, Users, Video, Target, 
   TrendingUp, Zap, Globe, ChevronRight, Star
