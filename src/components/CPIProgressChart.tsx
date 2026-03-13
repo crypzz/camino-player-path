@@ -1,5 +1,5 @@
-import { Player, CPIEntry } from '@/types/player';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { Player } from '@/types/player';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 interface Props {
   player: Player;
@@ -12,34 +12,36 @@ export function CPIProgressChart({ player }: Props) {
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={250}>
-      <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+    <ResponsiveContainer width="100%" height={200}>
+      <AreaChart data={data} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
         <defs>
           <linearGradient id="cpiGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="hsl(43, 96%, 56%)" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="hsl(43, 96%, 56%)" stopOpacity={0} />
+            <stop offset="5%" stopColor="hsl(45, 100%, 58%)" stopOpacity={0.2} />
+            <stop offset="95%" stopColor="hsl(45, 100%, 58%)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 30%, 14%)" />
-        <XAxis dataKey="date" tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 11 }} axisLine={false} />
-        <YAxis domain={[0, 100]} tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 11 }} axisLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(225, 15%, 12%)" vertical={false} />
+        <XAxis dataKey="date" tick={{ fill: 'hsl(220, 15%, 45%)', fontSize: 10 }} axisLine={false} tickLine={false} />
+        <YAxis domain={[0, 100]} tick={{ fill: 'hsl(220, 15%, 45%)', fontSize: 10 }} axisLine={false} tickLine={false} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'hsl(222, 44%, 9%)',
-            border: '1px solid hsl(222, 30%, 18%)',
-            borderRadius: '8px',
-            fontSize: '12px',
+            backgroundColor: 'hsl(225, 25%, 8%)',
+            border: '1px solid hsl(225, 15%, 15%)',
+            borderRadius: '6px',
+            fontSize: '11px',
+            padding: '6px 10px',
           }}
-          labelStyle={{ color: 'hsl(210, 40%, 96%)' }}
+          labelStyle={{ color: 'hsl(0, 0%, 95%)', fontWeight: 600 }}
         />
         <Area
           type="monotone"
           dataKey="score"
-          stroke="hsl(43, 96%, 56%)"
+          stroke="hsl(45, 100%, 58%)"
           fill="url(#cpiGradient)"
-          strokeWidth={2}
-          dot={{ fill: 'hsl(43, 96%, 56%)', r: 4 }}
-          name="CPI Score"
+          strokeWidth={1.5}
+          dot={{ fill: 'hsl(45, 100%, 58%)', r: 3, strokeWidth: 0 }}
+          activeDot={{ r: 4, strokeWidth: 0 }}
+          name="CPI"
         />
       </AreaChart>
     </ResponsiveContainer>
