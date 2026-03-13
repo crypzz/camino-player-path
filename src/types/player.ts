@@ -1,6 +1,7 @@
 export type UserRole = 'coach' | 'player' | 'parent';
 
 export interface TechnicalMetrics {
+  [key: string]: number;
   'First Touch': number;
   'Ball Control': number;
   'Passing Accuracy': number;
@@ -12,6 +13,7 @@ export interface TechnicalMetrics {
 }
 
 export interface TacticalMetrics {
+  [key: string]: number;
   'Positioning': number;
   'Decision Making': number;
   'Off-Ball Movement': number;
@@ -20,6 +22,7 @@ export interface TacticalMetrics {
 }
 
 export interface PhysicalMetrics {
+  [key: string]: number;
   '10m Sprint': number;
   '30m Sprint': number;
   'Agility': number;
@@ -28,6 +31,7 @@ export interface PhysicalMetrics {
 }
 
 export interface MentalMetrics {
+  [key: string]: number;
   'Confidence': number;
   'Work Ethic': number;
   'Coachability': number;
