@@ -183,7 +183,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="relative py-20 lg:py-28">
+      <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-5">
           <motion.div
             initial="hidden"
