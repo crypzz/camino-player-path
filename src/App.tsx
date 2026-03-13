@@ -9,6 +9,10 @@ import CoachDashboard from "@/pages/CoachDashboard";
 import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
 import PlayersPage from "@/pages/PlayersPage";
+import EvaluationsPage from "@/pages/EvaluationsPage";
+import AttendancePage from "@/pages/AttendancePage";
+import VideoAnalysisPage from "@/pages/VideoAnalysisPage";
+import ReportsPage from "@/pages/ReportsPage";
 import ComingSoon from "@/pages/ComingSoon";
 import NotFound from "@/pages/NotFound";
 
@@ -24,21 +28,25 @@ function AppRoutes() {
           <>
             <Route path="/" element={<CoachDashboard />} />
             <Route path="/players" element={<PlayersPage />} />
-            <Route path="/evaluations" element={<ComingSoon title="Evaluations" description="Player evaluation forms and history coming soon." />} />
-            <Route path="/attendance" element={<ComingSoon title="Attendance" description="Track training and match attendance here." />} />
+            <Route path="/evaluations" element={<EvaluationsPage />} />
+            <Route path="/videos" element={<VideoAnalysisPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/attendance" element={<AttendancePage />} />
           </>
         )}
         {role === 'player' && (
           <>
             <Route path="/" element={<PlayerDashboard />} />
-            <Route path="/progress" element={<ComingSoon title="My Progress" description="Detailed progress tracking over time." />} />
-            <Route path="/goals" element={<ComingSoon title="Goals" description="View and manage your development goals." />} />
+            <Route path="/progress" element={<ComingSoon title="Detailed Progress" description="Deep-dive into your performance metrics over time." />} />
+            <Route path="/goals" element={<ComingSoon title="My Goals" description="Track and manage your development goals." />} />
+            <Route path="/videos" element={<VideoAnalysisPage />} />
           </>
         )}
         {role === 'parent' && (
           <>
             <Route path="/" element={<ParentDashboard />} />
-            <Route path="/reports" element={<ComingSoon title="Progress Reports" description="View coach reports and assessments." />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/schedule" element={<ComingSoon title="Training Schedule" description="View upcoming training sessions and matches." />} />
           </>
         )}
         <Route path="*" element={<NotFound />} />
