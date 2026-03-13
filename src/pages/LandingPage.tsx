@@ -228,6 +228,8 @@ export default function LandingPage() {
 
       {/* CPI Section */}
       <section id="cpi" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
+        <div className="max-w-6xl mx-auto px-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
