@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useAppContext } from "@/context/AppContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import LandingPage from "@/pages/LandingPage";
 import CoachDashboard from "@/pages/CoachDashboard";
 import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
@@ -18,7 +19,7 @@ import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function AppRoutes() {
+function DashboardRoutes() {
   const { role } = useAppContext();
 
   return (
@@ -62,7 +63,11 @@ const App = () => (
       <Sonner />
       <AppProvider>
         <BrowserRouter>
-          <AppRoutes />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/dashboard/*" element={<DashboardRoutes />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </AppProvider>
     </TooltipProvider>
