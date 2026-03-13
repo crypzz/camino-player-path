@@ -14,9 +14,10 @@ const categoryColors: Record<string, string> = {
 };
 
 export function PlayerRadarChart({ player, category }: Props) {
-  const metrics = player[category];
+  const metrics = player[category] as Record<string, number>;
   const data = Object.entries(metrics).map(([key, value]) => ({
-    metric: key,
+    metric: key.length > 12 ? key.slice(0, 12) + '…' : key,
+    fullMetric: key,
     value,
     fullMark: 10,
   }));
@@ -25,11 +26,11 @@ export function PlayerRadarChart({ player, category }: Props) {
 
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <RadarChart data={data} cx="50%" cy="50%" outerRadius="70%">
+      <RadarChart data={data} cx="50%" cy="50%" outerRadius="65%">
         <PolarGrid stroke="hsl(222, 30%, 18%)" />
         <PolarAngleAxis
           dataKey="metric"
-          tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 11 }}
+          tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }}
         />
         <PolarRadiusAxis
           angle={90}

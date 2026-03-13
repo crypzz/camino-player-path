@@ -1,6 +1,6 @@
-import { Player } from '@/types/player';
+import { Player, getCategoryAverage, calculateCPI } from '@/types/player';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar } from 'lucide-react';
+import { Calendar, Flag } from 'lucide-react';
 
 interface Props {
   player: Player;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function PlayerCard({ player, onClick, index }: Props) {
-  const avgTechnical = Object.values(player.technical).reduce((a, b) => a + b, 0) / Object.values(player.technical).length;
+  const cpi = calculateCPI(player);
 
   return (
     <motion.div
@@ -32,17 +32,17 @@ export function PlayerCard({ player, onClick, index }: Props) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-display font-bold text-primary">{player.overallRating}</div>
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Overall</div>
+          <div className="text-2xl font-display font-bold text-primary">{cpi}</div>
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">CPI</div>
         </div>
       </div>
 
       <div className="grid grid-cols-4 gap-2 mb-4">
         {[
-          { label: 'TEC', value: avgTechnical.toFixed(1) },
-          { label: 'TAC', value: (Object.values(player.tactical).reduce((a, b) => a + b, 0) / Object.values(player.tactical).length).toFixed(1) },
-          { label: 'PHY', value: (Object.values(player.physical).reduce((a, b) => a + b, 0) / Object.values(player.physical).length).toFixed(1) },
-          { label: 'MEN', value: (Object.values(player.mental).reduce((a, b) => a + b, 0) / Object.values(player.mental).length).toFixed(1) },
+          { label: 'TEC', value: getCategoryAverage(player.technical) },
+          { label: 'TAC', value: getCategoryAverage(player.tactical) },
+          { label: 'PHY', value: getCategoryAverage(player.physical) },
+          { label: 'MEN', value: getCategoryAverage(player.mental) },
         ].map((stat) => (
           <div key={stat.label} className="stat-gradient rounded-lg p-2 text-center">
             <div className="text-xs text-muted-foreground">{stat.label}</div>
@@ -53,12 +53,12 @@ export function PlayerCard({ player, onClick, index }: Props) {
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Calendar className="h-3 w-3" />
-          Age {player.age}
+          <Flag className="h-3 w-3" />
+          {player.nationality}
         </span>
         <span className="flex items-center gap-1">
-          <MapPin className="h-3 w-3" />
-          {player.attendance}% attendance
+          <Calendar className="h-3 w-3" />
+          Age {player.age} · {player.attendance}% att.
         </span>
       </div>
     </motion.div>

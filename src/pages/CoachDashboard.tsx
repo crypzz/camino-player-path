@@ -3,8 +3,9 @@ import { mockPlayers } from '@/data/mockPlayers';
 import { StatCard } from '@/components/StatCard';
 import { PlayerCard } from '@/components/PlayerCard';
 import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
-import { Users, TrendingUp, Target, CalendarCheck } from 'lucide-react';
+import { Users, TrendingUp, Target, CalendarCheck, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { calculateCPI } from '@/types/player';
 
 export default function CoachDashboard() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -12,21 +13,18 @@ export default function CoachDashboard() {
 
   const totalGoalsCompleted = mockPlayers.reduce((acc, p) => acc + p.goals.filter(g => g.status === 'completed').length, 0);
   const avgAttendance = Math.round(mockPlayers.reduce((acc, p) => acc + p.attendance, 0) / mockPlayers.length);
-  const avgRating = (mockPlayers.reduce((acc, p) => acc + p.overallRating, 0) / mockPlayers.length).toFixed(1);
+  const avgCPI = Math.round(mockPlayers.reduce((acc, p) => acc + calculateCPI(p), 0) / mockPlayers.length);
 
   return (
     <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">Welcome back, Coach</h1>
         <p className="text-muted-foreground text-sm mt-1">Here's how your academy is performing</p>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Players" value={mockPlayers.length} subtitle="Across all teams" icon={Users} index={0} />
-        <StatCard title="Avg Rating" value={avgRating} subtitle="Out of 10" icon={TrendingUp} index={1} />
+        <StatCard title="Avg CPI" value={avgCPI} subtitle="Camino Player Index" icon={Award} index={1} />
         <StatCard title="Goals Completed" value={totalGoalsCompleted} subtitle="Development targets" icon={Target} index={2} />
         <StatCard title="Avg Attendance" value={`${avgAttendance}%`} subtitle="This month" icon={CalendarCheck} index={3} />
       </div>
