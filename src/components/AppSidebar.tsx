@@ -28,6 +28,8 @@ const coachLinks = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Players', url: '/players', icon: Users },
   { title: 'Evaluations', url: '/evaluations', icon: ClipboardList },
+  { title: 'Video Analysis', url: '/videos', icon: Video },
+  { title: 'Reports', url: '/reports', icon: FileText },
   { title: 'Attendance', url: '/attendance', icon: CalendarCheck },
 ];
 
@@ -35,11 +37,13 @@ const playerLinks = [
   { title: 'My Profile', url: '/', icon: User },
   { title: 'My Progress', url: '/progress', icon: TrendingUp },
   { title: 'Goals', url: '/goals', icon: Target },
+  { title: 'My Videos', url: '/videos', icon: Video },
 ];
 
 const parentLinks = [
   { title: 'Overview', url: '/', icon: LayoutDashboard },
   { title: 'Progress Reports', url: '/reports', icon: ClipboardList },
+  { title: 'Schedule', url: '/schedule', icon: CalendarCheck },
 ];
 
 const roleLabels: Record<UserRole, string> = {
