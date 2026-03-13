@@ -13,21 +13,19 @@ interface Props {
 export function StatCard({ title, value, subtitle, icon: Icon, index = 0 }: Props) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08, duration: 0.4 }}
-      className="glass-card rounded-xl p-5"
+      transition={{ delay: index * 0.06, duration: 0.35 }}
+      className="glass-card p-4"
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">{title}</p>
-          <p className="text-2xl font-display font-bold text-foreground">{value}</p>
-          {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
-        </div>
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Icon className="h-5 w-5 text-primary" />
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{title}</p>
+        <div className="w-7 h-7 rounded-md bg-primary/8 flex items-center justify-center">
+          <Icon className="h-3.5 w-3.5 text-primary" />
         </div>
       </div>
+      <p className="text-2xl font-display font-bold text-foreground tracking-tight">{value}</p>
+      {subtitle && <p className="text-[11px] text-muted-foreground mt-0.5">{subtitle}</p>}
     </motion.div>
   );
 }

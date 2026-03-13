@@ -69,27 +69,27 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
-        <div className="px-4 py-6">
+        <div className="px-3 py-5">
           {!collapsed ? (
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-                <span className="font-display font-bold text-primary-foreground text-sm">C</span>
+            <div className="flex items-center gap-2.5 px-1">
+              <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
+                <span className="font-display font-bold text-primary-foreground text-xs">C</span>
               </div>
               <div>
-                <h1 className="font-display font-bold text-foreground text-lg leading-none">Camino</h1>
-                <p className="text-xs text-muted-foreground mt-0.5">Player Development</p>
+                <h1 className="font-display font-bold text-foreground text-sm leading-none tracking-tight">Camino</h1>
+                <p className="text-[10px] text-muted-foreground mt-0.5 tracking-wide uppercase">Player Development</p>
               </div>
             </div>
           ) : (
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center mx-auto">
-              <span className="font-display font-bold text-primary-foreground text-sm">C</span>
+            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center mx-auto">
+              <span className="font-display font-bold text-primary-foreground text-xs">C</span>
             </div>
           )}
         </div>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/60">
-            {!collapsed && 'Navigation'}
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-4 mb-1">
+            {!collapsed && 'Menu'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -99,7 +99,7 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end
-                      className="text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                      className="text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors text-[13px] rounded-md"
                       activeClassName="bg-accent text-primary font-medium"
                     >
                       <item.icon className="h-4 w-4" />
@@ -113,15 +113,17 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-3">
+      <SidebarFooter className="p-2 border-t border-sidebar-border">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-accent transition-colors text-sm text-muted-foreground">
-              <RoleIcon className="h-4 w-4 text-primary" />
+            <button className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-sidebar-accent transition-colors text-[13px] text-sidebar-foreground">
+              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
+                <RoleIcon className="h-3 w-3 text-primary" />
+              </div>
               {!collapsed && (
                 <>
-                  <span className="flex-1 text-left">{roleLabels[role]}</span>
-                  <ChevronDown className="h-3 w-3" />
+                  <span className="flex-1 text-left font-medium">{roleLabels[role]} View</span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
                 </>
               )}
             </button>
@@ -131,7 +133,7 @@ export function AppSidebar() {
               const Icon = roleIcons[r];
               return (
                 <DropdownMenuItem key={r} onClick={() => setRole(r)} className={r === role ? 'bg-accent' : ''}>
-                  <Icon className="h-4 w-4 mr-2" />
+                  <Icon className="h-3.5 w-3.5 mr-2" />
                   {roleLabels[r]} View
                 </DropdownMenuItem>
               );
