@@ -1,6 +1,6 @@
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown
+  User, TrendingUp, Shield, ChevronDown, FileText
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAppContext } from '@/context/AppContext';
