@@ -313,6 +313,15 @@ export default function LandingPage() {
 
       {/* Roles Section */}
       <section id="roles" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
+        <div className="max-w-6xl mx-auto px-5">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              Built for everyone
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
               Three views. One platform.
