@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
-  ArrowRight, BarChart3, Shield, Users, Video, Target, 
+  ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target, 
   TrendingUp, Zap, Globe, ChevronRight, Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -57,16 +58,37 @@ const fadeUp = {
 };
 
 export default function LandingPage() {
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [navSolid, setNavSolid] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+      setNavSolid(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background" style={{ scrollBehavior: 'smooth' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-lg">
+      <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/95 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
               <span className="font-display font-bold text-primary-foreground text-xs">C</span>
             </div>
             <span className="font-display font-bold text-foreground text-sm tracking-tight">Camino</span>
+          </div>
+          <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
+            <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
+            <button onClick={() => scrollTo('cpi')} className="hover:text-foreground transition-colors">CPI</button>
+            <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
           </div>
           <div className="flex items-center gap-2">
             <Link to="/dashboard">
@@ -161,7 +183,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="relative py-20 lg:py-28">
+      <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-5">
           <motion.div
             initial="hidden"
@@ -205,7 +227,7 @@ export default function LandingPage() {
       </section>
 
       {/* CPI Section */}
-      <section className="relative py-20 lg:py-28 border-t border-border/40">
+      <section id="cpi" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -290,7 +312,7 @@ export default function LandingPage() {
       </section>
 
       {/* Roles Section */}
-      <section className="relative py-20 lg:py-28 border-t border-border/40">
+      <section id="roles" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-5">
           <motion.div
             initial="hidden"
@@ -408,6 +430,22 @@ export default function LandingPage() {
           <p className="text-[11px] text-muted-foreground/50">© 2026 Camino. Player Development Platform.</p>
         </div>
       </footer>
+
+      {/* Scroll to top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:brightness-110 transition-all"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
