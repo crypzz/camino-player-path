@@ -7,16 +7,16 @@ interface Props {
 }
 
 const categoryColors: Record<string, string> = {
-  technical: 'hsl(43, 96%, 56%)',
-  tactical: 'hsl(210, 92%, 55%)',
-  physical: 'hsl(152, 69%, 45%)',
-  mental: 'hsl(280, 70%, 60%)',
+  technical: 'hsl(45, 100%, 58%)',
+  tactical: 'hsl(215, 95%, 58%)',
+  physical: 'hsl(160, 72%, 42%)',
+  mental: 'hsl(275, 65%, 55%)',
 };
 
 export function PlayerRadarChart({ player, category }: Props) {
   const metrics = player[category] as Record<string, number>;
   const data = Object.entries(metrics).map(([key, value]) => ({
-    metric: key.length > 12 ? key.slice(0, 12) + '…' : key,
+    metric: key.length > 10 ? key.slice(0, 10) + '…' : key,
     fullMetric: key,
     value,
     fullMark: 10,
@@ -25,12 +25,12 @@ export function PlayerRadarChart({ player, category }: Props) {
   const color = categoryColors[category];
 
   return (
-    <ResponsiveContainer width="100%" height={220}>
-      <RadarChart data={data} cx="50%" cy="50%" outerRadius="65%">
-        <PolarGrid stroke="hsl(222, 30%, 18%)" />
+    <ResponsiveContainer width="100%" height={200}>
+      <RadarChart data={data} cx="50%" cy="50%" outerRadius="62%">
+        <PolarGrid stroke="hsl(225, 15%, 15%)" strokeWidth={0.5} />
         <PolarAngleAxis
           dataKey="metric"
-          tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }}
+          tick={{ fill: 'hsl(220, 15%, 45%)', fontSize: 9, fontWeight: 500 }}
         />
         <PolarRadiusAxis
           angle={90}
@@ -43,8 +43,8 @@ export function PlayerRadarChart({ player, category }: Props) {
           dataKey="value"
           stroke={color}
           fill={color}
-          fillOpacity={0.2}
-          strokeWidth={2}
+          fillOpacity={0.15}
+          strokeWidth={1.5}
         />
       </RadarChart>
     </ResponsiveContainer>

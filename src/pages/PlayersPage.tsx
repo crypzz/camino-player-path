@@ -18,24 +18,24 @@ export default function PlayersPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-display font-bold text-foreground">Players</h1>
-        <p className="text-muted-foreground text-sm mt-1">Manage and evaluate your academy players</p>
+    <div className="space-y-5">
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-xl font-display font-bold text-foreground tracking-tight">Players</h1>
+        <p className="text-muted-foreground text-[13px] mt-0.5">Manage and evaluate your academy players</p>
       </motion.div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="relative max-w-xs">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <Input
           placeholder="Search players..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="pl-10 bg-card border-border"
+          className="pl-8 h-8 text-[13px] bg-card border-border"
         />
       </div>
 
-      <div className={`grid gap-6 ${selectedPlayer ? 'lg:grid-cols-[1fr_420px]' : 'grid-cols-1'}`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`grid gap-5 ${selectedPlayer ? 'lg:grid-cols-[1fr_380px]' : 'grid-cols-1'}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filtered.map((player, i) => (
             <PlayerCard
               key={player.id}
@@ -45,7 +45,7 @@ export default function PlayersPage() {
             />
           ))}
           {filtered.length === 0 && (
-            <p className="text-muted-foreground text-sm col-span-2 text-center py-12">No players found</p>
+            <p className="text-muted-foreground text-[13px] col-span-2 text-center py-12">No players found</p>
           )}
         </div>
         {selectedPlayer && (
