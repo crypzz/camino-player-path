@@ -25,25 +25,25 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const coachLinks = [
-  { title: 'Dashboard', url: '/', icon: LayoutDashboard },
-  { title: 'Players', url: '/players', icon: Users },
-  { title: 'Evaluations', url: '/evaluations', icon: ClipboardList },
-  { title: 'Video Analysis', url: '/videos', icon: Video },
-  { title: 'Reports', url: '/reports', icon: FileText },
-  { title: 'Attendance', url: '/attendance', icon: CalendarCheck },
+  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Players', url: '/dashboard/players', icon: Users },
+  { title: 'Evaluations', url: '/dashboard/evaluations', icon: ClipboardList },
+  { title: 'Video Analysis', url: '/dashboard/videos', icon: Video },
+  { title: 'Reports', url: '/dashboard/reports', icon: FileText },
+  { title: 'Attendance', url: '/dashboard/attendance', icon: CalendarCheck },
 ];
 
 const playerLinks = [
-  { title: 'My Profile', url: '/', icon: User },
-  { title: 'My Progress', url: '/progress', icon: TrendingUp },
-  { title: 'Goals', url: '/goals', icon: Target },
-  { title: 'My Videos', url: '/videos', icon: Video },
+  { title: 'My Profile', url: '/dashboard', icon: User },
+  { title: 'My Progress', url: '/dashboard/progress', icon: TrendingUp },
+  { title: 'Goals', url: '/dashboard/goals', icon: Target },
+  { title: 'My Videos', url: '/dashboard/videos', icon: Video },
 ];
 
 const parentLinks = [
-  { title: 'Overview', url: '/', icon: LayoutDashboard },
-  { title: 'Progress Reports', url: '/reports', icon: ClipboardList },
-  { title: 'Schedule', url: '/schedule', icon: CalendarCheck },
+  { title: 'Overview', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Progress Reports', url: '/dashboard/reports', icon: ClipboardList },
+  { title: 'Schedule', url: '/dashboard/schedule', icon: CalendarCheck },
 ];
 
 const roleLabels: Record<UserRole, string> = {
