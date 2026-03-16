@@ -89,9 +89,7 @@ export function AppSidebar() {
               </div>
             </div>
           ) : (
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center mx-auto">
-              <span className="font-display font-bold text-primary-foreground text-xs">C</span>
-            </div>
+            <img src={caminoLogo} alt="Camino" className="h-8 w-8 rounded-md object-contain mx-auto" />
           )}
         </div>
 
