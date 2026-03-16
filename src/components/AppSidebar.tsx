@@ -149,6 +149,13 @@ export function AppSidebar() {
             })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-destructive/10 transition-colors text-[13px] text-muted-foreground hover:text-destructive mt-1"
+        >
+          <LogOut className="h-4 w-4" />
+          {!collapsed && <span>Sign Out</span>}
+        </button>
       </SidebarFooter>
     </Sidebar>
   );
