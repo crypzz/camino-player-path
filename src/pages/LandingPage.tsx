@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroPattern from '@/assets/hero-pattern.jpg';
+import caminoLogo from '@/assets/camino-logo.png';
 
 const features = [
   {

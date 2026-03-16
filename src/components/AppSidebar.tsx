@@ -1,3 +1,4 @@
+import caminoLogo from '@/assets/camino-logo.png';
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
   User, TrendingUp, Shield, ChevronDown, FileText, LogOut
