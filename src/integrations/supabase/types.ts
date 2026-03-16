@@ -14,7 +14,199 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      development_goals: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          player_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          player_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          player_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "development_goals_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluations: {
+        Row: {
+          created_at: string
+          date: string
+          evaluated_by: string
+          id: string
+          mental: number
+          notes: string | null
+          physical: number
+          player_id: string
+          score: number
+          tactical: number
+          technical: number
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          evaluated_by: string
+          id?: string
+          mental: number
+          notes?: string | null
+          physical: number
+          player_id: string
+          score: number
+          tactical: number
+          technical: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          evaluated_by?: string
+          id?: string
+          mental?: number
+          notes?: string | null
+          physical?: number
+          player_id?: string
+          score?: number
+          tactical?: number
+          technical?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          age: number
+          attendance: number | null
+          avatar: string | null
+          created_at: string
+          created_by: string
+          height: number | null
+          id: string
+          join_date: string
+          mental: Json
+          name: string
+          nationality: string | null
+          overall_rating: number | null
+          physical: Json
+          position: string
+          preferred_foot: string | null
+          tactical: Json
+          team: string
+          technical: Json
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          age: number
+          attendance?: number | null
+          avatar?: string | null
+          created_at?: string
+          created_by: string
+          height?: number | null
+          id?: string
+          join_date?: string
+          mental?: Json
+          name: string
+          nationality?: string | null
+          overall_rating?: number | null
+          physical?: Json
+          position: string
+          preferred_foot?: string | null
+          tactical?: Json
+          team: string
+          technical?: Json
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          age?: number
+          attendance?: number | null
+          avatar?: string | null
+          created_at?: string
+          created_by?: string
+          height?: number | null
+          id?: string
+          join_date?: string
+          mental?: Json
+          name?: string
+          nationality?: string | null
+          overall_rating?: number | null
+          physical?: Json
+          position?: string
+          preferred_foot?: string | null
+          tactical?: Json
+          team?: string
+          technical?: Json
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
