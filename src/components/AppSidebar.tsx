@@ -1,8 +1,10 @@
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { UserRole } from '@/types/player';
 import {
@@ -60,8 +62,15 @@ const roleIcons: Record<UserRole, typeof Shield> = {
 
 export function AppSidebar() {
   const { role, setRole } = useAppContext();
+  const { signOut, profile } = useAuth();
+  const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : parentLinks;
   const RoleIcon = roleIcons[role];
@@ -140,6 +149,13 @@ export function AppSidebar() {
             })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-destructive/10 transition-colors text-[13px] text-muted-foreground hover:text-destructive mt-1"
+        >
+          <LogOut className="h-4 w-4" />
+          {!collapsed && <span>Sign Out</span>}
+        </button>
       </SidebarFooter>
     </Sidebar>
   );

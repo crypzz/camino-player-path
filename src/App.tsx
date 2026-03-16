@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useAppContext } from "@/context/AppContext";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import LandingPage from "@/pages/LandingPage";
+import AuthPage from "@/pages/AuthPage";
 import CoachDashboard from "@/pages/CoachDashboard";
 import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
@@ -18,6 +20,13 @@ import ComingSoon from "@/pages/ComingSoon";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { session, loading } = useAuth();
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" /></div>;
+  if (!session) return <Navigate to="/auth" replace />;
+  return <>{children}</>;
+}
 
 function DashboardRoutes() {
   const { role } = useAppContext();
@@ -61,15 +70,22 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AppProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/dashboard/*" element={<DashboardRoutes />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AppProvider>
+      <AuthProvider>
+        <AppProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/dashboard/*" element={
+                <ProtectedRoute>
+                  <DashboardRoutes />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AppProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
