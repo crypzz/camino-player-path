@@ -81,9 +81,7 @@ export function AppSidebar() {
         <div className="px-3 py-5">
           {!collapsed ? (
             <div className="flex items-center gap-2.5 px-1">
-              <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-                <span className="font-display font-bold text-primary-foreground text-xs">C</span>
-              </div>
+              <img src={caminoLogo} alt="Camino" className="h-8 w-8 rounded-md object-contain" />
               <div>
                 <h1 className="font-display font-bold text-foreground text-sm leading-none tracking-tight">Camino</h1>
                 <p className="text-[10px] text-muted-foreground mt-0.5 tracking-wide uppercase">Player Development</p>
