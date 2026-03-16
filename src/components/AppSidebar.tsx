@@ -62,8 +62,15 @@ const roleIcons: Record<UserRole, typeof Shield> = {
 
 export function AppSidebar() {
   const { role, setRole } = useAppContext();
+  const { signOut, profile } = useAuth();
+  const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : parentLinks;
   const RoleIcon = roleIcons[role];
