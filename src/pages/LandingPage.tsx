@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroPattern from '@/assets/hero-pattern.jpg';
+import caminoLogo from '@/assets/camino-logo.png';
 
 const features = [
   {
@@ -80,9 +81,7 @@ export default function LandingPage() {
       <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/95 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-              <span className="font-display font-bold text-primary-foreground text-xs">C</span>
-            </div>
+            <img src={caminoLogo} alt="Camino" className="h-8 w-8 rounded-md object-contain" />
             <span className="font-display font-bold text-foreground text-sm tracking-tight">Camino</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
