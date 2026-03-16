@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserRole } from '@/types/player';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AppContextType {
   role: UserRole;
@@ -11,8 +12,15 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const { profile } = useAuth();
   const [role, setRole] = useState<UserRole>('coach');
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (profile?.role) {
+      setRole(profile.role as UserRole);
+    }
+  }, [profile]);
 
   return (
     <AppContext.Provider value={{ role, setRole, selectedPlayerId, setSelectedPlayerId }}>
