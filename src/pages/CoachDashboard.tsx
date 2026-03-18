@@ -45,12 +45,15 @@ export default function CoachDashboard() {
           <h1 className="text-xl font-display font-bold text-foreground tracking-tight">Welcome back, Coach</h1>
           <p className="text-muted-foreground text-[13px] mt-0.5">Here's how your academy is performing</p>
         </div>
-        {players.length === 0 && (
-          <Button onClick={handleSeed} disabled={seedMutation.isPending} variant="outline" size="sm" className="gap-2">
-            <Database className="h-4 w-4" />
-            {seedMutation.isPending ? 'Seeding...' : 'Load Sample Data'}
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <AddPlayerDialog />
+          {players.length === 0 && (
+            <Button onClick={handleSeed} disabled={seedMutation.isPending} variant="outline" size="sm" className="gap-2">
+              <Database className="h-4 w-4" />
+              {seedMutation.isPending ? 'Seeding...' : 'Load Sample Data'}
+            </Button>
+          )}
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
