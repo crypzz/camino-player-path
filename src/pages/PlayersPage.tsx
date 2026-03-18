@@ -5,6 +5,7 @@ import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
+import { AddPlayerDialog } from '@/components/AddPlayerDialog';
 
 export default function PlayersPage() {
   const { data: players = [], isLoading } = usePlayers();

@@ -59,13 +59,19 @@ export function AddPlayerDialog() {
     if (!user) return;
     try {
       await createPlayer.mutateAsync({
-        ...values,
+        ...defaultMetrics,
+        name: values.name,
+        age: values.age,
+        position: values.position,
+        team: values.team,
         nationality: values.nationality || '',
+        preferredFoot: values.preferredFoot,
+        height: values.height,
+        weight: values.weight,
         avatar: '',
         joinDate: new Date().toISOString().split('T')[0],
         attendance: 0,
         overallRating: 0,
-        ...defaultMetrics,
       });
       toast.success(`${values.name} added successfully!`);
       form.reset();

@@ -8,6 +8,7 @@ import { Users, Target, CalendarCheck, Award, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { calculateCPI } from '@/types/player';
 import { Button } from '@/components/ui/button';
+import { AddPlayerDialog } from '@/components/AddPlayerDialog';
 import { toast } from 'sonner';
 
 export default function CoachDashboard() {
