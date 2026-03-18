@@ -5,6 +5,7 @@ import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
+import { AddPlayerDialog } from '@/components/AddPlayerDialog';
 
 export default function PlayersPage() {
   const { data: players = [], isLoading } = usePlayers();
@@ -24,9 +25,12 @@ export default function PlayersPage() {
 
   return (
     <div className="space-y-5">
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-xl font-display font-bold text-foreground tracking-tight">Players</h1>
-        <p className="text-muted-foreground text-[13px] mt-0.5">Manage and evaluate your academy players</p>
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-display font-bold text-foreground tracking-tight">Players</h1>
+          <p className="text-muted-foreground text-[13px] mt-0.5">Manage and evaluate your academy players</p>
+        </div>
+        <AddPlayerDialog />
       </motion.div>
 
       <div className="relative max-w-xs">
