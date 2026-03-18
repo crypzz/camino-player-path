@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { mockPlayers } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
 import { PlayerCard } from '@/components/PlayerCard';
 import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
 import { Search } from 'lucide-react';
@@ -7,15 +7,20 @@ import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 
 export default function PlayersPage() {
+  const { data: players = [], isLoading } = usePlayers();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const selectedPlayer = mockPlayers.find(p => p.id === selectedId) ?? null;
+  const selectedPlayer = players.find(p => p.id === selectedId) ?? null;
 
-  const filtered = mockPlayers.filter(p =>
+  const filtered = players.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.position.toLowerCase().includes(search.toLowerCase()) ||
     p.team.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
 
   return (
     <div className="space-y-5">
