@@ -93,3 +93,39 @@ export function useCreatePlayer() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['players'] }),
   });
 }
+
+export function useUpdatePlayer() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<Player, 'id' | 'goals' | 'cpiHistory' | 'videos' | 'reports'>>) => {
+      const dbUpdates: Record<string, unknown> = {};
+      if (updates.name !== undefined) dbUpdates.name = updates.name;
+      if (updates.age !== undefined) dbUpdates.age = updates.age;
+      if (updates.position !== undefined) dbUpdates.position = updates.position;
+      if (updates.team !== undefined) dbUpdates.team = updates.team;
+      if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar;
+      if (updates.joinDate !== undefined) dbUpdates.join_date = updates.joinDate;
+      if (updates.nationality !== undefined) dbUpdates.nationality = updates.nationality;
+      if (updates.preferredFoot !== undefined) dbUpdates.preferred_foot = updates.preferredFoot;
+      if (updates.height !== undefined) dbUpdates.height = updates.height;
+      if (updates.weight !== undefined) dbUpdates.weight = updates.weight;
+      if (updates.technical !== undefined) dbUpdates.technical = updates.technical as unknown as Json;
+      if (updates.tactical !== undefined) dbUpdates.tactical = updates.tactical as unknown as Json;
+      if (updates.physical !== undefined) dbUpdates.physical = updates.physical as unknown as Json;
+      if (updates.mental !== undefined) dbUpdates.mental = updates.mental as unknown as Json;
+      if (updates.attendance !== undefined) dbUpdates.attendance = updates.attendance;
+      if (updates.overallRating !== undefined) dbUpdates.overall_rating = updates.overallRating;
+
+      const { data, error } = await supabase
+        .from('players')
+        .update(dbUpdates)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['players'] }),
+  });
+}
