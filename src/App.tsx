@@ -16,7 +16,9 @@ import EvaluationsPage from "@/pages/EvaluationsPage";
 import AttendancePage from "@/pages/AttendancePage";
 import VideoAnalysisPage from "@/pages/VideoAnalysisPage";
 import ReportsPage from "@/pages/ReportsPage";
-import ComingSoon from "@/pages/ComingSoon";
+import PlayerProgressPage from "@/pages/PlayerProgressPage";
+import PlayerGoalsPage from "@/pages/PlayerGoalsPage";
+import SchedulePage from "@/pages/SchedulePage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,8 +49,8 @@ function DashboardRoutes() {
         {role === 'player' && (
           <>
             <Route path="/" element={<PlayerDashboard />} />
-            <Route path="/progress" element={<ComingSoon title="Detailed Progress" description="Deep-dive into your performance metrics over time." />} />
-            <Route path="/goals" element={<ComingSoon title="My Goals" description="Track and manage your development goals." />} />
+            <Route path="/progress" element={<PlayerProgressPage />} />
+            <Route path="/goals" element={<PlayerGoalsPage />} />
             <Route path="/videos" element={<VideoAnalysisPage />} />
           </>
         )}
@@ -56,7 +58,7 @@ function DashboardRoutes() {
           <>
             <Route path="/" element={<ParentDashboard />} />
             <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/schedule" element={<ComingSoon title="Training Schedule" description="View upcoming training sessions and matches." />} />
+            <Route path="/schedule" element={<SchedulePage />} />
           </>
         )}
         <Route path="*" element={<NotFound />} />
