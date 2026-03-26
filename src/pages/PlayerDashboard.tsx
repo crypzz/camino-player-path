@@ -1,4 +1,5 @@
-import { mockPlayers } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
+import { useSeedPlayers } from '@/hooks/useSeedPlayers';
 import { PlayerRadarChart } from '@/components/PlayerRadarChart';
 import { CPIScoreDisplay } from '@/components/CPIScoreDisplay';
 import { CPIProgressChart } from '@/components/CPIProgressChart';
@@ -6,6 +7,9 @@ import { StatCard } from '@/components/StatCard';
 import { TrendingUp, Target, CalendarCheck, Award, Video } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Database } from 'lucide-react';
+import { toast } from 'sonner';
 
 const statusColors: Record<string, string> = {
   'completed': 'bg-success/20 text-success border-success/30',
@@ -14,7 +18,35 @@ const statusColors: Record<string, string> = {
 };
 
 export default function PlayerDashboard() {
-  const player = mockPlayers[0];
+  const { data: players = [], isLoading } = usePlayers();
+  const seedMutation = useSeedPlayers();
+  const player = players[0];
+
+  const handleSeed = async () => {
+    try {
+      const result = await seedMutation.mutateAsync();
+      if (result.seeded) toast.success(`Seeded ${result.count} players!`);
+      else toast.info('Data already seeded');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to seed data');
+    }
+  };
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
+
+  if (!player) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <p className="text-muted-foreground text-sm">No player data available yet.</p>
+        <Button onClick={handleSeed} disabled={seedMutation.isPending} variant="outline" size="sm" className="gap-2">
+          <Database className="h-4 w-4" />
+          {seedMutation.isPending ? 'Seeding...' : 'Load Sample Data'}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -51,25 +83,27 @@ export default function PlayerDashboard() {
             ))}
           </div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-xl p-5">
-            <h3 className="font-display font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Video className="h-5 w-5 text-primary" />Video Highlights
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {player.videos.map(video => (
-                <div key={video.id} className="p-3 rounded-lg bg-accent/50 flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                    <Video className="h-4 w-4 text-primary" />
+          {player.videos.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-xl p-5">
+              <h3 className="font-display font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Video className="h-5 w-5 text-primary" />Video Highlights
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {player.videos.map(video => (
+                  <div key={video.id} className="p-3 rounded-lg bg-accent/50 flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                      <Video className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <h5 className="text-sm font-medium text-foreground truncate">{video.title}</h5>
+                      <p className="text-xs text-muted-foreground">{video.duration} · {new Date(video.date).toLocaleDateString()}</p>
+                      {video.coachComment && <p className="text-xs text-muted-foreground/80 mt-1 italic">"{video.coachComment}"</p>}
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <h5 className="text-sm font-medium text-foreground truncate">{video.title}</h5>
-                    <p className="text-xs text-muted-foreground">{video.duration} · {new Date(video.date).toLocaleDateString()}</p>
-                    {video.coachComment && <p className="text-xs text-muted-foreground/80 mt-1 italic">"{video.coachComment}"</p>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
 
         <div className="space-y-4">
@@ -91,6 +125,7 @@ export default function PlayerDashboard() {
                   {goal.description && <p className="text-xs text-muted-foreground">{goal.description}</p>}
                 </div>
               ))}
+              {player.goals.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No goals set yet</p>}
             </div>
           </motion.div>
 

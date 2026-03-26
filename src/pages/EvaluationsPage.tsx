@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { mockPlayers } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
 import { Player, getCategoryAverage } from '@/types/player';
 import { PlayerRadarChart } from '@/components/PlayerRadarChart';
 import { CPIScoreDisplay } from '@/components/CPIScoreDisplay';
@@ -9,17 +9,44 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Save, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useUpdatePlayer } from '@/hooks/usePlayers';
 
 export default function EvaluationsPage() {
-  const [selectedPlayerId, setSelectedPlayerId] = useState(mockPlayers[0].id);
+  const { data: players = [], isLoading } = usePlayers();
+  const updatePlayer = useUpdatePlayer();
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<'technical' | 'tactical' | 'physical' | 'mental'>('technical');
-  const player = mockPlayers.find(p => p.id === selectedPlayerId)!;
-  const metrics = player[selectedCategory] as Record<string, number>;
-  const [ratings, setRatings] = useState<Record<string, number>>({ ...metrics });
+  const [ratings, setRatings] = useState<Record<string, number>>({});
+  const [initialized, setInitialized] = useState(false);
+
+  // Initialize once players load
+  if (players.length > 0 && !initialized) {
+    const firstId = players[0].id;
+    setSelectedPlayerId(firstId);
+    setRatings({ ...players[0][selectedCategory] as Record<string, number> });
+    setInitialized(true);
+  }
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
+
+  if (players.length === 0) {
+    return (
+      <div className="space-y-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-2xl font-display font-bold text-foreground">Player Evaluations</h1>
+          <p className="text-muted-foreground text-sm mt-1">No players available yet.</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  const player = players.find(p => p.id === selectedPlayerId) || players[0];
 
   const handlePlayerChange = (id: string) => {
     setSelectedPlayerId(id);
-    const p = mockPlayers.find(p => p.id === id)!;
+    const p = players.find(p => p.id === id)!;
     setRatings({ ...p[selectedCategory] as Record<string, number> });
   };
 
@@ -33,11 +60,18 @@ export default function EvaluationsPage() {
     toast.info('Ratings reset');
   };
 
-  const handleSave = () => {
-    toast.success(`${selectedCategory} ratings saved for ${player.name}`);
+  const handleSave = async () => {
+    try {
+      await updatePlayer.mutateAsync({
+        id: player.id,
+        [selectedCategory]: ratings,
+      });
+      toast.success(`${selectedCategory} ratings saved for ${player.name}`);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to save ratings');
+    }
   };
 
-  // Create a temp player with modified ratings for the radar chart
   const tempPlayer = { ...player, [selectedCategory]: { ...ratings } };
 
   return (
@@ -53,7 +87,7 @@ export default function EvaluationsPage() {
             <SelectValue placeholder="Select player" />
           </SelectTrigger>
           <SelectContent>
-            {mockPlayers.map(p => (
+            {players.map(p => (
               <SelectItem key={p.id} value={p.id}>{p.name} – {p.position}</SelectItem>
             ))}
           </SelectContent>
@@ -80,8 +114,8 @@ export default function EvaluationsPage() {
               <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5">
                 <RotateCcw className="h-3 w-3" /> Reset
               </Button>
-              <Button size="sm" onClick={handleSave} className="gap-1.5">
-                <Save className="h-3 w-3" /> Save
+              <Button size="sm" onClick={handleSave} disabled={updatePlayer.isPending} className="gap-1.5">
+                <Save className="h-3 w-3" /> {updatePlayer.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>

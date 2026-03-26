@@ -1,4 +1,4 @@
-import { mockPlayers } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
 import { motion } from 'framer-motion';
 import { Video, Play, MessageSquare, Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -12,9 +12,26 @@ const typeColors: Record<string, string> = {
 };
 
 export default function VideoAnalysisPage() {
+  const { data: players = [], isLoading } = usePlayers();
   const [filter, setFilter] = useState<string>('all');
-  const allVideos = mockPlayers.flatMap(p => p.videos.map(v => ({ ...v, playerName: p.name, playerId: p.id })));
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
+
+  const allVideos = players.flatMap(p => p.videos.map(v => ({ ...v, playerName: p.name, playerId: p.id })));
   const filtered = filter === 'all' ? allVideos : allVideos.filter(v => v.type === filter);
+
+  if (allVideos.length === 0) {
+    return (
+      <div className="space-y-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-2xl font-display font-bold text-foreground">Video Analysis</h1>
+          <p className="text-muted-foreground text-sm mt-1">No video clips available yet.</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

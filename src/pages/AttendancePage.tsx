@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { mockPlayers, mockTrainingSessions, mockAttendance } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
 import { motion } from 'framer-motion';
 import { CalendarCheck, X, Check, Dumbbell, Swords, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -16,8 +16,58 @@ const typeColors: Record<string, string> = {
   fitness: 'bg-success/20 text-success border-success/30',
 };
 
+// Generate sessions based on current date
+function generateSessions() {
+  const sessions = [];
+  const types: Array<'training' | 'match' | 'fitness'> = ['training', 'match', 'fitness'];
+  const titles = {
+    training: ['Technical Session', 'Tactical Drills', 'Passing Practice', 'Set Piece Training'],
+    match: ['Friendly Match', 'League Match', 'Cup Fixture'],
+    fitness: ['Sprint & Agility', 'Strength & Conditioning', 'Endurance Training'],
+  };
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(now);
+    date.setDate(now.getDate() - i);
+    const type = types[i % 3];
+    const titleList = titles[type];
+    sessions.push({
+      id: `session-${i}`,
+      date: date.toISOString().split('T')[0],
+      type,
+      title: titleList[i % titleList.length],
+      time: ['09:00', '10:30', '14:00'][i % 3],
+      location: ['Main Pitch', 'Training Ground A', 'Indoor Arena'][i % 3],
+    });
+  }
+  return sessions;
+}
+
+interface AttendanceRecord {
+  sessionId: string;
+  playerId: string;
+  present: boolean;
+}
+
 export default function AttendancePage() {
-  const [attendance, setAttendance] = useState(mockAttendance);
+  const { data: players = [], isLoading } = usePlayers();
+  const sessions = generateSessions();
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
+
+  if (players.length === 0) {
+    return (
+      <div className="space-y-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-2xl font-display font-bold text-foreground">Attendance Tracking</h1>
+          <p className="text-muted-foreground text-sm mt-1">No players available yet.</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   const toggleAttendance = (sessionId: string, playerId: string) => {
     setAttendance(prev => {
@@ -48,7 +98,7 @@ export default function AttendancePage() {
                 <th className="text-left p-4 text-xs uppercase tracking-wider text-muted-foreground font-medium sticky left-0 bg-card z-10 min-w-[200px]">
                   Session
                 </th>
-                {mockPlayers.map(player => (
+                {players.map(player => (
                   <th key={player.id} className="p-4 text-center min-w-[80px]">
                     <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center font-display font-bold text-primary text-xs mx-auto mb-1">
                       {player.name.split(' ').map(n => n[0]).join('')}
@@ -60,10 +110,10 @@ export default function AttendancePage() {
               </tr>
             </thead>
             <tbody>
-              {mockTrainingSessions.map((session, i) => {
+              {sessions.map((session, i) => {
                 const Icon = typeIcons[session.type];
-                const presentCount = mockPlayers.filter(p => getAttendance(session.id, p.id)?.present).length;
-                const rate = mockPlayers.length > 0 ? Math.round((presentCount / mockPlayers.length) * 100) : 0;
+                const presentCount = players.filter(p => getAttendance(session.id, p.id)?.present).length;
+                const rate = players.length > 0 ? Math.round((presentCount / players.length) * 100) : 0;
 
                 return (
                   <motion.tr
@@ -87,7 +137,7 @@ export default function AttendancePage() {
                         </div>
                       </div>
                     </td>
-                    {mockPlayers.map(player => {
+                    {players.map(player => {
                       const record = getAttendance(session.id, player.id);
                       const isPresent = record?.present;
 

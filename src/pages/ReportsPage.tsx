@@ -1,6 +1,6 @@
-import { mockPlayers } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
 import { motion } from 'framer-motion';
-import { FileText, Download, ChevronRight, TrendingUp, AlertTriangle, Lightbulb } from 'lucide-react';
+import { FileText, Download, ChevronRight, AlertTriangle, Lightbulb } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -9,13 +9,30 @@ import { PlayerRadarChart } from '@/components/PlayerRadarChart';
 import { toast } from 'sonner';
 
 export default function ReportsPage() {
+  const { data: players = [], isLoading } = usePlayers();
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
-  const allReports = mockPlayers.flatMap(p => p.reports.map(r => ({ ...r, player: p })));
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
+
+  const allReports = players.flatMap(p => p.reports.map(r => ({ ...r, player: p })));
   const selectedReport = allReports.find(r => r.id === selectedReportId);
 
   const handleExportPDF = () => {
     toast.success('PDF report exported (demo)');
   };
+
+  if (allReports.length === 0) {
+    return (
+      <div className="space-y-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-2xl font-display font-bold text-foreground">Development Reports</h1>
+          <p className="text-muted-foreground text-sm mt-1">No reports available yet. Reports are generated from player evaluations.</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (selectedReport) {
     const { player } = selectedReport;
