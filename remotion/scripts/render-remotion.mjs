@@ -22,6 +22,7 @@ const compositionId = process.argv[2] || "main";
 const outputMap = {
   "main": "/mnt/documents/camino-vertical-ig.mp4",
   "path-to-pro": "/mnt/documents/camino-path-to-pro.mp4",
+  "level-up": "/mnt/documents/camino-level-up.mp4",
 };
 const outputLocation = outputMap[compositionId] || `/mnt/documents/${compositionId}.mp4`;
 
