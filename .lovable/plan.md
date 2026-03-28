@@ -1,91 +1,63 @@
 
 
-# Inspirational "Path to Pro" Vertical Video — 30 seconds
+# "Level Up" — 15-Second Fitness & Progress Video
 
 ## Creative Direction
 
-**Audience**: Players (ages 12-18) and their parents. The video should feel like a Nike/Adidas sports ad — aspirational, emotional, cinematic.
+**Format**: 1080x1920, 15 seconds, 450 frames @ 30fps
+**Tone**: Aspirational, personal. "The work shows. The data proves it. Your coach sees it." Speaks directly to the player.
+**Motion**: Kinetic Energy for the hook, Cinematic Minimal for the data moments.
+**Palette**: Same brand — `#0D0F14` bg, `#E8B400` gold, `#1DB870` green, `#2B7FE8` blue.
 
-**Tone**: "Every pro started somewhere. Camino tracks the journey." Inspirational, not salesy. The message is: your development matters, every session counts, the data tells your story.
+## Scene Breakdown (5 scenes)
 
-**Format**: 1080x1920, 30 seconds, 900 frames @ 30fps
+### Scene 1 — "The Hook" (0–3s, 90 frames)
+- Text SLAMS in: **"You put in the work."**
+- Massive gold, 100px, hard spring with shake effect (like HookScene pattern)
+- Beat. Then second line springs in below: **"Now prove it."**
+- Gold accent line sweeps across
 
-**Motion style**: Cinematic Minimal with bursts of Kinetic Energy on key phrases. Slow, dramatic reveals for emotional beats; fast cuts for data/feature moments.
+### Scene 2 — "Fitness Test" (3–6s, 90 frames)
+- Mock fitness test results card slides up
+- Animated stat bars filling in: Sprint 8.2s, Beep Test Lv12, Agility 4.1s
+- Each bar springs to its value with staggered timing
+- Label: **"Every test. Measured."**
 
-**Palette**: Same brand — `#0D0F14` bg, `#E8B400` gold, `#1DB870` green, `#2B7FE8` blue. Gold is dominant for the aspirational feel.
+### Scene 3 — "Progress Tracker" (6–9s, 90 frames)
+- Animated line chart drawing itself (SVG path with strokeDashoffset)
+- Shows upward trend over 6 months with dot markers
+- Score counter: 58 → 74 (interpolated number)
+- Label: **"Every gain. Tracked."**
 
-**Typography**: Plus Jakarta Sans 800 (display), Inter (body). Even larger than the launch video — 100-120px for hero lines.
+### Scene 4 — "Coach Feedback" (9–12s, 90 frames)
+- Chat-bubble style coach feedback cards spring in staggered:
+  - "Great improvement on ball control" ✓
+  - "Focus on weak foot next session"
+  - "Ready for match selection"
+- Gold avatar icon for coach
+- Label: **"Your coach. Always watching."**
 
----
-
-## Scene Breakdown (8 scenes)
-
-### Scene 1 — "The Dream" (0–4s, 120 frames)
-- Slow fade in: **"Every pro started somewhere."**
-- Gold text, massive, centered. Slow scale 1.05→1.0 with gentle breathing motion.
-- Subtle gold particles drifting upward. Cinematic pace — let it breathe.
-
-### Scene 2 — "The Grind" (4–7.5s, 105 frames)
-- Staggered word reveals: **"The training. The early mornings. The setbacks."**
-- Each phrase springs in one at a time, white text with slight gold underline accents.
-- Builds momentum — faster stagger than Scene 1.
-
-### Scene 3 — "The Question" (7.5–10.5s, 90 frames)
-- Bold gold text slams in: **"But who's tracking your progress?"**
-- Hard spring with shake (like the hook scene from the launch video).
-- Dramatic pause, then fade.
-
-### Scene 4 — "The Answer" (10.5–13.5s, 90 frames)
-- "Camino" logo reveals with gold arc sweep.
-- Below: **"Your digital development passport"**
-- Clean, confident. No rush.
-
-### Scene 5 — "CPI Journey" (13.5–18s, 135 frames)
-- Animated CPI ring counting up: 45 → 62 → 73 → 81
-- Shows progression over time with month labels (Sep → Dec → Mar → Jun)
-- Message: **"Watch yourself grow."**
-- The ring color shifts from blue → green as score improves.
-
-### Scene 6 — "Feature Flash" (18–22s, 120 frames)
-- Quick 3-panel montage: Evaluations card, Progress chart, Goals checklist
-- Each slides in from bottom, holds 1 second, cross-fades to next
-- Small labels: "Every session scored", "Every trend tracked", "Every goal mapped"
-
-### Scene 7 — "The Vision" (22–26s, 120 frames)
-- Large text reveal: **"Your journey. Your data. Your future."**
-- Each phrase on its own line, staggered spring-in
-- Gold accent lines between phrases
-
-### Scene 8 — "The Close" (26–30s, 120 frames)
-- "Camino" large with pulsing gold ring
-- Tagline: **"The path to pro starts here."**
-- Particles converge inward toward logo (reverse of outward drift)
-
----
+### Scene 5 — "The Close" (12–15s, 90 frames)
+- "Camino" logo with pulsing gold ring
+- Tagline: **"Your progress. Proven."**
+- Converging particles
 
 ## Technical Plan
 
-### Files to create/update in `remotion/`
+### Files to create
+- `remotion/src/scenes/LevelUpHookScene.tsx`
+- `remotion/src/scenes/FitnessTestScene.tsx`
+- `remotion/src/scenes/ProgressTrackerScene.tsx`
+- `remotion/src/scenes/CoachFeedbackScene.tsx`
+- `remotion/src/scenes/LevelUpCloseScene.tsx`
+- `remotion/src/LevelUpVideo.tsx` — TransitionSeries with 5 scenes + fade/wipe transitions
 
-All new scene files under `remotion/src/scenes/`:
-- `DreamScene.tsx` — Scene 1
-- `GrindScene.tsx` — Scene 2
-- `QuestionScene.tsx` — Scene 3
-- `AnswerScene.tsx` — Scene 4
-- `CPIJourneyScene.tsx` — Scene 5
-- `FeatureFlashScene.tsx` — Scene 6
-- `VisionScene.tsx` — Scene 7
-- `PathCloseScene.tsx` — Scene 8
+### Files to update
+- `remotion/src/Root.tsx` — Add `"level-up"` composition, 450 frames, 1080x1920
+- `remotion/scripts/render-remotion.mjs` — Add `"level-up"` to output map
 
-Update:
-- `remotion/src/Root.tsx` — New composition `"path-to-pro"`, 900 frames, 1080x1920
-- `remotion/src/MainVideo.tsx` — Keep existing. Create new `PathToProVideo.tsx`
-- `remotion/scripts/render-remotion.mjs` — Update to render `"path-to-pro"` composition
-
-### Key details
-- 900 frames total (30s @ 30fps), accounting for ~15-frame transition overlaps between scenes
-- TransitionSeries with fade transitions for emotional scenes, wipe for energy scenes
-- CPI ring reuses SVG arc pattern from existing CPIScene but adds temporal progression
+### Render
+- `node scripts/render-remotion.mjs level-up` → `/mnt/documents/camino-level-up.mp4`
+- 450 frames total, accounting for ~15-frame transition overlaps
 - All animation via `useCurrentFrame()` + `interpolate()`/`spring()`
-- Output: `/mnt/documents/camino-path-to-pro.mp4`
 
