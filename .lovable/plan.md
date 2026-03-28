@@ -1,96 +1,91 @@
 
 
-# Vertical Instagram Launch Video — Camino
+# Inspirational "Path to Pro" Vertical Video — 30 seconds
 
 ## Creative Direction
 
-**Format**: 1080x1920 (9:16), 25 seconds, 750 frames @ 30fps
+**Audience**: Players (ages 12-18) and their parents. The video should feel like a Nike/Adidas sports ad — aspirational, emotional, cinematic.
 
-**Vibe**: Launch hype — fast-paced opening with bold Instagram-style text hooks, then transitions into polished app showcase. Think product launch announcement meets sports brand reveal.
+**Tone**: "Every pro started somewhere. Camino tracks the journey." Inspirational, not salesy. The message is: your development matters, every session counts, the data tells your story.
 
-**Brand Palette**: Same as existing — `#0D0F14` background, `#E8B400` gold, `#141821` card, `#1DB870` green, `#2B7FE8` blue, `#8B3FCC` purple.
+**Format**: 1080x1920, 30 seconds, 900 frames @ 30fps
 
-**Typography**: Plus Jakarta Sans (bold display) + Inter (body). Large, punchy text fills for hooks.
+**Motion style**: Cinematic Minimal with bursts of Kinetic Energy on key phrases. Slow, dramatic reveals for emotional beats; fast cuts for data/feature moments.
 
-**Motion**: Kinetic Energy for hooks (fast cuts, bold scale, snappy springs), Cinematic Minimal for app screens (smooth reveals, parallax slides).
+**Palette**: Same brand — `#0D0F14` bg, `#E8B400` gold, `#1DB870` green, `#2B7FE8` blue. Gold is dominant for the aspirational feel.
 
-## Scene Breakdown
+**Typography**: Plus Jakarta Sans 800 (display), Inter (body). Even larger than the launch video — 100-120px for hero lines.
 
-### Scene 1 — "The Hook" (0–3s, 90 frames)
-- Black screen. Gold text SLAMS in huge: **"Your players deserve better."**
-- Text scales from 200% to 100% with a hard spring, slight shake
-- Quick cut to black
+---
 
-### Scene 2 — "The Problem" (3–6s, 90 frames)
-- Bold white text types/reveals: **"Spreadsheets. Guesswork. No visibility."**
-- Each word strikes in staggered with red-ish tint, then wipes away
-- Builds urgency
+## Scene Breakdown (8 scenes)
 
-### Scene 3 — "The Reveal" (6–9s, 90 frames)
-- Gold particles drift up, Camino logo springs in center
-- Text below: **"Introducing Camino"**
-- Gold arc sweeps across frame
+### Scene 1 — "The Dream" (0–4s, 120 frames)
+- Slow fade in: **"Every pro started somewhere."**
+- Gold text, massive, centered. Slow scale 1.05→1.0 with gentle breathing motion.
+- Subtle gold particles drifting upward. Cinematic pace — let it breathe.
 
-### Scene 4 — "Dashboard Showcase" (9–14s, 150 frames)
-- Screenshot of Coach Dashboard slides up with parallax
-- Gold highlight scans across the screenshot
-- Small label: "Complete player intelligence"
+### Scene 2 — "The Grind" (4–7.5s, 105 frames)
+- Staggered word reveals: **"The training. The early mornings. The setbacks."**
+- Each phrase springs in one at a time, white text with slight gold underline accents.
+- Builds momentum — faster stagger than Scene 1.
 
-### Scene 5 — "CPI Score" (14–18s, 120 frames)
-- Animated CPI ring 0→73 (SVG arc, no screenshot needed)
-- Category labels spring in: TEC 7.5, TAC 6.8, PHY 7.8, MEN 7.2
-- Label: "One score. Total clarity."
+### Scene 3 — "The Question" (7.5–10.5s, 90 frames)
+- Bold gold text slams in: **"But who's tracking your progress?"**
+- Hard spring with shake (like the hook scene from the launch video).
+- Dramatic pause, then fade.
 
-### Scene 6 — "App Screens Montage" (18–22s, 120 frames)
-- Quick staggered reveals of 3 app screenshots (Evaluations, Progress, Attendance)
-- Each slides in, pauses briefly, slides out for the next
-- Vertical phone-frame mockup style
+### Scene 4 — "The Answer" (10.5–13.5s, 90 frames)
+- "Camino" logo reveals with gold arc sweep.
+- Below: **"Your digital development passport"**
+- Clean, confident. No rush.
 
-### Scene 7 — "The Close" (22–25s, 90 frames)
-- "Camino" large display text, slow scale
-- Tagline: "The digital passport for elite player development"
-- Gold ring pulse, logo resolves
+### Scene 5 — "CPI Journey" (13.5–18s, 135 frames)
+- Animated CPI ring counting up: 45 → 62 → 73 → 81
+- Shows progression over time with month labels (Sep → Dec → Mar → Jun)
+- Message: **"Watch yourself grow."**
+- The ring color shifts from blue → green as score improves.
 
-## Asset Strategy
+### Scene 6 — "Feature Flash" (18–22s, 120 frames)
+- Quick 3-panel montage: Evaluations card, Progress chart, Goals checklist
+- Each slides in from bottom, holds 1 second, cross-fades to next
+- Small labels: "Every session scored", "Every trend tracked", "Every goal mapped"
 
-- **App screenshots**: Captured programmatically during render using `bunx remotion still` of mock UI built as React components within scenes (no external screenshots needed — we'll build simplified mock UIs directly in the scene components using the brand styles)
-- **Logo**: `public/camino-logo.png` (already exists)
+### Scene 7 — "The Vision" (22–26s, 120 frames)
+- Large text reveal: **"Your journey. Your data. Your future."**
+- Each phrase on its own line, staggered spring-in
+- Gold accent lines between phrases
+
+### Scene 8 — "The Close" (26–30s, 120 frames)
+- "Camino" large with pulsing gold ring
+- Tagline: **"The path to pro starts here."**
+- Particles converge inward toward logo (reverse of outward drift)
+
+---
 
 ## Technical Plan
 
-### File Structure
-```
-remotion/
-  tsconfig.json
-  scripts/render-remotion.mjs
-  src/
-    index.ts
-    Root.tsx              # 1080x1920, 30fps, 750 frames
-    MainVideo.tsx         # TransitionSeries with 7 sequences
-    scenes/
-      HookScene.tsx       # "Your players deserve better"
-      ProblemScene.tsx    # "Spreadsheets. Guesswork."
-      RevealScene.tsx     # Logo reveal
-      DashboardScene.tsx  # Mock dashboard UI
-      CPIScene.tsx        # Animated CPI ring
-      MontageScene.tsx    # App screen montage
-      CloseScene.tsx      # Final branding
-    components/
-      GoldArc.tsx
-      MockPhone.tsx       # Phone frame wrapper
-```
+### Files to create/update in `remotion/`
 
-### Steps
-1. Scaffold Remotion project in `remotion/`, install deps, fix compositor
-2. Build all 7 scene components with frame-based animations
-3. Wire scenes in `MainVideo.tsx` with transitions
-4. Spot-check key frames with `bunx remotion still`
-5. Full render to `/mnt/documents/camino-vertical-ig.mp4`
+All new scene files under `remotion/src/scenes/`:
+- `DreamScene.tsx` — Scene 1
+- `GrindScene.tsx` — Scene 2
+- `QuestionScene.tsx` — Scene 3
+- `AnswerScene.tsx` — Scene 4
+- `CPIJourneyScene.tsx` — Scene 5
+- `FeatureFlashScene.tsx` — Scene 6
+- `VisionScene.tsx` — Scene 7
+- `PathCloseScene.tsx` — Scene 8
 
-### Key Details
-- All animations via `useCurrentFrame()` + `interpolate()`/`spring()` — no CSS animations
-- Hook scenes use oversized typography (80-120px) for Instagram impact
-- Mock UI panels built as styled divs matching brand colors (no actual app imports)
-- Muted render (no audio in sandbox)
-- Output: `/mnt/documents/camino-vertical-ig.mp4`
+Update:
+- `remotion/src/Root.tsx` — New composition `"path-to-pro"`, 900 frames, 1080x1920
+- `remotion/src/MainVideo.tsx` — Keep existing. Create new `PathToProVideo.tsx`
+- `remotion/scripts/render-remotion.mjs` — Update to render `"path-to-pro"` composition
+
+### Key details
+- 900 frames total (30s @ 30fps), accounting for ~15-frame transition overlaps between scenes
+- TransitionSeries with fade transitions for emotional scenes, wipe for energy scenes
+- CPI ring reuses SVG arc pattern from existing CPIScene but adds temporal progression
+- All animation via `useCurrentFrame()` + `interpolate()`/`spring()`
+- Output: `/mnt/documents/camino-path-to-pro.mp4`
 
