@@ -138,7 +138,7 @@ export function AppSidebar() {
             {(['coach', 'player', 'parent'] as UserRole[]).map((r) => {
               const Icon = roleIcons[r];
               return (
-                <DropdownMenuItem key={r} onClick={() => setRole(r)} className={r === role ? 'bg-accent' : ''}>
+                <DropdownMenuItem key={r} onClick={() => { setRole(r); navigate('/dashboard'); }} className={r === role ? 'bg-accent' : ''}>
                   <Icon className="h-3.5 w-3.5 mr-2" />
                   {roleLabels[r]} View
                 </DropdownMenuItem>
