@@ -3,6 +3,7 @@ import { MainVideo } from "./MainVideo";
 import { PathToProVideo } from "./PathToProVideo";
 import { LevelUpVideo } from "./LevelUpVideo";
 import { PlatformPromoVideo } from "./PlatformPromoVideo";
+import { IdentityPromoVideo } from "./IdentityPromoVideo";
 
 export const RemotionRoot = () => (
   <>
