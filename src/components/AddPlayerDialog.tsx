@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { CANADIAN_CITIES, AGE_GROUPS } from '@/lib/constants';
 
 const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'ST', 'CF'];
 const teams = ['U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'First Team'];
@@ -32,6 +33,8 @@ const schema = z.object({
   preferredFoot: z.enum(['Left', 'Right', 'Both']),
   height: z.coerce.number().int().min(100, 'Min 100 cm').max(220, 'Max 220 cm'),
   weight: z.coerce.number().int().min(25, 'Min 25 kg').max(120, 'Max 120 kg'),
+  location: z.string().optional(),
+  ageGroup: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
