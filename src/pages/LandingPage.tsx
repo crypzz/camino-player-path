@@ -63,6 +63,7 @@ const fadeUp = {
 export default function LandingPage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [navSolid, setNavSolid] = useState(false);
+  const { data: rankings = [] } = useRankings();
 
   useEffect(() => {
     const onScroll = () => {
