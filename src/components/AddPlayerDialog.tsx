@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { CANADIAN_CITIES, AGE_GROUPS } from '@/lib/constants';
 
 const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'ST', 'CF'];
 const teams = ['U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'First Team'];
@@ -32,6 +33,8 @@ const schema = z.object({
   preferredFoot: z.enum(['Left', 'Right', 'Both']),
   height: z.coerce.number().int().min(100, 'Min 100 cm').max(220, 'Max 220 cm'),
   weight: z.coerce.number().int().min(25, 'Min 25 kg').max(120, 'Max 120 kg'),
+  location: z.string().optional(),
+  ageGroup: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -52,6 +55,8 @@ export function AddPlayerDialog() {
       preferredFoot: 'Right',
       height: 170,
       weight: 65,
+      location: '',
+      ageGroup: '',
     },
   });
 
@@ -72,6 +77,9 @@ export function AddPlayerDialog() {
         joinDate: new Date().toISOString().split('T')[0],
         attendance: 0,
         overallRating: 0,
+        location: values.location || '',
+        ageGroup: values.ageGroup || '',
+        isPublic: false,
       });
       toast.success(`${values.name} added successfully!`);
       form.reset();
@@ -172,6 +180,33 @@ export function AddPlayerDialog() {
                 <FormItem>
                   <FormLabel>Weight (kg)</FormLabel>
                   <FormControl><Input type="number" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <FormField control={form.control} name="location" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      {CANADIAN_CITIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="ageGroup" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age Group</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      {AGE_GROUPS.map(ag => <SelectItem key={ag} value={ag}>{ag}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )} />

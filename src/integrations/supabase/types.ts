@@ -111,13 +111,16 @@ export type Database = {
       players: {
         Row: {
           age: number
+          age_group: string | null
           attendance: number | null
           avatar: string | null
           created_at: string
           created_by: string
           height: number | null
           id: string
+          is_public: boolean | null
           join_date: string
+          location: string | null
           mental: Json
           name: string
           nationality: string | null
@@ -133,13 +136,16 @@ export type Database = {
         }
         Insert: {
           age: number
+          age_group?: string | null
           attendance?: number | null
           avatar?: string | null
           created_at?: string
           created_by: string
           height?: number | null
           id?: string
+          is_public?: boolean | null
           join_date?: string
+          location?: string | null
           mental?: Json
           name: string
           nationality?: string | null
@@ -155,13 +161,16 @@ export type Database = {
         }
         Update: {
           age?: number
+          age_group?: string | null
           attendance?: number | null
           avatar?: string | null
           created_at?: string
           created_by?: string
           height?: number | null
           id?: string
+          is_public?: boolean | null
           join_date?: string
+          location?: string | null
           mental?: Json
           name?: string
           nationality?: string | null
@@ -176,6 +185,105 @@ export type Database = {
           weight?: number | null
         }
         Relationships: []
+      }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          player_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          player_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          player_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

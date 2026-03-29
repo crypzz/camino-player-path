@@ -21,6 +21,9 @@ function dbToPlayer(row: any): Player {
     preferredFoot: row.preferred_foot as 'Left' | 'Right' | 'Both',
     height: row.height || 170,
     weight: row.weight || 65,
+    location: (row as any).location || '',
+    ageGroup: (row as any).age_group || '',
+    isPublic: (row as any).is_public ?? false,
     technical: jsonToMetrics<TechnicalMetrics>(row.technical),
     tactical: jsonToMetrics<TacticalMetrics>(row.tactical),
     physical: jsonToMetrics<PhysicalMetrics>(row.physical),
@@ -86,6 +89,9 @@ export function useCreatePlayer() {
         mental: player.mental as unknown as Json,
         attendance: player.attendance,
         overall_rating: player.overallRating,
+        location: player.location,
+        age_group: player.ageGroup,
+        is_public: player.isPublic,
       }).select().single();
       if (error) throw error;
       return data;
@@ -116,6 +122,9 @@ export function useUpdatePlayer() {
       if (updates.mental !== undefined) dbUpdates.mental = updates.mental as unknown as Json;
       if (updates.attendance !== undefined) dbUpdates.attendance = updates.attendance;
       if (updates.overallRating !== undefined) dbUpdates.overall_rating = updates.overallRating;
+      if (updates.location !== undefined) dbUpdates.location = updates.location;
+      if (updates.ageGroup !== undefined) dbUpdates.age_group = updates.ageGroup;
+      if (updates.isPublic !== undefined) dbUpdates.is_public = updates.isPublic;
 
       const { data, error } = await supabase
         .from('players')

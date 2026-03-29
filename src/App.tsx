@@ -19,6 +19,9 @@ import ReportsPage from "@/pages/ReportsPage";
 import PlayerProgressPage from "@/pages/PlayerProgressPage";
 import PlayerGoalsPage from "@/pages/PlayerGoalsPage";
 import SchedulePage from "@/pages/SchedulePage";
+import LeaderboardPage from "@/pages/LeaderboardPage";
+import FeedPage from "@/pages/FeedPage";
+import PublicProfilePage from "@/pages/PublicProfilePage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +39,11 @@ function DashboardRoutes() {
   return (
     <DashboardLayout>
       <Routes>
+        {/* Shared routes */}
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/feed" element={<FeedPage />} />
+        <Route path="/player/:id" element={<PublicProfilePage />} />
+
         {role === 'coach' && (
           <>
             <Route path="/" element={<CoachDashboard />} />

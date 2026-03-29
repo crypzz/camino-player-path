@@ -1,7 +1,7 @@
 import caminoLogo from '@/assets/camino-logo.png';
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -26,6 +26,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+const sharedLinks = [
+  { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
+  { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
+];
 
 const coachLinks = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -100,6 +105,31 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {links.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.url}
+                      end
+                      className="text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors text-[13px] rounded-md"
+                      activeClassName="bg-accent text-primary font-medium"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-4 mb-1">
+            {!collapsed && 'Community'}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {sharedLinks.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink

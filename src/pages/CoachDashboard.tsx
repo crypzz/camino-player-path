@@ -4,6 +4,7 @@ import { useSeedPlayers } from '@/hooks/useSeedPlayers';
 import { StatCard } from '@/components/StatCard';
 import { PlayerCard } from '@/components/PlayerCard';
 import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
+import { PlayerOfTheWeek } from '@/components/PlayerOfTheWeek';
 import { Users, Target, CalendarCheck, Award, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { calculateCPI } from '@/types/player';
@@ -62,6 +63,13 @@ export default function CoachDashboard() {
         <StatCard title="Goals Completed" value={totalGoalsCompleted} subtitle="Development targets" icon={Target} index={2} />
         <StatCard title="Avg Attendance" value={`${avgAttendance}%`} subtitle="This month" icon={CalendarCheck} index={3} />
       </div>
+
+      {/* Player Spotlight */}
+      {players.length > 0 && (
+        <div className="lg:hidden">
+          <PlayerOfTheWeek />
+        </div>
+      )}
 
       {players.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground text-sm">
