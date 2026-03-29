@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target, 
-  TrendingUp, Zap, Globe, ChevronRight, Star
+  TrendingUp, Zap, Globe, ChevronRight, Star, Trophy
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LeaderboardTable } from '@/components/LeaderboardTable';
+import { useRankings } from '@/hooks/useRankings';
 import heroPattern from '@/assets/hero-pattern.jpg';
 import caminoLogo from '@/assets/camino-logo.png';
 
