@@ -3,8 +3,9 @@ import { useRankings } from '@/hooks/useRankings';
 import { LeaderboardTable } from '@/components/LeaderboardTable';
 import { PlayerOfTheWeek } from '@/components/PlayerOfTheWeek';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CANADIAN_CITIES, AGE_GROUPS } from '@/lib/constants';
-import { Trophy } from 'lucide-react';
+import { Trophy, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function LeaderboardPage() {
