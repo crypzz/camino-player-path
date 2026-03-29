@@ -1,7 +1,7 @@
 import caminoLogo from '@/assets/camino-logo.png';
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -26,6 +26,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+const sharedLinks = [
+  { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
+  { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
+];
 
 const coachLinks = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
