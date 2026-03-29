@@ -77,6 +77,9 @@ export function AddPlayerDialog() {
         joinDate: new Date().toISOString().split('T')[0],
         attendance: 0,
         overallRating: 0,
+        location: values.location || '',
+        ageGroup: values.ageGroup || '',
+        isPublic: false,
       });
       toast.success(`${values.name} added successfully!`);
       form.reset();
