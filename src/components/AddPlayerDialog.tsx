@@ -55,6 +55,8 @@ export function AddPlayerDialog() {
       preferredFoot: 'Right',
       height: 170,
       weight: 65,
+      location: '',
+      ageGroup: '',
     },
   });
 
