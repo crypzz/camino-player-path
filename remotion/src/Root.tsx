@@ -3,6 +3,7 @@ import { MainVideo } from "./MainVideo";
 import { PathToProVideo } from "./PathToProVideo";
 import { LevelUpVideo } from "./LevelUpVideo";
 import { PlatformPromoVideo } from "./PlatformPromoVideo";
+import { IdentityPromoVideo } from "./IdentityPromoVideo";
 
 export const RemotionRoot = () => (
   <>
@@ -34,6 +35,14 @@ export const RemotionRoot = () => (
       id="platform-promo"
       component={PlatformPromoVideo}
       durationInFrames={650}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="identity-promo"
+      component={IdentityPromoVideo}
+      durationInFrames={900}
       fps={30}
       width={1080}
       height={1920}
