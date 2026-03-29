@@ -47,8 +47,12 @@ export function LeaderboardTable({ players }: Props) {
             </div>
             <div className="text-right">
               <p className={`font-bold text-sm ${isTop3 ? 'text-primary' : 'text-foreground'}`}>
-                {player.overall_rating.toFixed(1)}
+                {player.rankingScore.toFixed(1)}
               </p>
+              <p className="text-[10px] text-muted-foreground">Score</p>
+            </div>
+            <div className="text-right min-w-[40px]">
+              <p className="text-xs text-muted-foreground">{player.overall_rating.toFixed(1)}</p>
               <p className="text-[10px] text-muted-foreground">CPI</p>
             </div>
           </motion.div>
