@@ -88,6 +88,7 @@ export default function LandingPage() {
             <span className="font-display font-bold text-foreground text-sm tracking-tight">Camino</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
+            <button onClick={() => scrollTo('rankings')} className="hover:text-foreground transition-colors">Rankings</button>
             <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
             <button onClick={() => scrollTo('cpi')} className="hover:text-foreground transition-colors">CPI</button>
             <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
