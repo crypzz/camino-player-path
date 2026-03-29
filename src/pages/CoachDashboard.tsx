@@ -4,6 +4,7 @@ import { useSeedPlayers } from '@/hooks/useSeedPlayers';
 import { StatCard } from '@/components/StatCard';
 import { PlayerCard } from '@/components/PlayerCard';
 import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
+import { PlayerOfTheWeek } from '@/components/PlayerOfTheWeek';
 import { Users, Target, CalendarCheck, Award, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { calculateCPI } from '@/types/player';
