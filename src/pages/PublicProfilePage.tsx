@@ -55,7 +55,7 @@ export default function PublicProfilePage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl font-display font-bold text-foreground">{player.name}</h1>
-                  {!(player as any).is_public && (
+                  {!player.isPublic && (
                     <Badge variant="outline" className="text-[10px]"><Lock className="h-2.5 w-2.5 mr-1" />Private</Badge>
                   )}
                 </div>
@@ -65,10 +65,10 @@ export default function PublicProfilePage() {
                   <span>{player.team}</span>
                   <span>·</span>
                   <span>Age {player.age}</span>
-                  {(player as any).location && (
+                  {player.location && (
                     <>
                       <span>·</span>
-                      <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{(player as any).location}</span>
+                      <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{player.location}</span>
                     </>
                   )}
                 </div>
