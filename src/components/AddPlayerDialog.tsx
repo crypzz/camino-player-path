@@ -185,6 +185,33 @@ export function AddPlayerDialog() {
               )} />
             </div>
 
+            <div className="grid grid-cols-2 gap-3">
+              <FormField control={form.control} name="location" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      {CANADIAN_CITIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="ageGroup" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age Group</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      {AGE_GROUPS.map(ag => <SelectItem key={ag} value={ag}>{ag}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+
             <Button type="submit" className="w-full" disabled={createPlayer.isPending}>
               {createPlayer.isPending ? 'Adding...' : 'Add Player'}
             </Button>
