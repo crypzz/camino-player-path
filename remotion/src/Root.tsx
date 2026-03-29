@@ -39,5 +39,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="identity-promo"
+      component={IdentityPromoVideo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
