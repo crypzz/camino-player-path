@@ -89,6 +89,9 @@ export function useCreatePlayer() {
         mental: player.mental as unknown as Json,
         attendance: player.attendance,
         overall_rating: player.overallRating,
+        location: player.location,
+        age_group: player.ageGroup,
+        is_public: player.isPublic,
       }).select().single();
       if (error) throw error;
       return data;

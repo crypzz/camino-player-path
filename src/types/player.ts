@@ -49,8 +49,11 @@ export interface Player {
   joinDate: string;
   nationality: string;
   preferredFoot: 'Left' | 'Right' | 'Both';
-  height: number; // cm
-  weight: number; // kg
+  height: number;
+  weight: number;
+  location: string;
+  ageGroup: string;
+  isPublic: boolean;
   technical: TechnicalMetrics;
   tactical: TacticalMetrics;
   physical: PhysicalMetrics;

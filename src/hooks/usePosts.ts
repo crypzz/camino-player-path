@@ -34,51 +34,23 @@ export function usePosts(playerId?: string) {
     queryFn: async () => {
       let query = supabase
         .from('posts')
-        .select('*, profiles!posts_user_id_fkey(display_name, avatar_url), players(name, avatar)')
+        .select('*, players(name, avatar)')
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (playerId) query = query.eq('player_id', playerId);
 
       const { data: posts, error } = await query;
-      if (error) {
-        // Fallback without join if FK doesn't exist
-        const { data: fallbackPosts, error: fbError } = await supabase
-          .from('posts')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(50);
-        if (fbError) throw fbError;
-        
-        // Get likes and comments counts
-        const postIds = (fallbackPosts || []).map(p => p.id);
-        const [likesRes, commentsRes, userLikesRes] = await Promise.all([
-          supabase.from('post_likes').select('post_id').in('post_id', postIds),
-          supabase.from('post_comments').select('post_id').in('post_id', postIds),
-          user ? supabase.from('post_likes').select('post_id').eq('user_id', user.id).in('post_id', postIds) : Promise.resolve({ data: [] }),
-        ]);
+      if (error) throw error;
 
-        const likeCounts: Record<string, number> = {};
-        const commentCounts: Record<string, number> = {};
-        const userLikedSet = new Set<string>();
-
-        (likesRes.data || []).forEach(l => { likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1; });
-        (commentsRes.data || []).forEach(c => { commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1; });
-        ((userLikesRes as any).data || []).forEach((l: any) => userLikedSet.add(l.post_id));
-
-        return (fallbackPosts || []).map(p => ({
-          ...p,
-          profiles: null,
-          players: null,
-          likes_count: likeCounts[p.id] || 0,
-          comments_count: commentCounts[p.id] || 0,
-          user_has_liked: userLikedSet.has(p.id),
-        })) as Post[];
-      }
-
-      // Get likes and comments counts
       const postIds = (posts || []).map(p => p.id);
       if (postIds.length === 0) return [] as Post[];
+
+      // Get user profiles for post authors
+      const userIds = [...new Set((posts || []).map(p => p.user_id))];
+      const { data: profiles } = await supabase.from('profiles').select('user_id, display_name, avatar_url').in('user_id', userIds);
+      const profileMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
+      (profiles || []).forEach(p => { profileMap[p.user_id] = p; });
 
       const [likesRes, commentsRes, userLikesRes] = await Promise.all([
         supabase.from('post_likes').select('post_id').in('post_id', postIds),
@@ -96,6 +68,7 @@ export function usePosts(playerId?: string) {
 
       return (posts || []).map(p => ({
         ...p,
+        profiles: profileMap[p.user_id] || null,
         likes_count: likeCounts[p.id] || 0,
         comments_count: commentCounts[p.id] || 0,
         user_has_liked: userLikedSet.has(p.id),
