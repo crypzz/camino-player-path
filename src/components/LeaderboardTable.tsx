@@ -30,7 +30,7 @@ export function LeaderboardTable({ players }: Props) {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.03 }}
-            onClick={() => navigate(`/dashboard/player/${player.id}`)}
+            onClick={() => navigate(`/player/${player.id}`)}
             className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/60 ${isTop3 ? 'bg-primary/5 border border-primary/10' : ''}`}
           >
             <div className="w-8 flex items-center justify-center">

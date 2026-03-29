@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target, 
-  TrendingUp, Zap, Globe, ChevronRight, Star
+  TrendingUp, Zap, Globe, ChevronRight, Star, Trophy
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LeaderboardTable } from '@/components/LeaderboardTable';
+import { useRankings } from '@/hooks/useRankings';
 import heroPattern from '@/assets/hero-pattern.jpg';
 import caminoLogo from '@/assets/camino-logo.png';
 
@@ -61,6 +63,7 @@ const fadeUp = {
 export default function LandingPage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [navSolid, setNavSolid] = useState(false);
+  const { data: rankings = [] } = useRankings();
 
   useEffect(() => {
     const onScroll = () => {
@@ -85,6 +88,7 @@ export default function LandingPage() {
             <span className="font-display font-bold text-foreground text-sm tracking-tight">Camino</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
+            <button onClick={() => scrollTo('rankings')} className="hover:text-foreground transition-colors">Rankings</button>
             <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
             <button onClick={() => scrollTo('cpi')} className="hover:text-foreground transition-colors">CPI</button>
             <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
@@ -181,7 +185,53 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Live Rankings */}
+      <section id="rankings" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
+        <div className="max-w-6xl mx-auto px-5">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="text-center mb-10"
+          >
+            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Trophy className="h-3 w-3 text-primary" />
+              <span className="text-[11px] font-medium text-primary tracking-wide">LIVE RANKINGS</span>
+            </motion.div>
+            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+              Player Leaderboard
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
+              See who's climbing the ranks. Rankings are based on 60% CPI, 20% consistency, and 20% improvement.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="glass-card p-4 max-w-2xl mx-auto"
+          >
+            {rankings.length > 0 ? (
+              <LeaderboardTable players={rankings.slice(0, 10)} />
+            ) : (
+              <div className="text-center py-12 text-muted-foreground text-sm">
+                No ranked players yet. Be the first to join!
+              </div>
+            )}
+          </motion.div>
+
+          <div className="text-center mt-6">
+            <Link to="/auth">
+              <Button variant="outline" size="sm" className="gap-2 text-xs">
+                Join & Get Ranked <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-5">
           <motion.div
