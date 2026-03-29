@@ -22,6 +22,7 @@ import SchedulePage from "@/pages/SchedulePage";
 import LeaderboardPage from "@/pages/LeaderboardPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
+import FitnessTestPage from "@/pages/FitnessTestPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ function DashboardRoutes() {
             <Route path="/videos" element={<VideoAnalysisPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
+            <Route path="/fitness" element={<FitnessTestPage />} />
           </>
         )}
         {role === 'player' && (

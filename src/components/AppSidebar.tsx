@@ -1,7 +1,7 @@
 import caminoLogo from '@/assets/camino-logo.png';
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -39,6 +39,7 @@ const coachLinks = [
   { title: 'Video Analysis', url: '/dashboard/videos', icon: Video },
   { title: 'Reports', url: '/dashboard/reports', icon: FileText },
   { title: 'Attendance', url: '/dashboard/attendance', icon: CalendarCheck },
+  { title: 'Fitness Tests', url: '/dashboard/fitness', icon: Activity },
 ];
 
 const playerLinks = [

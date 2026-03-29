@@ -108,6 +108,62 @@ export type Database = {
           },
         ]
       }
+      fitness_tests: {
+        Row: {
+          agility_time: number | null
+          beep_test_level: number | null
+          beep_test_shuttles: number | null
+          created_at: string
+          endurance_distance: number | null
+          id: string
+          notes: string | null
+          player_id: string
+          sprint_10m: number | null
+          sprint_30m: number | null
+          test_date: string
+          tested_by: string
+          vertical_jump: number | null
+        }
+        Insert: {
+          agility_time?: number | null
+          beep_test_level?: number | null
+          beep_test_shuttles?: number | null
+          created_at?: string
+          endurance_distance?: number | null
+          id?: string
+          notes?: string | null
+          player_id: string
+          sprint_10m?: number | null
+          sprint_30m?: number | null
+          test_date?: string
+          tested_by: string
+          vertical_jump?: number | null
+        }
+        Update: {
+          agility_time?: number | null
+          beep_test_level?: number | null
+          beep_test_shuttles?: number | null
+          created_at?: string
+          endurance_distance?: number | null
+          id?: string
+          notes?: string | null
+          player_id?: string
+          sprint_10m?: number | null
+          sprint_30m?: number | null
+          test_date?: string
+          tested_by?: string
+          vertical_jump?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fitness_tests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       players: {
         Row: {
           age: number
