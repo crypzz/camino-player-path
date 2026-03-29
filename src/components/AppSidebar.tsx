@@ -39,6 +39,7 @@ const coachLinks = [
   { title: 'Video Analysis', url: '/dashboard/videos', icon: Video },
   { title: 'Reports', url: '/dashboard/reports', icon: FileText },
   { title: 'Attendance', url: '/dashboard/attendance', icon: CalendarCheck },
+  { title: 'Fitness Tests', url: '/dashboard/fitness', icon: Activity },
 ];
 
 const playerLinks = [

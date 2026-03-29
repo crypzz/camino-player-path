@@ -53,6 +53,7 @@ function DashboardRoutes() {
             <Route path="/videos" element={<VideoAnalysisPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
+            <Route path="/fitness" element={<FitnessTestPage />} />
           </>
         )}
         {role === 'player' && (
