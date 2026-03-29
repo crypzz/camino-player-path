@@ -64,6 +64,13 @@ export default function CoachDashboard() {
         <StatCard title="Avg Attendance" value={`${avgAttendance}%`} subtitle="This month" icon={CalendarCheck} index={3} />
       </div>
 
+      {/* Player Spotlight */}
+      {players.length > 0 && (
+        <div className="lg:hidden">
+          <PlayerOfTheWeek />
+        </div>
+      )}
+
       {players.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground text-sm">
           No players yet. Click "Load Sample Data" above to get started.
