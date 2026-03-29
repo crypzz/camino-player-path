@@ -119,6 +119,9 @@ export function useUpdatePlayer() {
       if (updates.mental !== undefined) dbUpdates.mental = updates.mental as unknown as Json;
       if (updates.attendance !== undefined) dbUpdates.attendance = updates.attendance;
       if (updates.overallRating !== undefined) dbUpdates.overall_rating = updates.overallRating;
+      if (updates.location !== undefined) dbUpdates.location = updates.location;
+      if (updates.ageGroup !== undefined) dbUpdates.age_group = updates.ageGroup;
+      if (updates.isPublic !== undefined) dbUpdates.is_public = updates.isPublic;
 
       const { data, error } = await supabase
         .from('players')
