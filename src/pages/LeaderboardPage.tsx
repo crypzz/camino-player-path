@@ -24,7 +24,22 @@ export default function LeaderboardPage() {
           <Trophy className="h-5 w-5 text-primary" />
           Leaderboard
         </h1>
-        <p className="text-muted-foreground text-[13px] mt-0.5">Player rankings by CPI score</p>
+        <p className="text-muted-foreground text-[13px] mt-0.5 flex items-center gap-1">
+          Player rankings by composite score
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-[240px] text-xs leading-relaxed">
+                <p className="font-semibold mb-1">Ranking Formula</p>
+                <p><span className="font-medium">60%</span> CPI (overall skill rating)</p>
+                <p><span className="font-medium">20%</span> Consistency (sessions in last 30 days)</p>
+                <p><span className="font-medium">20%</span> Improvement (CPI change over 30 days)</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </p>
       </motion.div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
