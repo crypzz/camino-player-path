@@ -23,6 +23,7 @@ const outputMap = {
   "main": "/mnt/documents/camino-vertical-ig.mp4",
   "path-to-pro": "/mnt/documents/camino-path-to-pro.mp4",
   "level-up": "/mnt/documents/camino-level-up.mp4",
+  "platform-promo": "/mnt/documents/camino-platform-promo.mp4",
 };
 const outputLocation = outputMap[compositionId] || `/mnt/documents/${compositionId}.mp4`;
 
