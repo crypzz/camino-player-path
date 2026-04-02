@@ -4,6 +4,7 @@ import { PathToProVideo } from "./PathToProVideo";
 import { LevelUpVideo } from "./LevelUpVideo";
 import { PlatformPromoVideo } from "./PlatformPromoVideo";
 import { IdentityPromoVideo } from "./IdentityPromoVideo";
+import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
 
 export const RemotionRoot = () => (
   <>
