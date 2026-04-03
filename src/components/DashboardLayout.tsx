@@ -7,6 +7,7 @@ const roleGreetings: Record<string, string> = {
   coach: 'Coach Dashboard',
   player: 'Player Dashboard',
   parent: 'Parent Dashboard',
+  director: 'Director Dashboard',
 };
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
