@@ -134,7 +134,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
+        {role !== 'director' && <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-4 mb-1">
             {!collapsed && 'Community'}
           </SidebarGroupLabel>
