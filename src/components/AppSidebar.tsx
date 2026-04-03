@@ -55,16 +55,26 @@ const parentLinks = [
   { title: 'Schedule', url: '/dashboard/schedule', icon: CalendarCheck },
 ];
 
+const directorLinks = [
+  { title: 'Overview', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Leaderboard', url: '/dashboard/director/leaderboard', icon: Trophy },
+  { title: 'Teams', url: '/dashboard/director/teams', icon: Shield },
+  { title: 'Players', url: '/dashboard/director/players', icon: Users },
+  { title: 'Coaches', url: '/dashboard/director/coaches', icon: Star },
+];
+
 const roleLabels: Record<UserRole, string> = {
   coach: 'Coach',
   player: 'Player',
   parent: 'Parent',
+  director: 'Director',
 };
 
 const roleIcons: Record<UserRole, typeof Shield> = {
   coach: Shield,
   player: User,
   parent: Users,
+  director: Building2,
 };
 
 export function AppSidebar() {
