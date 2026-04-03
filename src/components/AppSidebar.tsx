@@ -89,7 +89,7 @@ export function AppSidebar() {
     navigate('/');
   };
 
-  const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : parentLinks;
+  const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : role === 'director' ? directorLinks : parentLinks;
   const RoleIcon = roleIcons[role];
 
   return (
