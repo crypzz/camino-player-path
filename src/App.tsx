@@ -76,6 +76,15 @@ function DashboardRoutes() {
             <Route path="/schedule" element={<SchedulePage />} />
           </>
         )}
+        {role === 'director' && (
+          <>
+            <Route path="/" element={<DirectorDashboard />} />
+            <Route path="/director/leaderboard" element={<DirectorLeaderboardPage />} />
+            <Route path="/director/teams" element={<DirectorTeamsPage />} />
+            <Route path="/director/players" element={<DirectorPlayersPage />} />
+            <Route path="/director/coaches" element={<DirectorCoachesPage />} />
+          </>
+        )}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </DashboardLayout>
