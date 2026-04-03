@@ -5,6 +5,7 @@ import { LevelUpVideo } from "./LevelUpVideo";
 import { PlatformPromoVideo } from "./PlatformPromoVideo";
 import { IdentityPromoVideo } from "./IdentityPromoVideo";
 import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
+import { CountdownTeaser } from "./CountdownTeaser";
 
 export const RemotionRoot = () => (
   <>
@@ -51,6 +52,14 @@ export const RemotionRoot = () => (
     <Composition
       id="pre-launch-hype"
       component={PreLaunchHypeVideo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="countdown-teaser"
+      component={CountdownTeaser}
       durationInFrames={900}
       fps={30}
       width={1080}
