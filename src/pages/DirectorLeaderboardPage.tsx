@@ -4,7 +4,7 @@ import { Trophy, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useRankings, RankedPlayer } from '@/hooks/useRankings';
+import { useRankings } from '@/hooks/useRankings';
 import { AGE_GROUPS } from '@/lib/constants';
 import { useNavigate } from 'react-router-dom';
 

@@ -7,7 +7,7 @@ import { useRankings } from '@/hooks/useRankings';
 import { useDirectorStats } from '@/hooks/useDirectorData';
 import { exportToCSV, exportPlayerReportPDF } from '@/lib/exportUtils';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis } from 'recharts';
 
 export default function DirectorPlayersPage() {
   const { data: players = [] } = useRankings();
