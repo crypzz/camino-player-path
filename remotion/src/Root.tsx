@@ -5,6 +5,7 @@ import { LevelUpVideo } from "./LevelUpVideo";
 import { PlatformPromoVideo } from "./PlatformPromoVideo";
 import { IdentityPromoVideo } from "./IdentityPromoVideo";
 import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
+import { CountdownTeaser } from "./CountdownTeaser";
 
 export const RemotionRoot = () => (
   <>
