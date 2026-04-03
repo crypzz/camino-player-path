@@ -157,7 +157,7 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup>}
       </SidebarContent>
 
       <SidebarFooter className="p-2 border-t border-sidebar-border">
