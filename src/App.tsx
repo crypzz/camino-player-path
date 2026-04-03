@@ -23,6 +23,11 @@ import LeaderboardPage from "@/pages/LeaderboardPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
+import DirectorDashboard from "@/pages/DirectorDashboard";
+import DirectorLeaderboardPage from "@/pages/DirectorLeaderboardPage";
+import DirectorTeamsPage from "@/pages/DirectorTeamsPage";
+import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
+import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
