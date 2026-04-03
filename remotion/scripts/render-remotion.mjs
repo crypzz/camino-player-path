@@ -26,6 +26,7 @@ const outputMap = {
   "platform-promo": "/mnt/documents/camino-platform-promo.mp4",
   "identity-promo": "/mnt/documents/camino-identity-promo.mp4",
   "pre-launch-hype": "/mnt/documents/camino-pre-launch-hype.mp4",
+  "countdown-teaser": "/mnt/documents/camino-countdown-teaser.mp4",
 };
 const outputLocation = outputMap[compositionId] || `/mnt/documents/${compositionId}.mp4`;
 
