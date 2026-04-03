@@ -1,4 +1,4 @@
-export type UserRole = 'coach' | 'player' | 'parent';
+export type UserRole = 'coach' | 'player' | 'parent' | 'director';
 
 export interface TechnicalMetrics {
   [key: string]: number;

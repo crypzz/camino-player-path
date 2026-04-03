@@ -1,7 +1,7 @@
 import caminoLogo from '@/assets/camino-logo.png';
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -55,16 +55,26 @@ const parentLinks = [
   { title: 'Schedule', url: '/dashboard/schedule', icon: CalendarCheck },
 ];
 
+const directorLinks = [
+  { title: 'Overview', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Leaderboard', url: '/dashboard/director/leaderboard', icon: Trophy },
+  { title: 'Teams', url: '/dashboard/director/teams', icon: Shield },
+  { title: 'Players', url: '/dashboard/director/players', icon: Users },
+  { title: 'Coaches', url: '/dashboard/director/coaches', icon: Star },
+];
+
 const roleLabels: Record<UserRole, string> = {
   coach: 'Coach',
   player: 'Player',
   parent: 'Parent',
+  director: 'Director',
 };
 
 const roleIcons: Record<UserRole, typeof Shield> = {
   coach: Shield,
   player: User,
   parent: Users,
+  director: Building2,
 };
 
 export function AppSidebar() {
@@ -79,7 +89,7 @@ export function AppSidebar() {
     navigate('/');
   };
 
-  const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : parentLinks;
+  const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : role === 'director' ? directorLinks : parentLinks;
   const RoleIcon = roleIcons[role];
 
   return (
@@ -124,7 +134,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
+        {role !== 'director' && <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-4 mb-1">
             {!collapsed && 'Community'}
           </SidebarGroupLabel>
@@ -147,7 +157,7 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup>}
       </SidebarContent>
 
       <SidebarFooter className="p-2 border-t border-sidebar-border">
@@ -166,7 +176,7 @@ export function AppSidebar() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="start" className="w-48">
-            {(['coach', 'player', 'parent'] as UserRole[]).map((r) => {
+            {(['coach', 'player', 'parent', 'director'] as UserRole[]).map((r) => {
               const Icon = roleIcons[r];
               return (
                 <DropdownMenuItem key={r} onClick={() => { setRole(r); navigate('/dashboard'); }} className={r === role ? 'bg-accent' : ''}>

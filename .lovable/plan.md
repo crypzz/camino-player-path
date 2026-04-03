@@ -1,84 +1,72 @@
 
+# Club Director Admin Dashboard
 
-# "Your Profile. Your Proof." — 30-Second Marketing Video
+## Phase 1: Database Schema (Migration)
 
-## Creative Direction
+### New tables:
+1. **`teams`** — `id`, `name`, `club_name`, `age_group`, `created_by` (director user_id), `created_at`, `updated_at`
+2. **`coach_assignments`** — `id`, `team_id` (FK→teams), `coach_user_id` (FK→profiles.user_id), `status` (enum: pending/approved/removed), `assigned_at`, `updated_at`
+3. **`user_roles`** — `id`, `user_id` (FK→auth.users), `role` (enum: coach/player/parent/director) — following the security pattern from instructions
 
-**Format**: 1080×1920 (vertical/IG Reels), 30 seconds, 900 frames @ 30fps
-**Tone**: Aspirational, identity-driven. "You're not just playing — you're building a reputation."
-**Palette**: `#0D0F14` bg, `#E8B400` gold, `#1DB870` green, `#2B7FE8` blue — same brand system
-**Fonts**: Plus Jakarta Sans (display) + Inter (body) — matching existing videos
-**Motion**: Kinetic Energy for hook, Cinematic Minimal for showcase moments
+### Modifications:
+- Add `team_id` (FK→teams, nullable) to `players` table so players belong to teams
+- RLS policies: directors can view all data club-wide; coaches manage only their assigned teams
 
-## Scene Breakdown (7 scenes, ~900 frames)
+### Security definer function:
+- `has_role(user_id, role)` for safe RLS checks without recursion
 
-### Scene 1 — "Identity Hook" (0–4s, ~120 frames)
-Three lines slam in with scale + shake (matching PlatformHookScene pattern):
-- **"YOUR WORK."** (white)
-- **"YOUR PROOF."** (white)
-- **"YOUR IDENTITY."** (gold)
-Pulsing gold ring behind. Fade out at end.
+## Phase 2: Auth & Role Updates
 
-### Scene 2 — "Public Profile" (4–8s, ~130 frames)
-Mock public profile card slides up — the centerpiece of new features:
-- Player avatar circle, name "Sofia Chen", position/team
-- Level badge: "GOLD · Level 7" with gold accent
-- CPI score animating up to 76
-- "Built on Camino" branding at bottom
-- Label: **"Your profile. Always public."**
+- Update `UserRole` type to include `'director'`
+- Update `AppContext` to support director role
+- Update `AppSidebar` with director-specific nav links
+- Add director routes in `App.tsx`
 
-### Scene 3 — "Level System" (8–12s, ~130 frames)
-Showcase the tier/leveling system:
-- Five tier badges spring in staggered: Bronze → Silver → Gold → Platinum → Elite
-- A progress bar fills from Level 6 to Level 7
-- Gold particle burst on level-up
-- Label: **"Every session. Every level."**
+## Phase 3: Director Dashboard Pages
 
-### Scene 4 — "Ranking Formula" (12–16s, ~130 frames)
-Animated breakdown of the ranking score:
-- Three bars fill in staggered:
-  - CPI 60% (gold bar)
-  - Consistency 20% (green bar)
-  - Improvement 20% (blue bar)
-- Combined score counter: 0 → 82
-- Label: **"Ranked by what matters."**
+### 3a. Overview Page (`DirectorDashboard.tsx`)
+- Stat cards: Total Players, Total Teams, Active Players (30d), Avg CPI, Most Improved, Top Ranked
+- Quick alerts/notifications section
 
-### Scene 5 — "Stat Card Share" (16–20.5s, ~135 frames)
-Shareable stat card springs in with rotation (reuse ShareBadge aesthetic):
-- Mock stat card with player name, CPI, category scores
-- Card tilts and "floats" with subtle sine motion
-- Social icons appear: IG, Twitter/X, TikTok
-- Label: **"Share your card. Build your brand."**
+### 3b. Club Leaderboard (`DirectorLeaderboardPage.tsx`)
+- Full club-wide leaderboard with rank change indicators (↑↓)
+- Filters: age group, team, timeframe
 
-### Scene 6 — "Live Rankings" (20.5–25s, ~135 frames)
-Top 5 leaderboard rows slide in from right (reuse LeaderboardShowcase pattern):
-- Each row: rank medal/number, avatar, name, CPI score
-- Highlight #1 row with gold glow
-- Label: **"Climb the ranks. Get seen."**
+### 3c. Team Performance (`DirectorTeamsPage.tsx`)
+- Table/card layout of all teams with Avg CPI, activity level, most improved player
+- Click to view team detail
 
-### Scene 7 — "The Close" (25–30s, ~120 frames)
-- "CAMINO" logo with breathing scale
-- Tagline: **"Your progress. Proven."**
-- Feature pills spring in: "Public Profiles · Levels · Rankings · Stat Cards"
-- Converging gold particles
+### 3d. Player Development Insights (`DirectorPlayersPage.tsx`)
+- CPI progression chart (club average over time)
+- Top 10 most improved players
+- Flagged inactive players
 
-## Technical Plan
+### 3e. Coach Management (`DirectorCoachesPage.tsx`)
+- List coaches with team, status, activity
+- Approve/remove actions
 
-### Files to Create (7 new)
-1. `remotion/src/scenes/IdentityHookScene.tsx` — Hook with 3 slam-in lines
-2. `remotion/src/scenes/PublicProfileScene.tsx` — Mock profile card showcase
-3. `remotion/src/scenes/LevelSystemScene.tsx` — Tier badges + level-up animation
-4. `remotion/src/scenes/RankingFormulaScene.tsx` — 3-bar formula breakdown
-5. `remotion/src/scenes/StatCardScene.tsx` — Shareable stat card floating
-6. `remotion/src/scenes/LiveRankingsScene.tsx` — Top 5 leaderboard rows
-7. `remotion/src/IdentityPromoVideo.tsx` — TransitionSeries wiring all 7 scenes
+## Phase 4: Export Features
 
-### Files to Update (2)
-- `remotion/src/Root.tsx` — Add `"identity-promo"` composition, 900 frames, 1080×1920
-- `remotion/scripts/render-remotion.mjs` — Add `"identity-promo"` to output map
+- PDF player report generation (client-side)
+- CSV team data export
 
-### Rendering
-- Composition: `identity-promo`, 900 frames @ 30fps = 30 seconds
-- 6 transitions × 15 frames = 90 frames of overlap accounted for
-- Output: `/mnt/documents/camino-identity-promo.mp4`
+## Files Created (~12-15 new files)
+- `src/pages/DirectorDashboard.tsx`
+- `src/pages/DirectorLeaderboardPage.tsx`
+- `src/pages/DirectorTeamsPage.tsx`
+- `src/pages/DirectorPlayersPage.tsx`
+- `src/pages/DirectorCoachesPage.tsx`
+- `src/hooks/useDirectorData.ts`
+- `src/hooks/useTeams.ts`
+- `src/components/DirectorStatCards.tsx`
+- `src/components/ClubLeaderboard.tsx`
+- `src/components/TeamPerformanceTable.tsx`
+- `src/components/CoachManagementTable.tsx`
+- `src/components/PlayerInsightsCharts.tsx`
+- `src/lib/exportUtils.ts`
 
+## Files Modified (~4 files)
+- `src/types/player.ts` — add director role
+- `src/App.tsx` — add director routes
+- `src/components/AppSidebar.tsx` — add director nav
+- `src/context/AppContext.tsx` — (minor, already handles dynamic roles)

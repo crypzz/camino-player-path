@@ -23,6 +23,11 @@ import LeaderboardPage from "@/pages/LeaderboardPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
+import DirectorDashboard from "@/pages/DirectorDashboard";
+import DirectorLeaderboardPage from "@/pages/DirectorLeaderboardPage";
+import DirectorTeamsPage from "@/pages/DirectorTeamsPage";
+import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
+import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +74,15 @@ function DashboardRoutes() {
             <Route path="/" element={<ParentDashboard />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
+          </>
+        )}
+        {role === 'director' && (
+          <>
+            <Route path="/" element={<DirectorDashboard />} />
+            <Route path="/director/leaderboard" element={<DirectorLeaderboardPage />} />
+            <Route path="/director/teams" element={<DirectorTeamsPage />} />
+            <Route path="/director/players" element={<DirectorPlayersPage />} />
+            <Route path="/director/coaches" element={<DirectorCoachesPage />} />
           </>
         )}
         <Route path="*" element={<NotFound />} />
