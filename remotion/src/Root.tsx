@@ -6,6 +6,7 @@ import { PlatformPromoVideo } from "./PlatformPromoVideo";
 import { IdentityPromoVideo } from "./IdentityPromoVideo";
 import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
 import { CountdownTeaser } from "./CountdownTeaser";
+import { GoProVideo } from "./GoProVideo";
 
 export const RemotionRoot = () => (
   <>
