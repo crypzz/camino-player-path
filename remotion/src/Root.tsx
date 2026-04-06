@@ -66,5 +66,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="go-pro"
+      component={GoProVideo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
