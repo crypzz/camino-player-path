@@ -6,6 +6,7 @@ import { PlatformPromoVideo } from "./PlatformPromoVideo";
 import { IdentityPromoVideo } from "./IdentityPromoVideo";
 import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
 import { CountdownTeaser } from "./CountdownTeaser";
+import { GoProVideo } from "./GoProVideo";
 
 export const RemotionRoot = () => (
   <>
@@ -60,6 +61,14 @@ export const RemotionRoot = () => (
     <Composition
       id="countdown-teaser"
       component={CountdownTeaser}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="go-pro"
+      component={GoProVideo}
       durationInFrames={900}
       fps={30}
       width={1080}
