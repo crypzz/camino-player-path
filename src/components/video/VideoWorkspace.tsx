@@ -33,20 +33,14 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const stats = useVideoStats(events, players);
 
   useEffect(() => {
-    const { data } = supabase.storage.from('match-videos').getPublicUrl(video.video_url);
-    if (data?.publicUrl) setVideoSrc(data.publicUrl);
-    // If bucket is private, use createSignedUrl instead
-    if (!data?.publicUrl) {
-      supabase.storage.from('match-videos').createSignedUrl(video.video_url, 3600).then(({ data: d }) => {
-        if (d?.signedUrl) setVideoSrc(d.signedUrl);
-      });
-    }
-  }, [video.video_url]);
-
-  // Private bucket — always use signed URL
-  useEffect(() => {
-    supabase.storage.from('match-videos').createSignedUrl(video.video_url, 3600).then(({ data }) => {
-      if (data?.signedUrl) setVideoSrc(data.signedUrl);
+    supabase.storage.from('match-videos').createSignedUrl(video.video_url, 3600).then(({ data, error }) => {
+      if (data?.signedUrl) {
+        setVideoSrc(data.signedUrl);
+      } else {
+        // Fallback to public URL
+        const { data: pub } = supabase.storage.from('match-videos').getPublicUrl(video.video_url);
+        if (pub?.publicUrl) setVideoSrc(pub.publicUrl);
+      }
     });
   }, [video.video_url]);
 

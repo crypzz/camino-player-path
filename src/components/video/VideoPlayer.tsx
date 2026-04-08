@@ -75,7 +75,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
 
   return (
     <div className="relative rounded-xl overflow-hidden bg-black">
-      <video ref={videoRef} src={src} className="w-full aspect-video" muted={muted} playsInline />
+      <video ref={videoRef} src={src} className="w-full aspect-video object-contain" muted={muted} playsInline preload="auto" />
       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={() => skip(-5)}>
