@@ -75,5 +75,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="video-analysis"
+      component={VideoAnalysisVideo}
+      durationInFrames={920}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
