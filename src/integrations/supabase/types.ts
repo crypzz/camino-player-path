@@ -199,6 +199,54 @@ export type Database = {
           },
         ]
       }
+      match_videos: {
+        Row: {
+          created_at: string
+          created_by: string
+          duration_seconds: number | null
+          id: string
+          match_date: string | null
+          notes: string | null
+          opponent: string | null
+          team: string | null
+          thumbnail_url: string | null
+          title: string
+          type: string
+          updated_at: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          duration_seconds?: number | null
+          id?: string
+          match_date?: string | null
+          notes?: string | null
+          opponent?: string | null
+          team?: string | null
+          thumbnail_url?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          id?: string
+          match_date?: string | null
+          notes?: string | null
+          opponent?: string | null
+          team?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           age: number
@@ -467,6 +515,95 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      video_annotations: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          timestamp_seconds: number
+          video_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          timestamp_seconds: number
+          video_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          timestamp_seconds?: number
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_annotations_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "match_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          notes: string | null
+          player_id: string | null
+          tagged_by: string
+          timestamp_seconds: number
+          video_id: string
+          x_position: number | null
+          y_position: number | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          notes?: string | null
+          player_id?: string | null
+          tagged_by: string
+          timestamp_seconds: number
+          video_id: string
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          notes?: string | null
+          player_id?: string | null
+          tagged_by?: string
+          timestamp_seconds?: number
+          video_id?: string
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_events_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_events_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "match_videos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
