@@ -1,137 +1,59 @@
 
 
-# Video Analysis Feature — Manual Tagging (Hudl-Style)
+# "Your Coaching Hub" — Video Analysis Feature Showcase (30s)
 
-## Overview
-Replace the current static video gallery with a full video analysis workspace. Coaches upload match footage, tag events on a timeline (touches, passes, shots, fouls), link events to players, and view auto-calculated stats. Clean sports analytics UI with timeline scrubber, event markers, and a stats dashboard.
+## Concept
+A fast-paced product showcase that walks through Camino's new Video Analysis suite — upload, tag, timeline, stats, heat map — then teases the upcoming AI Analyzer. Feels like a tech product reveal: dark, clean, punchy. Positions Camino as the one-stop platform for player development.
 
-## Database Changes (3 new tables)
+## Creative Direction
+- **Palette**: Navy-black `#0A0E1A` bg, gold `#E8B400` accent, `#2B7FE8` blue for UI elements, `#1DB870` green for stats, white text
+- **Fonts**: Bebas Neue (display/headlines), Inter (body/UI labels) — consistent with existing videos
+- **Motion**: Kinetic Energy — fast spring entrances, staggered reveals, screen shake on hero moments
+- **Motifs**: Mock phone/tablet UI frames, timeline bars, pitch diagram SVG, glowing scan line for AI tease
 
-### `match_videos`
-Stores uploaded video metadata.
-- `id`, `created_by` (coach), `title`, `type` (match/training/highlight), `video_url` (storage path), `duration_seconds`, `thumbnail_url`, `match_date`, `team`, `opponent`, `notes`, `created_at`, `updated_at`
+## Scene Breakdown (8 scenes, 900 frames @ 30fps)
 
-### `video_events`
-Individual tagged events on the timeline.
-- `id`, `video_id` (FK → match_videos), `player_id` (FK → players), `event_type` (touch/pass/shot/tackle/foul/save/goal/assist/cross/dribble/interception), `timestamp_seconds` (position in video), `x_position`, `y_position` (optional pitch coordinates 0-100), `notes`, `tagged_by`, `created_at`
+### Scene 1: Hook (0–3s, ~90 frames)
+**"GAME FILM."** slams in large. Then below: **"FINALLY DONE RIGHT."**
+Gold underline wipe. Establishes the video analysis context immediately.
 
-### `video_annotations`
-Free-form coach notes at specific timestamps.
-- `id`, `video_id` (FK → match_videos), `timestamp_seconds`, `content`, `created_by`, `created_at`
+### Scene 2: Upload Showcase (3–7s, ~120 frames)
+Mock UI showing drag-and-drop upload zone. A progress bar fills from 0→100% with spring animation. File card appears with match metadata (team, date, opponent). Title: **"Upload. Organize. Analyze."**
 
-RLS: Authenticated users can read all; only creators can insert/update/delete.
+### Scene 3: Timeline & Tagging (7–12s, ~150 frames)
+Full-width timeline bar with colored event dots appearing one by one (staggered springs). Quick-tap event buttons flash: Touch, Pass, Shot, Goal. A player name dropdown appears. Shows the tagging workflow in motion. Subtitle: **"Tag every moment."**
 
-### Storage
-Create a `match-videos` storage bucket (public: false) for video file uploads.
+### Scene 4: Pitch Mini-Map (12–16s, ~120 frames)
+SVG soccer pitch slides in. Event dots appear on the field at various positions with glow effects — like the heat map feature. Dots pulse and accumulate. Title: **"See where it happens."**
 
-## New Components
+### Scene 5: Stats Dashboard (16–20s, ~120 frames)
+Stat cards fly in staggered: Touches 47, Passes 32, Goals 3, Tackles 12. A mini bar chart animates bars growing. Per-player breakdown. Title: **"Stats that write themselves."**
 
-### 1. `VideoAnalysisPage.tsx` (rewrite)
-Two views:
-- **Library view**: Grid of uploaded videos with upload button, filters by type/date/team
-- **Analysis view**: Opens when clicking a video — full workspace
+### Scene 6: Full Workspace (20–23s, ~90 frames)
+Pull-back view showing the full workspace layout — video player on left, tabs on right (Events, Stats, Notes). Mock UI with populated data. Feels like looking at a real analytics tool. Title: **"One workspace. Everything."**
 
-### 2. `VideoUploadDialog.tsx`
-- Drag & drop zone with progress bar
-- Fields: title, type, match date, team, opponent, notes
-- Uploads to `match-videos` storage bucket
-- Shows upload percentage via Supabase storage `onUploadProgress`
+### Scene 7: AI Tease (23–27s, ~120 frames)
+Screen goes darker. A scanning line sweeps across a pitch diagram or video frame. Glitch/pulse effect. Text fades in: **"AI MATCH ANALYZER"** then **"COMING SOON"** with a pulsing glow. Mystery and anticipation.
 
-### 3. `VideoWorkspace.tsx` (main analysis view)
-Layout (left-right split):
-- **Left (70%)**: Video player + timeline scrubber + event markers
-- **Right (30%)**: Tabbed panel — Events list, Stats dashboard, Annotations
+### Scene 8: Close (27–30s, ~90 frames)
+**CAMINO** logo slam with gold glow. Tagline: **"Your complete player development platform."** Breathing scale effect.
 
-### 4. `VideoPlayer.tsx`
-- HTML5 `<video>` element with custom controls
-- Play/pause, seek, playback speed (0.5x, 1x, 1.5x, 2x)
-- Current time display
-- Keyboard shortcuts (space = play/pause, arrow keys = ±5s)
+## Files to Create (9)
+1. `remotion/src/scenes/VAHookScene.tsx` — "Game Film. Finally Done Right."
+2. `remotion/src/scenes/VAUploadScene.tsx` — Upload UI mock
+3. `remotion/src/scenes/VATimelineScene.tsx` — Timeline + tagging showcase
+4. `remotion/src/scenes/VAPitchMapScene.tsx` — Pitch heat map visualization
+5. `remotion/src/scenes/VAStatsScene.tsx` — Stats dashboard montage
+6. `remotion/src/scenes/VAWorkspaceScene.tsx` — Full workspace pull-back
+7. `remotion/src/scenes/AITeaseScene.tsx` — AI Analyzer tease
+8. `remotion/src/scenes/VACloseScene.tsx` — CAMINO close
+9. `remotion/src/VideoAnalysisVideo.tsx` — TransitionSeries wiring
 
-### 5. `VideoTimeline.tsx`
-- Horizontal timeline bar showing full video duration
-- Colored event markers (dots) positioned by timestamp
-- Color-coded by event type
-- Click to seek, drag scrubber handle
-- Zoom in/out on timeline sections
+## Files to Update (2)
+- `remotion/src/Root.tsx` — Add `"video-analysis"` composition (900 frames)
+- `remotion/scripts/render-remotion.mjs` — Add output mapping
 
-### 6. `EventTagger.tsx`
-- Floating toolbar overlay on the video
-- Quick-tap buttons for common events: Touch, Pass, Shot, Tackle, Goal
-- Select player from dropdown before tagging
-- Clicking a button creates an event at current playback time
-- Optional: click on a pitch mini-map to set x/y position
-
-### 7. `EventsList.tsx`
-- Scrollable list of all tagged events for this video
-- Shows: timestamp, event type icon, player name, notes
-- Click to seek video to that moment
-- Delete/edit events
-
-### 8. `VideoStatsPanel.tsx`
-- Aggregated stats from tagged events per player:
-  - Touches (count of touch events)
-  - Passes (count of pass events)
-  - Shots / Goals / Assists
-  - Tackles / Interceptions
-- Bar chart or table format
-- Filter by player
-- "Link to profile" button to navigate to player page
-
-### 9. `AnnotationsPanel.tsx`
-- Add timestamped text notes
-- Display as a scrollable list with seek-to-time
-
-### 10. `PitchOverlay.tsx` (optional mini-map)
-- Small soccer pitch diagram
-- Click to mark event position
-- Shows event distribution as a heat-style dot map
-
-## Hooks
-- `useMatchVideos()` — CRUD for match_videos table
-- `useVideoEvents(videoId)` — CRUD for video_events, filtered by video
-- `useVideoAnnotations(videoId)` — CRUD for annotations
-- `useVideoStats(videoId)` — Derived stats aggregation from events
-
-## File Structure
-```
-src/
-  components/
-    video/
-      VideoUploadDialog.tsx
-      VideoWorkspace.tsx
-      VideoPlayer.tsx
-      VideoTimeline.tsx
-      EventTagger.tsx
-      EventsList.tsx
-      VideoStatsPanel.tsx
-      AnnotationsPanel.tsx
-      PitchOverlay.tsx
-  hooks/
-    useMatchVideos.ts
-    useVideoEvents.ts
-    useVideoAnnotations.ts
-    useVideoStats.ts
-  pages/
-    VideoAnalysisPage.tsx (rewrite)
-```
-
-## UI Design
-- Dark card backgrounds consistent with existing app theme
-- Timeline uses primary color for scrubber, muted dots for events
-- Event type color coding: green (goals/assists), blue (passes/touches), orange (shots), red (fouls/tackles)
-- Stats panel uses small bar charts (Recharts) or clean stat cards
-- Responsive: on mobile, workspace stacks vertically (video on top, tabs below)
-
-## Route
-No route changes needed — already at `/dashboard/videos`.
-
-## Implementation Order
-1. Database migration (3 tables + storage bucket)
-2. Hooks (useMatchVideos, useVideoEvents, useVideoAnnotations, useVideoStats)
-3. VideoUploadDialog + rewritten VideoAnalysisPage (library view)
-4. VideoPlayer + VideoTimeline + EventTagger
-5. VideoWorkspace (assembles player + timeline + panels)
-6. EventsList + AnnotationsPanel + VideoStatsPanel
-7. PitchOverlay (if time permits)
+## Output
+- Composition: `video-analysis`, 900 frames @ 30fps = 30s, 1080x1920 (vertical)
+- Rendered to: `/mnt/documents/camino-video-analysis.mp4`
 
