@@ -78,7 +78,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               <EventsList events={events} players={players} onSeek={seekTo} />
             </TabsContent>
             <TabsContent value="stats" className="m-0">
-              <VideoStatsPanel stats={stats} />
+              <VideoStatsPanel stats={stats} events={events} />
             </TabsContent>
             <TabsContent value="notes" className="m-0">
               <AnnotationsPanel videoId={video.id} currentTime={currentTime} annotations={annotations} onSeek={seekTo} />
