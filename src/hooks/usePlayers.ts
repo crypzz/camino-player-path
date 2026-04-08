@@ -105,7 +105,7 @@ export function useUpdatePlayer() {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<Player, 'id' | 'goals' | 'cpiHistory' | 'videos' | 'reports'>>) => {
-      const dbUpdates: Record<string, unknown> = {};
+      const dbUpdates: any = {};
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.age !== undefined) dbUpdates.age = updates.age;
       if (updates.position !== undefined) dbUpdates.position = updates.position;
