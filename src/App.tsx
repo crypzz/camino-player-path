@@ -49,6 +49,7 @@ function DashboardRoutes() {
         {/* Shared routes */}
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/feed" element={<FeedPage />} />
+        <Route path="/communications" element={<CommunicationsPage />} />
         <Route path="/player/:id" element={<PublicProfilePage />} />
 
         {role === 'coach' && (
