@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target, 
-  TrendingUp, Zap, Globe, ChevronRight, Star, Trophy
+import {
+  ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target,
+  TrendingUp, Zap, Globe, ChevronRight, Star, Trophy, MessageSquare,
+  Activity, CheckCircle2, Building2, Dumbbell, Award
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LeaderboardTable } from '@/components/LeaderboardTable';
@@ -15,40 +16,76 @@ const features = [
   {
     icon: BarChart3,
     title: 'Camino Player Index',
-    description: 'Proprietary 0–100 scoring system combining technical, tactical, physical, and mental attributes into one actionable metric.',
+    description: 'A proprietary 0–100 score combining 23 metrics across technical, tactical, physical, and mental domains. One number. Full clarity.',
   },
   {
     icon: Target,
     title: 'Player Evaluations',
-    description: 'Rate players across 23 metrics with interactive radar charts and real-time CPI calculations.',
+    description: 'Rate athletes across every dimension with interactive radar charts, real-time CPI calculations, and exportable reports.',
   },
   {
     icon: Video,
     title: 'Video Analysis',
-    description: 'Upload match and training footage, tag key moments, and attach coach commentary for review.',
+    description: 'Upload match footage, tag key moments by player, overlay coach commentary, and generate per-player performance stats.',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Communication Hub',
+    description: 'Club-wide announcements, direct messaging, team channels, and structured player feedback — all in one place. Replace WhatsApp.',
+  },
+  {
+    icon: Dumbbell,
+    title: 'Fitness Testing',
+    description: 'Record sprint times, agility, vertical jump, and endurance tests. Results auto-update player physical ratings.',
   },
   {
     icon: TrendingUp,
     title: 'Progress Tracking',
-    description: 'Visualize development over time with quarterly reports, trend graphs, and automated insights.',
-  },
-  {
-    icon: Users,
-    title: 'Multi-Role Access',
-    description: 'Dedicated dashboards for coaches, players, and parents — each with tailored views and permissions.',
-  },
-  {
-    icon: Shield,
-    title: 'Development Reports',
-    description: 'Generate comprehensive quarterly reports with skill ratings, recommendations, and exportable PDFs.',
+    description: 'Visualize development over time with trend graphs, level progression, and automated performance insights.',
   },
 ];
 
 const stats = [
   { value: '23', label: 'Performance Metrics' },
-  { value: '3', label: 'Dashboard Views' },
+  { value: '4', label: 'User Roles' },
   { value: '100', label: 'CPI Score Range' },
-  { value: '4', label: 'Skill Categories' },
+  { value: '10', label: 'Player Levels' },
+];
+
+const steps = [
+  {
+    num: '01',
+    title: 'Onboard your club',
+    description: 'Create your academy, set up teams by age group, and invite coaches, players, and parents to the platform.',
+  },
+  {
+    num: '02',
+    title: 'Evaluate & track',
+    description: 'Run evaluations, record fitness tests, upload match video, and watch CPI scores update in real time.',
+  },
+  {
+    num: '03',
+    title: 'Develop & prove',
+    description: 'Players build verified profiles. Parents stay informed. Coaches make data-driven decisions. Everyone levels up.',
+  },
+];
+
+const testimonials = [
+  {
+    quote: "Camino replaced three separate tools for us. Evaluations, video, and parent communication — all in one place.",
+    name: 'Technical Director',
+    org: 'Youth Academy',
+  },
+  {
+    quote: "My son's CPI went from 42 to 67 in one season. For the first time I could actually see his progress clearly.",
+    name: 'Parent',
+    org: 'U-14 Player',
+  },
+  {
+    quote: "The player profiles gave our kids something to own. They share their cards, check their rankings — it drives motivation.",
+    name: 'Head Coach',
+    org: 'Club Program',
+  },
 ];
 
 const fadeUp = {
@@ -90,16 +127,16 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
             <button onClick={() => scrollTo('rankings')} className="hover:text-foreground transition-colors">Rankings</button>
             <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
-            <button onClick={() => scrollTo('cpi')} className="hover:text-foreground transition-colors">CPI</button>
+            <button onClick={() => scrollTo('how-it-works')} className="hover:text-foreground transition-colors">How It Works</button>
             <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/dashboard">
+            <Link to="/auth">
               <Button variant="ghost" size="sm" className="text-muted-foreground text-[13px] h-8">
                 Log in
               </Button>
             </Link>
-            <Link to="/dashboard">
+            <Link to="/auth">
               <Button size="sm" className="h-8 text-[13px] font-semibold gap-1.5">
                 Get Started <ArrowRight className="h-3.5 w-3.5" />
               </Button>
@@ -112,11 +149,7 @@ export default function LandingPage() {
       <section className="relative pt-14">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background z-10" />
-          <img
-            src={heroPattern}
-            alt=""
-            className="w-full h-full object-cover opacity-30"
-          />
+          <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-30" />
         </div>
 
         <div className="relative z-20 max-w-6xl mx-auto px-5 pt-20 pb-24 lg:pt-28 lg:pb-32">
@@ -137,9 +170,8 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl lg:text-5xl font-display font-extrabold text-foreground leading-[1.1] tracking-tight"
             >
-              The digital passport for{' '}
-              <span className="text-primary">elite player</span>{' '}
-              development
+              Your progress,{' '}
+              <span className="text-primary">proven.</span>
             </motion.h1>
 
             <motion.p
@@ -148,7 +180,8 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-5 text-[15px] text-muted-foreground leading-relaxed max-w-lg"
             >
-              Camino gives academies a complete toolkit to track, evaluate, and accelerate youth player development — from first touch to first team.
+              Camino is the all-in-one platform where academies evaluate, communicate, and develop talent.
+              Track 23 performance metrics. Build verified player profiles. Replace guesswork with proof.
             </motion.p>
 
             <motion.div
@@ -157,13 +190,18 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-8 flex items-center gap-3"
             >
-              <Link to="/dashboard">
+              <Link to="/auth">
                 <Button size="lg" className="h-11 px-6 text-[13px] font-semibold gap-2">
-                  Open Platform <ArrowRight className="h-4 w-4" />
+                  Start Free <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="h-11 px-6 text-[13px] font-semibold border-border text-muted-foreground hover:text-foreground">
-                Watch Demo
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-11 px-6 text-[13px] font-semibold border-border text-muted-foreground hover:text-foreground"
+                onClick={() => scrollTo('how-it-works')}
+              >
+                See How It Works
               </Button>
             </motion.div>
           </div>
@@ -199,10 +237,10 @@ export default function LandingPage() {
               <span className="text-[11px] font-medium text-primary tracking-wide">LIVE RANKINGS</span>
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
-              Player Leaderboard
+              The Leaderboard Is Live
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
-              See who's climbing the ranks. Rankings are based on 60% CPI, 20% consistency, and 20% improvement.
+              Rankings update after every evaluation. Weighted by CPI, consistency, and improvement trajectory.
             </motion.p>
           </motion.div>
 
@@ -217,7 +255,7 @@ export default function LandingPage() {
               <LeaderboardTable players={rankings.slice(0, 10)} />
             ) : (
               <div className="text-center py-12 text-muted-foreground text-sm">
-                No ranked players yet. Be the first to join!
+                No ranked players yet. Be the first to join.
               </div>
             )}
           </motion.div>
@@ -232,6 +270,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Features */}
       <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-5">
           <motion.div
@@ -241,13 +280,13 @@ export default function LandingPage() {
             className="text-center mb-14"
           >
             <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
-              Features
+              Platform
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
-              Everything your academy needs
+              Everything your club needs. Nothing it doesn't.
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
-              A complete platform designed for modern football academies to develop world-class talent.
+            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-lg mx-auto">
+              Evaluations, communication, fitness, video analysis, and player profiles — unified in a single platform built for youth football.
             </motion.p>
           </motion.div>
 
@@ -291,15 +330,15 @@ export default function LandingPage() {
                 One score. Complete picture.
               </motion.h2>
               <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground leading-relaxed">
-                The CPI distills 23 performance metrics into a single 0–100 score, weighted to reflect what matters most in player development.
+                The CPI distills 23 performance metrics into a single 0–100 score. Coaches evaluate. The system quantifies. Players own their proof.
               </motion.p>
 
               <motion.div variants={fadeUp} custom={3} className="mt-6 space-y-3">
                 {[
-                  { weight: '40%', label: 'Technical Ability', desc: '8 metrics including first touch, dribbling, weak foot' },
-                  { weight: '30%', label: 'Tactical Intelligence', desc: '5 metrics covering positioning, decision making, game reading' },
-                  { weight: '20%', label: 'Physical Performance', desc: '5 metrics from sprint speed to endurance' },
-                  { weight: '10%', label: 'Mental Attributes', desc: '5 metrics including composure, leadership, resilience' },
+                  { weight: '40%', label: 'Technical Ability', desc: 'First touch, dribbling, passing, crossing, finishing, heading, weak foot, free kicks' },
+                  { weight: '30%', label: 'Tactical Intelligence', desc: 'Positioning, decision making, game reading, pressing, transition play' },
+                  { weight: '20%', label: 'Physical Performance', desc: '10m & 30m sprint, agility, vertical jump, endurance — auto-scored from fitness tests' },
+                  { weight: '10%', label: 'Mental Attributes', desc: 'Composure, leadership, work rate, resilience, communication' },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-3 p-3 rounded-md bg-card border border-border/50">
                     <span className="text-xs font-display font-bold text-primary bg-primary/10 px-2 py-0.5 rounded shrink-0">{item.weight}</span>
@@ -320,13 +359,12 @@ export default function LandingPage() {
               className="flex justify-center"
             >
               <div className="relative">
-                {/* Large CPI ring visualization */}
                 <div className="w-64 h-64 relative">
                   <svg width="256" height="256" className="-rotate-90">
-                    <circle cx="128" cy="128" r="110" fill="none" stroke="hsl(225, 15%, 13%)" strokeWidth="8" />
+                    <circle cx="128" cy="128" r="110" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
                     <circle
                       cx="128" cy="128" r="110" fill="none"
-                      stroke="hsl(45, 100%, 58%)" strokeWidth="8"
+                      stroke="hsl(var(--primary))" strokeWidth="8"
                       strokeLinecap="round"
                       strokeDasharray={2 * Math.PI * 110}
                       strokeDashoffset={2 * Math.PI * 110 * (1 - 0.73)}
@@ -337,7 +375,6 @@ export default function LandingPage() {
                     <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium mt-1">CPI Score</span>
                   </div>
                 </div>
-                {/* Floating labels */}
                 <div className="absolute -top-2 -right-4 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
                   <div className="text-[10px] text-muted-foreground">Technical</div>
                   <div className="text-sm font-display font-bold text-foreground">7.5</div>
@@ -352,11 +389,53 @@ export default function LandingPage() {
                 </div>
                 <div className="absolute -bottom-2 -left-2 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
                   <div className="text-[10px] text-muted-foreground">Mental</div>
-                  <div className="text-sm font-display font-bold text-[hsl(275,65%,55%)]">7.2</div>
+                  <div className="text-sm font-display font-bold text-accent-foreground">7.2</div>
                 </div>
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
+        <div className="max-w-6xl mx-auto px-5">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              How It Works
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+              Three steps. Full visibility.
+            </motion.h2>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          >
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.num}
+                variants={fadeUp}
+                custom={i + 2}
+                className="relative glass-card p-6 group"
+              >
+                <span className="text-3xl font-display font-extrabold text-primary/15 absolute top-4 right-5">{step.num}</span>
+                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                  <span className="text-xs font-display font-bold text-primary">{step.num}</span>
+                </div>
+                <h3 className="font-display font-bold text-foreground text-sm mb-2">{step.title}</h3>
+                <p className="text-[12.5px] text-muted-foreground leading-relaxed">{step.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -373,7 +452,84 @@ export default function LandingPage() {
               Built for everyone
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
-              Three views. One platform.
+              Four roles. One platform.
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
+              Every stakeholder in the development pathway gets a dedicated experience.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
+          >
+            {[
+              {
+                icon: Shield,
+                role: 'Coach',
+                desc: 'Evaluate players, run fitness tests, analyze video, communicate with parents, and generate development reports.',
+                features: ['Evaluations & CPI', 'Video analysis', 'Fitness testing', 'Player feedback'],
+              },
+              {
+                icon: Star,
+                role: 'Player',
+                desc: 'Own your profile. Track your CPI, view radar charts, set goals, and share your verified stats with anyone.',
+                features: ['CPI dashboard', 'Skill breakdowns', 'Goal tracking', 'Public profile'],
+              },
+              {
+                icon: Users,
+                role: 'Parent',
+                desc: 'Stay informed with real-time progress updates, coach feedback, announcements, and direct messaging.',
+                features: ['Progress reports', 'Coach messaging', 'Announcements', 'Performance trends'],
+              },
+              {
+                icon: Building2,
+                role: 'Director',
+                desc: 'Oversee all teams, manage coaches, track club-wide performance, and drive development strategy with data.',
+                features: ['Club overview', 'Coach management', 'Cross-team analytics', 'Player exports'],
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.role}
+                variants={fadeUp}
+                custom={i + 3}
+                className="glass-card p-5 text-center group hover:border-primary/20 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-lg bg-primary/8 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/12 transition-colors">
+                  <item.icon className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="font-display font-bold text-foreground text-sm mb-1.5">{item.role}</h3>
+                <p className="text-[11.5px] text-muted-foreground leading-relaxed mb-3">{item.desc}</p>
+                <ul className="space-y-1">
+                  {item.features.map(f => (
+                    <li key={f} className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+                      <CheckCircle2 className="h-3 w-3 text-primary/60" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="relative py-20 lg:py-28 border-t border-border/40">
+        <div className="max-w-6xl mx-auto px-5">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              From the field
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+              Proof, not promises.
             </motion.h2>
           </motion.div>
 
@@ -381,47 +537,25 @@ export default function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-3"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
           >
-            {[
-              {
-                icon: Shield,
-                role: 'Coach',
-                desc: 'Manage squads, run evaluations, track attendance, analyze video, and generate development reports.',
-                features: ['Player management', 'Evaluation system', 'Video analysis', 'Attendance tracking'],
-              },
-              {
-                icon: Star,
-                role: 'Player',
-                desc: 'View your CPI score, track progress over time, review goals, and watch your highlight clips.',
-                features: ['CPI dashboard', 'Skill radar charts', 'Goal tracking', 'Video highlights'],
-              },
-              {
-                icon: Users,
-                role: 'Parent',
-                desc: 'Stay informed with progress reports, performance graphs, coach notes, and upcoming schedules.',
-                features: ['Progress reports', 'Performance trends', 'Coach feedback', 'Training schedule'],
-              },
-            ].map((item, i) => (
+            {testimonials.map((t, i) => (
               <motion.div
-                key={item.role}
+                key={i}
                 variants={fadeUp}
                 custom={i + 2}
-                className="glass-card p-6 text-center group hover:border-primary/20 transition-colors"
+                className="glass-card p-6"
               >
-                <div className="w-10 h-10 rounded-lg bg-primary/8 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/12 transition-colors">
-                  <item.icon className="h-5 w-5 text-primary" />
+                <p className="text-[13px] text-foreground/90 leading-relaxed italic mb-4">"{t.quote}"</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Award className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground">{t.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{t.org}</p>
+                  </div>
                 </div>
-                <h3 className="font-display font-bold text-foreground text-base mb-2">{item.role}</h3>
-                <p className="text-[12px] text-muted-foreground leading-relaxed mb-4">{item.desc}</p>
-                <ul className="space-y-1.5">
-                  {item.features.map(f => (
-                    <li key={f} className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-                      <ChevronRight className="h-3 w-3 text-primary" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
             ))}
           </motion.div>
@@ -437,30 +571,34 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <motion.h2 variants={fadeUp} custom={0} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
-              Ready to transform your academy?
+              Stop guessing. Start proving.
             </motion.h2>
             <motion.p variants={fadeUp} custom={1} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
-              Join the next generation of player development. Start tracking, evaluating, and accelerating talent today.
+              Camino is the operating system for player development. Set up your club in minutes. Start evaluating today.
             </motion.p>
             <motion.div variants={fadeUp} custom={2} className="mt-8 flex items-center justify-center gap-3">
-              <Link to="/dashboard">
+              <Link to="/auth">
                 <Button size="lg" className="h-11 px-8 text-[13px] font-semibold gap-2">
                   Get Started Free <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             </motion.div>
-            <motion.div variants={fadeUp} custom={3} className="mt-12 flex items-center justify-center gap-8 text-[11px] text-muted-foreground/60">
+            <motion.div variants={fadeUp} custom={3} className="mt-12 flex items-center justify-center gap-8 text-[11px] text-muted-foreground/60 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Globe className="h-3.5 w-3.5" />
-                Multi-academy support
+                Multi-club support
               </div>
               <div className="flex items-center gap-1.5">
                 <Shield className="h-3.5 w-3.5" />
-                Secure & private
+                Privacy-first
               </div>
               <div className="flex items-center gap-1.5">
-                <Zap className="h-3.5 w-3.5" />
-                Real-time analytics
+                <Activity className="h-3.5 w-3.5" />
+                Real-time data
+              </div>
+              <div className="flex items-center gap-1.5">
+                <MessageSquare className="h-3.5 w-3.5" />
+                Built-in comms
               </div>
             </motion.div>
           </motion.div>
@@ -471,12 +609,10 @@ export default function LandingPage() {
       <footer className="border-t border-border/40 py-8">
         <div className="max-w-6xl mx-auto px-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
-              <span className="font-display font-bold text-primary-foreground text-[10px]">C</span>
-            </div>
+            <img src={caminoLogo} alt="Camino" className="h-6 w-6 rounded object-contain" />
             <span className="font-display font-semibold text-foreground text-xs">Camino</span>
           </div>
-          <p className="text-[11px] text-muted-foreground/50">© 2026 Camino. Player Development Platform.</p>
+          <p className="text-[11px] text-muted-foreground/50">© 2026 Camino. The Pathway to Elite Football.</p>
         </div>
       </footer>
 
