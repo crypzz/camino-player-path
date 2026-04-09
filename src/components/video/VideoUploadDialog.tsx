@@ -136,6 +136,7 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
                 <div><Label>Team</Label><Input value={team} onChange={e => setTeam(e.target.value)} placeholder="Your team" disabled={uploading} /></div>
                 <div><Label>Opponent</Label><Input value={opponent} onChange={e => setOpponent(e.target.value)} placeholder="Opponent" disabled={uploading} /></div>
               </div>
+              <div><Label>Notes</Label><Input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional notes..." disabled={uploading} /></div>
             </div>
 
             <Button onClick={handleUpload} disabled={uploading || !title.trim()} className="w-full">

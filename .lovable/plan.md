@@ -1,59 +1,76 @@
 
+# Video Intelligence System — Implementation Plan
 
-# "Your Coaching Hub" — Video Analysis Feature Showcase (30s)
+## Approach
+Extend the existing video analysis system (upload, events, stats) rather than rebuilding. Add new capabilities in phases, each delivering working functionality.
 
-## Concept
-A fast-paced product showcase that walks through Camino's new Video Analysis suite — upload, tag, timeline, stats, heat map — then teases the upcoming AI Analyzer. Feels like a tech product reveal: dark, clean, punchy. Positions Camino as the one-stop platform for player development.
+---
 
-## Creative Direction
-- **Palette**: Navy-black `#0A0E1A` bg, gold `#E8B400` accent, `#2B7FE8` blue for UI elements, `#1DB870` green for stats, white text
-- **Fonts**: Bebas Neue (display/headlines), Inter (body/UI labels) — consistent with existing videos
-- **Motion**: Kinetic Energy — fast spring entrances, staggered reveals, screen shake on hero moments
-- **Motifs**: Mock phone/tablet UI frames, timeline bars, pitch diagram SVG, glowing scan line for AI tease
+## Phase 1: Processing Pipeline & Enhanced Data Model
+**Database changes:**
+- Add `status` column to `match_videos` (uploading → processing → ready → error)
+- Add `age_group` column to `match_videos`
+- Create `player_tracking` table (video_id, player_id, tracking_id, bounding_box JSON, frame_number, timestamp)
+- Create `match_player_stats` table (video_id, player_id, movement_intensity, activity_score, estimated_touches, time_on_field, etc.)
 
-## Scene Breakdown (8 scenes, 900 frames @ 30fps)
+**Code:**
+- Update VideoUploadDialog to show processing status flow
+- Add status badges on video cards
+- Simulate async processing (edge function or client-side timer)
 
-### Scene 1: Hook (0–3s, ~90 frames)
-**"GAME FILM."** slams in large. Then below: **"FINALLY DONE RIGHT."**
-Gold underline wipe. Establishes the video analysis context immediately.
+## Phase 2: Interactive Video Player with Overlay System
+**Enhance existing VideoPlayer:**
+- Frame-by-frame controls (←/→ single frame)
+- Bounding box overlay layer (canvas on top of video)
+- Player label overlays with toggle ON/OFF
+- Click-to-tag: pause video, click on pitch area, assign player from roster
+- Persist tracking data to `player_tracking` table
 
-### Scene 2: Upload Showcase (3–7s, ~120 frames)
-Mock UI showing drag-and-drop upload zone. A progress bar fills from 0→100% with spring animation. File card appears with match metadata (team, date, opponent). Title: **"Upload. Organize. Analyze."**
+## Phase 3: Player Tracking & Tagging UI
+- Roster sidebar showing team players
+- Click video → draw bounding box → assign player
+- Show existing tracking markers on timeline
+- "AI Suggested" placeholder UI (future-ready badge, no real AI)
+- Tracking ID management
 
-### Scene 3: Timeline & Tagging (7–12s, ~150 frames)
-Full-width timeline bar with colored event dots appearing one by one (staggered springs). Quick-tap event buttons flash: Touch, Pass, Shot, Goal. A player name dropdown appears. Shows the tagging workflow in motion. Subtitle: **"Tag every moment."**
+## Phase 4: Stats Engine & Match Analytics Dashboard
+- Calculate stats from tracking data (movement intensity from position changes, activity score, time on field)
+- New `/match/:id/analytics` dashboard page with:
+  - Player list with per-player stats
+  - Bar charts (Recharts) for comparisons
+  - "Most Active" / "Most Consistent" highlights
+  - Pitch heatmap per player
 
-### Scene 4: Pitch Mini-Map (12–16s, ~120 frames)
-SVG soccer pitch slides in. Event dots appear on the field at various positions with glow effects — like the heat map feature. Dots pulse and accumulate. Title: **"See where it happens."**
+## Phase 5: Player Profile Integration
+- Push `match_player_stats` into player evaluation history
+- Update CPI calculation to optionally weight video-derived stats
+- Show match participation history on player profile
+- Rankings reflect video-sourced data
 
-### Scene 5: Stats Dashboard (16–20s, ~120 frames)
-Stat cards fly in staggered: Touches 47, Passes 32, Goals 3, Tackles 12. A mini bar chart animates bars growing. Per-player breakdown. Title: **"Stats that write themselves."**
+## Phase 6: Polish & Optional Features
+- Clip creation tool (select time range → export)
+- Shareable player highlights
+- "Top Moments" placeholder section
+- Smooth transitions, loading skeletons, premium feel
 
-### Scene 6: Full Workspace (20–23s, ~90 frames)
-Pull-back view showing the full workspace layout — video player on left, tabs on right (Events, Stats, Notes). Mock UI with populated data. Feels like looking at a real analytics tool. Title: **"One workspace. Everything."**
+---
 
-### Scene 7: AI Tease (23–27s, ~120 frames)
-Screen goes darker. A scanning line sweeps across a pitch diagram or video frame. Glitch/pulse effect. Text fades in: **"AI MATCH ANALYZER"** then **"COMING SOON"** with a pulsing glow. Mystery and anticipation.
+## Permissions (applied throughout)
+- Existing RLS already handles coach-owns-video pattern
+- Player tracking inherits video ownership
+- Match stats viewable by authenticated users, writable by video owner
+- Directors see everything via `has_role` function
 
-### Scene 8: Close (27–30s, ~90 frames)
-**CAMINO** logo slam with gold glow. Tagline: **"Your complete player development platform."** Breathing scale effect.
+## Tech Decisions
+- All new tables use existing RLS patterns
+- Service abstraction via separate hooks (`useVideoTracking`, `useMatchStats`, `useVideoProcessing`)
+- Canvas overlay for bounding boxes (no external library needed)
+- Stats calculations in a dedicated `lib/videoStatsEngine.ts` module
+- Edge function for simulated "processing" step
 
-## Files to Create (9)
-1. `remotion/src/scenes/VAHookScene.tsx` — "Game Film. Finally Done Right."
-2. `remotion/src/scenes/VAUploadScene.tsx` — Upload UI mock
-3. `remotion/src/scenes/VATimelineScene.tsx` — Timeline + tagging showcase
-4. `remotion/src/scenes/VAPitchMapScene.tsx` — Pitch heat map visualization
-5. `remotion/src/scenes/VAStatsScene.tsx` — Stats dashboard montage
-6. `remotion/src/scenes/VAWorkspaceScene.tsx` — Full workspace pull-back
-7. `remotion/src/scenes/AITeaseScene.tsx` — AI Analyzer tease
-8. `remotion/src/scenes/VACloseScene.tsx` — CAMINO close
-9. `remotion/src/VideoAnalysisVideo.tsx` — TransitionSeries wiring
+---
 
-## Files to Update (2)
-- `remotion/src/Root.tsx` — Add `"video-analysis"` composition (900 frames)
-- `remotion/scripts/render-remotion.mjs` — Add output mapping
+## What I'll build first
+**Phase 1 + Phase 2** — the database foundation, processing pipeline, and enhanced video player with overlay system. This gives you a working, tangible upgrade immediately.
 
-## Output
-- Composition: `video-analysis`, 900 frames @ 30fps = 30s, 1080x1920 (vertical)
-- Rendered to: `/mnt/documents/camino-video-analysis.mp4`
-
+Shall I proceed?

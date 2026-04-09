@@ -74,9 +74,9 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
   };
 
   return (
-    <div className="relative rounded-xl overflow-hidden bg-black">
+    <>
       <video ref={videoRef} src={src} className="w-full aspect-video object-contain" muted={muted} playsInline preload="auto" />
-      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-20">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={() => skip(-5)}>
             <SkipBack className="h-4 w-4" />
@@ -86,6 +86,13 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={() => skip(5)}>
             <SkipForward className="h-4 w-4" />
+          </Button>
+          {/* Frame step buttons */}
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-white/70 hover:bg-white/20" onClick={() => skip(-1/30)} title="Previous frame">
+            <span className="text-[10px] font-mono">‹F</span>
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-white/70 hover:bg-white/20" onClick={() => skip(1/30)} title="Next frame">
+            <span className="text-[10px] font-mono">F›</span>
           </Button>
           <span className="text-xs text-white/80 font-mono min-w-[70px]">{fmt(currentTime)} / {fmt(duration)}</span>
           <div className="flex-1" />
@@ -97,6 +104,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="0.25">0.25x</SelectItem>
               <SelectItem value="0.5">0.5x</SelectItem>
               <SelectItem value="1">1x</SelectItem>
               <SelectItem value="1.5">1.5x</SelectItem>
@@ -105,7 +113,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
           </Select>
         </div>
       </div>
-    </div>
+    </>
   );
 });
 

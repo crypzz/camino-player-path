@@ -199,8 +199,81 @@ export type Database = {
           },
         ]
       }
+      match_player_stats: {
+        Row: {
+          activity_score: number | null
+          avg_speed: number | null
+          created_at: string
+          created_by: string
+          distance_covered: number | null
+          estimated_touches: number | null
+          heatmap_data: Json | null
+          id: string
+          integrated: boolean
+          movement_intensity: number | null
+          player_id: string
+          positions_tracked: number | null
+          sprint_count: number | null
+          time_on_field: number | null
+          updated_at: string
+          video_id: string
+        }
+        Insert: {
+          activity_score?: number | null
+          avg_speed?: number | null
+          created_at?: string
+          created_by: string
+          distance_covered?: number | null
+          estimated_touches?: number | null
+          heatmap_data?: Json | null
+          id?: string
+          integrated?: boolean
+          movement_intensity?: number | null
+          player_id: string
+          positions_tracked?: number | null
+          sprint_count?: number | null
+          time_on_field?: number | null
+          updated_at?: string
+          video_id: string
+        }
+        Update: {
+          activity_score?: number | null
+          avg_speed?: number | null
+          created_at?: string
+          created_by?: string
+          distance_covered?: number | null
+          estimated_touches?: number | null
+          heatmap_data?: Json | null
+          id?: string
+          integrated?: boolean
+          movement_intensity?: number | null
+          player_id?: string
+          positions_tracked?: number | null
+          sprint_count?: number | null
+          time_on_field?: number | null
+          updated_at?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_player_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_player_stats_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "match_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_videos: {
         Row: {
+          age_group: string | null
           created_at: string
           created_by: string
           duration_seconds: number | null
@@ -208,6 +281,7 @@ export type Database = {
           match_date: string | null
           notes: string | null
           opponent: string | null
+          status: string
           team: string | null
           thumbnail_url: string | null
           title: string
@@ -216,6 +290,7 @@ export type Database = {
           video_url: string
         }
         Insert: {
+          age_group?: string | null
           created_at?: string
           created_by: string
           duration_seconds?: number | null
@@ -223,6 +298,7 @@ export type Database = {
           match_date?: string | null
           notes?: string | null
           opponent?: string | null
+          status?: string
           team?: string | null
           thumbnail_url?: string | null
           title: string
@@ -231,6 +307,7 @@ export type Database = {
           video_url: string
         }
         Update: {
+          age_group?: string | null
           created_at?: string
           created_by?: string
           duration_seconds?: number | null
@@ -238,6 +315,7 @@ export type Database = {
           match_date?: string | null
           notes?: string | null
           opponent?: string | null
+          status?: string
           team?: string | null
           thumbnail_url?: string | null
           title?: string
@@ -246,6 +324,72 @@ export type Database = {
           video_url?: string
         }
         Relationships: []
+      }
+      player_tracking: {
+        Row: {
+          bbox_height: number
+          bbox_width: number
+          bbox_x: number
+          bbox_y: number
+          confidence: number | null
+          created_at: string
+          created_by: string
+          frame_number: number
+          id: string
+          player_id: string | null
+          source: string
+          timestamp_seconds: number
+          tracking_id: string
+          video_id: string
+        }
+        Insert: {
+          bbox_height?: number
+          bbox_width?: number
+          bbox_x?: number
+          bbox_y?: number
+          confidence?: number | null
+          created_at?: string
+          created_by: string
+          frame_number: number
+          id?: string
+          player_id?: string | null
+          source?: string
+          timestamp_seconds: number
+          tracking_id: string
+          video_id: string
+        }
+        Update: {
+          bbox_height?: number
+          bbox_width?: number
+          bbox_x?: number
+          bbox_y?: number
+          confidence?: number | null
+          created_at?: string
+          created_by?: string
+          frame_number?: number
+          id?: string
+          player_id?: string | null
+          source?: string
+          timestamp_seconds?: number
+          tracking_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_tracking_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tracking_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "match_videos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       players: {
         Row: {

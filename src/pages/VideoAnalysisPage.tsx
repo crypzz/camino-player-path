@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Video, Plus, Play, Calendar, Users } from 'lucide-react';
+import { Video, Plus, Play, Calendar, Users, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMatchVideos, MatchVideo } from '@/hooks/useMatchVideos';
 import VideoUploadDialog from '@/components/video/VideoUploadDialog';
 import VideoWorkspace from '@/components/video/VideoWorkspace';
+import ProcessingStatusBadge from '@/components/video/ProcessingStatusBadge';
 
 const typeColors: Record<string, string> = {
   match: 'bg-primary/20 text-primary border-primary/30',
@@ -29,9 +30,9 @@ export default function VideoAnalysisPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-display font-bold text-foreground flex items-center gap-2">
-            <Video className="h-6 w-6 text-primary" /> Video Analysis
+            <Video className="h-6 w-6 text-primary" /> Video Intelligence
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">Upload, tag events, and analyze match footage</p>
+          <p className="text-muted-foreground text-sm mt-1">Upload, track players, generate stats, and analyze match footage</p>
         </div>
         <Button onClick={() => setUploadOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" /> Upload Video
@@ -53,7 +54,9 @@ export default function VideoAnalysisPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+        </div>
       ) : videos.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-4">
@@ -78,6 +81,9 @@ export default function VideoAnalysisPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
                 <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors z-10">
                   <Play className="h-6 w-6 text-primary ml-1" />
+                </div>
+                <div className="absolute top-3 right-3 z-10">
+                  <ProcessingStatusBadge status={(v as any).status || 'ready'} />
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10">
                   <Badge variant="outline" className={typeColors[v.type] || typeColors.match}>{v.type}</Badge>
