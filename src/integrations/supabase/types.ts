@@ -234,6 +234,13 @@ export type Database = {
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "development_goals_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
         ]
       }
       evaluations: {
@@ -282,6 +289,13 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evaluations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
             referencedColumns: ["id"]
           },
         ]
@@ -338,6 +352,13 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fitness_tests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
             referencedColumns: ["id"]
           },
         ]
@@ -403,6 +424,13 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_player_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
             referencedColumns: ["id"]
           },
           {
@@ -569,6 +597,13 @@ export type Database = {
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "player_feedback_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
         ]
       }
       player_tracking: {
@@ -626,6 +661,13 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tracking_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
             referencedColumns: ["id"]
           },
           {
@@ -823,6 +865,13 @@ export type Database = {
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "posts_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -987,6 +1036,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "video_events_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "video_events_video_id_fkey"
             columns: ["video_id"]
             isOneToOne: false
@@ -997,7 +1053,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_player_cards: {
+        Row: {
+          age_group: string | null
+          avatar: string | null
+          id: string | null
+          is_public: boolean | null
+          overall_rating: number | null
+          position: string | null
+          preferred_foot: string | null
+          team: string | null
+        }
+        Insert: {
+          age_group?: string | null
+          avatar?: string | null
+          id?: string | null
+          is_public?: boolean | null
+          overall_rating?: number | null
+          position?: string | null
+          preferred_foot?: string | null
+          team?: string | null
+        }
+        Update: {
+          age_group?: string | null
+          avatar?: string | null
+          id?: string | null
+          is_public?: boolean | null
+          overall_rating?: number | null
+          position?: string | null
+          preferred_foot?: string | null
+          team?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
