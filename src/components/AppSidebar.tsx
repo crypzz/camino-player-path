@@ -30,6 +30,7 @@ import {
 const sharedLinks = [
   { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
   { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
+  { title: 'Comms Hub', url: '/dashboard/communications', icon: MessageCircle },
 ];
 
 const coachLinks = [
