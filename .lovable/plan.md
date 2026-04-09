@@ -1,76 +1,50 @@
 
-# Video Intelligence System — Implementation Plan
+# Communication Hub — Implementation Plan
 
-## Approach
-Extend the existing video analysis system (upload, events, stats) rather than rebuilding. Add new capabilities in phases, each delivering working functionality.
+## Phase 1: Database Foundation
+Create 5 new tables with RLS:
+- **announcements** — title, content, target_type (club/team/players/parents), target_team_id, pinned, created_by
+- **announcement_reads** — tracks seen/unseen per user
+- **conversations** — type (team_chat/direct), team_id, participants metadata
+- **messages** — conversation_id, sender_id, content, read status
+- **player_feedback** — player_id, coach_id, strengths, improvements, notes (structured dev log)
+- **notifications** — user_id, type, reference_id, read, title, body
 
----
+RLS: role-based access using existing `has_role()` + team/player ownership checks.
 
-## Phase 1: Processing Pipeline & Enhanced Data Model
-**Database changes:**
-- Add `status` column to `match_videos` (uploading → processing → ready → error)
-- Add `age_group` column to `match_videos`
-- Create `player_tracking` table (video_id, player_id, tracking_id, bounding_box JSON, frame_number, timestamp)
-- Create `match_player_stats` table (video_id, player_id, movement_intensity, activity_score, estimated_touches, time_on_field, etc.)
+## Phase 2: Core UI — Communication Hub Page
+- New route `/dashboard/communications` added to sidebar for all roles
+- Tabbed layout: **Announcements | Messages | Team Chat | Feedback**
+- Each tab filters content by user role
 
-**Code:**
-- Update VideoUploadDialog to show processing status flow
-- Add status badges on video cards
-- Simulate async processing (edge function or client-side timer)
+## Phase 3: Announcements System
+- Director/Coach can create announcements (title + body + target audience)
+- Pin support, read receipts (seen/unseen badges)
+- Players/Parents see filtered announcements for their team
 
-## Phase 2: Interactive Video Player with Overlay System
-**Enhance existing VideoPlayer:**
-- Frame-by-frame controls (←/→ single frame)
-- Bounding box overlay layer (canvas on top of video)
-- Player label overlays with toggle ON/OFF
-- Click-to-tag: pause video, click on pitch area, assign player from roster
-- Persist tracking data to `player_tracking` table
+## Phase 4: Team Chat
+- One conversation per team (auto-created or on-demand)
+- Real-time via Supabase Realtime
+- Messages grouped by date, clean WhatsApp-style UI
+- Coach admin controls placeholder
 
-## Phase 3: Player Tracking & Tagging UI
-- Roster sidebar showing team players
-- Click video → draw bounding box → assign player
-- Show existing tracking markers on timeline
-- "AI Suggested" placeholder UI (future-ready badge, no real AI)
-- Tracking ID management
+## Phase 5: Direct Messaging
+- 1-on-1 conversations: Coach↔Player, Coach↔Parent, Director↔Coach
+- New conversation dialog with role-filtered user list
+- Thread view with timestamps
 
-## Phase 4: Stats Engine & Match Analytics Dashboard
-- Calculate stats from tracking data (movement intensity from position changes, activity score, time on field)
-- New `/match/:id/analytics` dashboard page with:
-  - Player list with per-player stats
-  - Bar charts (Recharts) for comparisons
-  - "Most Active" / "Most Consistent" highlights
-  - Pitch heatmap per player
+## Phase 6: Player Feedback System
+- Structured feedback form (Strengths / Areas to Improve / Notes)
+- Feedback history timeline on player profile
+- Visible to player + parent
 
-## Phase 5: Player Profile Integration
-- Push `match_player_stats` into player evaluation history
-- Update CPI calculation to optionally weight video-derived stats
-- Show match participation history on player profile
-- Rankings reflect video-sourced data
-
-## Phase 6: Polish & Optional Features
-- Clip creation tool (select time range → export)
-- Shareable player highlights
-- "Top Moments" placeholder section
-- Smooth transitions, loading skeletons, premium feel
-
----
-
-## Permissions (applied throughout)
-- Existing RLS already handles coach-owns-video pattern
-- Player tracking inherits video ownership
-- Match stats viewable by authenticated users, writable by video owner
-- Directors see everything via `has_role` function
+## Phase 7: Notifications
+- Notification bell with unread count badge (already in header)
+- Notifications table populated on new message/announcement/feedback
+- Dropdown panel showing recent notifications
 
 ## Tech Decisions
-- All new tables use existing RLS patterns
-- Service abstraction via separate hooks (`useVideoTracking`, `useMatchStats`, `useVideoProcessing`)
-- Canvas overlay for bounding boxes (no external library needed)
-- Stats calculations in a dedicated `lib/videoStatsEngine.ts` module
-- Edge function for simulated "processing" step
-
----
-
-## What I'll build first
-**Phase 1 + Phase 2** — the database foundation, processing pipeline, and enhanced video player with overlay system. This gives you a working, tangible upgrade immediately.
-
-Shall I proceed?
+- Realtime: `supabase_realtime` publication on messages table
+- All colors via design tokens, dark theme consistent
+- Search/filter on messages and announcements
+- Existing sidebar navigation extended per role
