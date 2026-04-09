@@ -28,6 +28,7 @@ import DirectorLeaderboardPage from "@/pages/DirectorLeaderboardPage";
 import DirectorTeamsPage from "@/pages/DirectorTeamsPage";
 import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
 import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
+import CommunicationsPage from "@/pages/CommunicationsPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
