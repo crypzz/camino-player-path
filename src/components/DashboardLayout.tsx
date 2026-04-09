@@ -1,7 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { useAppContext } from '@/context/AppContext';
-import { Bell } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
 
 const roleGreetings: Record<string, string> = {
   coach: 'Coach Dashboard',
