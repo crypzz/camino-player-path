@@ -14,6 +14,8 @@ export interface MatchVideo {
   team: string | null;
   opponent: string | null;
   notes: string | null;
+  status: string;
+  age_group: string | null;
   created_at: string;
   updated_at: string;
 }
