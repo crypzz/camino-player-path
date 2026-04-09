@@ -14,6 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          pinned: boolean
+          target_team_id: string | null
+          target_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          pinned?: boolean
+          target_team_id?: string | null
+          target_type?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          pinned?: boolean
+          target_team_id?: string | null
+          target_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_target_team_id_fkey"
+            columns: ["target_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_assignments: {
         Row: {
           assigned_at: string
@@ -42,6 +115,76 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "coach_assignments_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          team_id: string | null
+          title: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          team_id?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          team_id?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -324,6 +467,109 @@ export type Database = {
           video_url?: string
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          read: boolean
+          reference_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          reference_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          reference_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      player_feedback: {
+        Row: {
+          coach_id: string
+          created_at: string
+          id: string
+          improvements: string | null
+          notes: string | null
+          player_id: string
+          strengths: string | null
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          notes?: string | null
+          player_id: string
+          strengths?: string | null
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          notes?: string | null
+          player_id?: string
+          strengths?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_feedback_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       player_tracking: {
         Row: {
@@ -759,6 +1005,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_conversation_participant: {
+        Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
       }
     }

@@ -1,7 +1,7 @@
 import caminoLogo from '@/assets/camino-logo.png';
 import { 
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -30,6 +30,7 @@ import {
 const sharedLinks = [
   { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
   { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
+  { title: 'Comms Hub', url: '/dashboard/communications', icon: MessageCircle },
 ];
 
 const coachLinks = [
@@ -134,7 +135,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {role !== 'director' && <SidebarGroup>
+        <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-4 mb-1">
             {!collapsed && 'Community'}
           </SidebarGroupLabel>
@@ -157,7 +158,7 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>}
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="p-2 border-t border-sidebar-border">
