@@ -48,6 +48,7 @@ const playerLinks = [
   { title: 'My Progress', url: '/dashboard/progress', icon: TrendingUp },
   { title: 'Goals', url: '/dashboard/goals', icon: Target },
   { title: 'My Videos', url: '/dashboard/videos', icon: Video },
+  { title: 'My CV', url: '/dashboard/cv-builder', icon: FileText },
 ];
 
 const parentLinks = [
