@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { usePlayerCVBySlug } from '@/hooks/usePlayerCV';
 import { useEffect } from 'react';
-import { Badge } from '@/components/ui/badge';
+
 import { Link2 } from 'lucide-react';
 
 export default function PublicCVPage() {

@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileText, Download, Share2, Eye, ChevronRight, ChevronLeft,
+  FileText, Download, ChevronRight, ChevronLeft,
   Sparkles, Plus, X, Link2, Check, Copy, Globe
 } from 'lucide-react';
 
@@ -22,7 +22,7 @@ type Step = 'generate' | 'edit' | 'preview' | 'export';
 export default function CVBuilderPage() {
   const { data: players } = usePlayers();
   const { data: rankings } = useRankings();
-  const { user } = useAuth();
+  useAuth();
   const player = players?.[0];
 
   const { data: existingCV, isLoading: cvLoading } = usePlayerCV(player?.id || null);
