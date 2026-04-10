@@ -52,6 +52,8 @@ export default function CVBuilderPage() {
   const [newAchievement, setNewAchievement] = useState('');
 
   // Auto-fill from player data
+  const [initialized, setInitialized] = useState(false);
+
   useEffect(() => {
     if (existingCV) {
       setForm({
@@ -62,7 +64,7 @@ export default function CVBuilderPage() {
         weight: existingCV.weight || 65,
         age: existingCV.age || 0,
         date_of_birth: existingCV.date_of_birth || '',
-        current_team: existingCV.current_team,
+        current_team: existingCV.current_team || '',
         previous_teams: existingCV.previous_teams || [],
         achievements: existingCV.achievements || [],
         bio: existingCV.bio || '',
@@ -70,7 +72,10 @@ export default function CVBuilderPage() {
         template: existingCV.template,
         is_published: existingCV.is_published,
       });
-      setStep('edit');
+      if (!initialized) {
+        setStep('edit');
+        setInitialized(true);
+      }
     } else if (player) {
       setForm(f => ({
         ...f,
