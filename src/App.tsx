@@ -29,6 +29,8 @@ import DirectorTeamsPage from "@/pages/DirectorTeamsPage";
 import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
 import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import CommunicationsPage from "@/pages/CommunicationsPage";
+import CVBuilderPage from "@/pages/CVBuilderPage";
+import PublicCVPage from "@/pages/PublicCVPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +52,7 @@ function DashboardRoutes() {
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/communications" element={<CommunicationsPage />} />
+        <Route path="/cv-builder" element={<CVBuilderPage />} />
         <Route path="/player/:id" element={<PublicProfilePage />} />
 
         {role === 'coach' && (
@@ -105,6 +108,7 @@ const App = () => (
               <Route path="/" element={<LandingPage />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/player/:id" element={<PublicProfilePage />} />
+              <Route path="/cv/:slug" element={<PublicCVPage />} />
               <Route path="/dashboard/*" element={
                 <ProtectedRoute>
                   <DashboardRoutes />

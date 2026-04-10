@@ -561,6 +561,90 @@ export type Database = {
         }
         Relationships: []
       }
+      player_cvs: {
+        Row: {
+          achievements: string[] | null
+          age: number | null
+          bio: string | null
+          created_at: string
+          current_team: string | null
+          date_of_birth: string | null
+          full_name: string
+          height: number | null
+          highlight_video_url: string | null
+          id: string
+          is_published: boolean
+          player_id: string
+          position: string
+          preferred_foot: string | null
+          previous_teams: string[] | null
+          slug: string
+          template: string
+          updated_at: string
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          achievements?: string[] | null
+          age?: number | null
+          bio?: string | null
+          created_at?: string
+          current_team?: string | null
+          date_of_birth?: string | null
+          full_name: string
+          height?: number | null
+          highlight_video_url?: string | null
+          id?: string
+          is_published?: boolean
+          player_id: string
+          position?: string
+          preferred_foot?: string | null
+          previous_teams?: string[] | null
+          slug: string
+          template?: string
+          updated_at?: string
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          achievements?: string[] | null
+          age?: number | null
+          bio?: string | null
+          created_at?: string
+          current_team?: string | null
+          date_of_birth?: string | null
+          full_name?: string
+          height?: number | null
+          highlight_video_url?: string | null
+          id?: string
+          is_published?: boolean
+          player_id?: string
+          position?: string
+          preferred_foot?: string | null
+          previous_teams?: string[] | null
+          slug?: string
+          template?: string
+          updated_at?: string
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_cvs_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_cvs_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_feedback: {
         Row: {
           coach_id: string
