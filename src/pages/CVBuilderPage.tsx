@@ -96,11 +96,19 @@ export default function CVBuilderPage() {
 
   const handleSave = async () => {
     if (!player) return;
+    const payload = {
+      ...form,
+      date_of_birth: form.date_of_birth || null,
+      highlight_video_url: form.highlight_video_url || null,
+      bio: form.bio || null,
+      current_team: form.current_team || null,
+      preferred_foot: form.preferred_foot || null,
+    };
     try {
       if (existingCV) {
-        await updateCV.mutateAsync({ id: existingCV.id, ...form });
+        await updateCV.mutateAsync({ id: existingCV.id, ...payload });
       } else {
-        await createCV.mutateAsync({ ...form, player_id: player.id });
+        await createCV.mutateAsync({ ...payload, player_id: player.id });
       }
       toast.success('CV saved successfully');
       setStep('preview');
