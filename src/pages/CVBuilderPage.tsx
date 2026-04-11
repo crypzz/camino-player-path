@@ -404,18 +404,7 @@ export default function CVBuilderPage() {
         {/* Step 3: Preview */}
         {step === 'preview' && player && (
           <motion.div key="preview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-            <CVPreview
-              form={form}
-              cpi={cpi}
-              techAvg={techAvg}
-              tacAvg={tacAvg}
-              phyAvg={phyAvg}
-              menAvg={menAvg}
-              globalRank={playerRank?.globalRank}
-              localRank={playerRank?.localRank}
-              consistencyScore={playerRank?.consistencyScore}
-              improvementScore={playerRank?.improvementScore}
-            />
+            {renderTemplate()}
             <div className="flex justify-end gap-3 mt-6">
               <Button variant="secondary" onClick={() => setStep('edit')}>
                 <ChevronLeft className="h-4 w-4 mr-1" /> Edit
