@@ -481,8 +481,8 @@ export default function CVBuilderPage() {
     </div>
   );
 }
-  form: any;
-  cpi: number;
+
+
   techAvg: number;
   tacAvg: number;
   phyAvg: number;
