@@ -482,8 +482,6 @@ export default function CVBuilderPage() {
   );
 }
 
-// ─── CV Preview Component ───
-function CVPreview({
   form, cpi, techAvg, tacAvg, phyAvg, menAvg,
   globalRank, localRank, consistencyScore, improvementScore,
 }: {
