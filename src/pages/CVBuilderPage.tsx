@@ -316,6 +316,26 @@ export default function CVBuilderPage() {
                       placeholder="https://youtube.com/..."
                     />
                   </div>
+                  {/* Template selector */}
+                  <div>
+                    <Label className="text-xs flex items-center gap-1.5 mb-2"><Palette className="h-3 w-3" /> Template</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {TEMPLATES.map(t => (
+                        <button
+                          key={t.key}
+                          onClick={() => setForm(f => ({ ...f, template: t.key }))}
+                          className={`p-3 rounded-lg border text-left transition-all ${
+                            form.template === t.key
+                              ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                              : 'border-border hover:border-primary/40'
+                          }`}
+                        >
+                          <p className="text-xs font-semibold">{t.label}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{t.desc}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
