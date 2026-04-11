@@ -481,8 +481,6 @@ export default function CVBuilderPage() {
     </div>
   );
 }
-  globalRank, localRank, consistencyScore, improvementScore,
-}: {
   form: any;
   cpi: number;
   techAvg: number;
