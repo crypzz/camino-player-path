@@ -106,6 +106,22 @@ export default function CVBuilderPage() {
   const phyAvg = player ? getCategoryAverage(player.physical) : 0;
   const menAvg = player ? getCategoryAverage(player.mental) : 0;
 
+  const templateProps = {
+    form, cpi, techAvg, tacAvg, phyAvg, menAvg,
+    globalRank: playerRank?.globalRank,
+    localRank: playerRank?.localRank,
+    consistencyScore: playerRank?.consistencyScore,
+    improvementScore: playerRank?.improvementScore,
+  };
+
+  const renderTemplate = () => {
+    switch (form.template) {
+      case 'dark': return <CVTemplateDark {...templateProps} />;
+      case 'minimal': return <CVTemplateMinimal {...templateProps} />;
+      default: return <CVTemplateClassic {...templateProps} />;
+    }
+  };
+
   const handleGenerate = () => setStep('edit');
 
   const handleSave = async () => {
