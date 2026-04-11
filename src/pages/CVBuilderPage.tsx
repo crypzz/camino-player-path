@@ -14,8 +14,17 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Download, ChevronRight, ChevronLeft,
-  Sparkles, Plus, X, Link2, Check, Copy, Globe
+  Sparkles, Plus, X, Link2, Check, Copy, Globe, Palette
 } from 'lucide-react';
+import { CVTemplateClassic } from '@/components/cv/CVTemplateClassic';
+import { CVTemplateDark } from '@/components/cv/CVTemplateDark';
+import { CVTemplateMinimal } from '@/components/cv/CVTemplateMinimal';
+
+const TEMPLATES = [
+  { key: 'classic', label: 'Classic', desc: 'Clean professional layout' },
+  { key: 'dark', label: 'Dark Pro', desc: 'Modern dark theme' },
+  { key: 'minimal', label: 'Minimal Gold', desc: 'White with gold accents' },
+] as const;
 
 type Step = 'generate' | 'edit' | 'preview' | 'export';
 
