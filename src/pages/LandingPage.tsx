@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { LeaderboardTable } from '@/components/LeaderboardTable';
 import { useRankings } from '@/hooks/useRankings';
 import heroPattern from '@/assets/hero-pattern.jpg';
+import { WaitlistForm } from '@/components/WaitlistForm';
 import caminoLogo from '@/assets/camino-logo.png';
 
 const features = [
@@ -310,6 +311,27 @@ export default function LandingPage() {
                 <p className="text-[12.5px] text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Waitlist Section */}
+      <section className="relative py-14 scroll-mt-16">
+        <div className="max-w-xl mx-auto px-5">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="relative rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 text-center shadow-sm"
+          >
+            <h3 className="font-display font-bold text-foreground text-lg tracking-tight">
+              See player development beyond match day
+            </h3>
+            <p className="mt-1.5 text-[13px] text-muted-foreground">
+              Request early access to Camino.
+            </p>
+            <WaitlistForm />
           </motion.div>
         </div>
       </section>
