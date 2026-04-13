@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHand
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 
 export interface VideoPlayerHandle {
   seekTo: (seconds: number) => void;
@@ -17,6 +18,10 @@ interface Props {
 
 const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, onDurationChange }, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const rafRef = useRef<number>(0);
+  const onTimeUpdateRef = useRef(onTimeUpdate);
+  onTimeUpdateRef.current = onTimeUpdate;
+
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -38,19 +43,54 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
     if (videoRef.current) videoRef.current.currentTime = Math.max(0, Math.min(videoRef.current.duration, videoRef.current.currentTime + delta));
   }, []);
 
+  // Use rAF loop for smooth time tracking instead of timeupdate event
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
+
+    let lastReported = -1;
+
+    const tick = () => {
+      if (v.paused && lastReported === v.currentTime) {
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      const t = v.currentTime;
+      if (Math.abs(t - lastReported) > 0.05) {
+        lastReported = t;
+        setCurrentTime(t);
+        onTimeUpdateRef.current?.(t);
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
     const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
-    const onTime = () => { setCurrentTime(v.currentTime); onTimeUpdate?.(v.currentTime); };
+    const onPause = () => {
+      setPlaying(false);
+      // Report final time on pause
+      setCurrentTime(v.currentTime);
+      onTimeUpdateRef.current?.(v.currentTime);
+    };
+    const onSeeked = () => {
+      setCurrentTime(v.currentTime);
+      onTimeUpdateRef.current?.(v.currentTime);
+    };
     const onDur = () => { setDuration(v.duration); onDurationChange?.(v.duration); };
+
     v.addEventListener('play', onPlay);
     v.addEventListener('pause', onPause);
-    v.addEventListener('timeupdate', onTime);
+    v.addEventListener('seeked', onSeeked);
     v.addEventListener('loadedmetadata', onDur);
-    return () => { v.removeEventListener('play', onPlay); v.removeEventListener('pause', onPause); v.removeEventListener('timeupdate', onTime); v.removeEventListener('loadedmetadata', onDur); };
-  }, [onTimeUpdate, onDurationChange]);
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      v.removeEventListener('play', onPlay);
+      v.removeEventListener('pause', onPause);
+      v.removeEventListener('seeked', onSeeked);
+      v.removeEventListener('loadedmetadata', onDur);
+    };
+  }, [onDurationChange]);
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = parseFloat(speed);
@@ -73,10 +113,26 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
+  const handleScrub = (values: number[]) => {
+    const t = values[0];
+    if (videoRef.current) videoRef.current.currentTime = t;
+  };
+
   return (
     <>
-      <video ref={videoRef} src={src} className="w-full aspect-video object-contain" muted={muted} playsInline preload="auto" />
+      <video ref={videoRef} src={src} className="w-full aspect-video object-contain bg-black" muted={muted} playsInline preload="auto" />
       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-20">
+        {/* Scrub bar */}
+        <div className="px-1 mb-2">
+          <Slider
+            min={0}
+            max={duration || 1}
+            step={0.1}
+            value={[currentTime]}
+            onValueChange={handleScrub}
+            className="w-full [&_[role=slider]]:h-3 [&_[role=slider]]:w-3 [&_[role=slider]]:bg-primary [&_.relative]:h-1 [&_.absolute]:bg-primary"
+          />
+        </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={() => skip(-5)}>
             <SkipBack className="h-4 w-4" />
@@ -87,7 +143,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
           <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={() => skip(5)}>
             <SkipForward className="h-4 w-4" />
           </Button>
-          {/* Frame step buttons */}
           <Button variant="ghost" size="icon" className="h-7 w-7 text-white/70 hover:bg-white/20" onClick={() => skip(-1/30)} title="Previous frame">
             <span className="text-[10px] font-mono">‹F</span>
           </Button>

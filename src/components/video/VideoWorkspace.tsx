@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, BarChart3, Wand2 } from 'lucide-react';
@@ -43,29 +43,42 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const { data: tracking = [] } = usePlayerTracking(video.id);
   const { data: matchStats = [] } = useMatchPlayerStats(video.id);
   const { data: playersRaw = [] } = usePlayers();
-  const players = playersRaw.map(p => ({ id: p.id, name: p.name }));
+
+  const players = useMemo(
+    () => playersRaw.map(p => ({ id: p.id, name: p.name })),
+    [playersRaw]
+  );
+
   const stats = useVideoStats(events, players);
   const upsertStats = useUpsertMatchPlayerStats();
 
+  // Cache signed URL — only regenerate when video changes
   useEffect(() => {
-    supabase.storage.from('match-videos').createSignedUrl(video.video_url, 3600).then(({ data, error }) => {
+    let cancelled = false;
+    const getUrl = async () => {
+      const { data } = await supabase.storage.from('match-videos').createSignedUrl(video.video_url, 7200);
+      if (cancelled) return;
       if (data?.signedUrl) {
         setVideoSrc(data.signedUrl);
       } else {
         const { data: pub } = supabase.storage.from('match-videos').getPublicUrl(video.video_url);
-        if (pub?.publicUrl) setVideoSrc(pub.publicUrl);
+        if (pub?.publicUrl && !cancelled) setVideoSrc(pub.publicUrl);
       }
-    });
+    };
+    getUrl();
+    return () => { cancelled = true; };
   }, [video.video_url]);
 
-  const seekTo = (t: number) => playerRef.current?.seekTo(t);
+  const handleTimeUpdate = useCallback((t: number) => setCurrentTime(t), []);
+  const handleDurationChange = useCallback((d: number) => setDuration(d), []);
+  const seekTo = useCallback((t: number) => playerRef.current?.seekTo(t), []);
 
-  const handleCanvasClick = (x: number, y: number) => {
+  const handleCanvasClick = useCallback((x: number, y: number) => {
     if (isTagging) {
-      playerRef.current?.seekTo(currentTime); // pause effectively
+      playerRef.current?.seekTo(currentTime);
       setPendingTag({ x, y });
     }
-  };
+  }, [isTagging, currentTime]);
 
   const handleGenerateStats = async () => {
     if (tracking.length === 0 && events.length === 0) {
@@ -74,7 +87,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
     }
 
     const computed = computePlayerStats(tracking, events, duration);
-    
+
     try {
       for (const s of computed) {
         await upsertStats.mutateAsync({
@@ -126,8 +139,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               <VideoPlayer
                 ref={playerRef}
                 src={videoSrc}
-                onTimeUpdate={setCurrentTime}
-                onDurationChange={setDuration}
+                onTimeUpdate={handleTimeUpdate}
+                onDurationChange={handleDurationChange}
               />
             )}
             <VideoOverlayCanvas
