@@ -8,6 +8,7 @@ import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
 import { CountdownTeaser } from "./CountdownTeaser";
 import { GoProVideo } from "./GoProVideo";
 import { VideoAnalysisVideo } from "./VideoAnalysisVideo";
+import { AcademyPromoVideo } from "./AcademyPromoVideo";
 
 export const RemotionRoot = () => (
   <>
@@ -79,6 +80,14 @@ export const RemotionRoot = () => (
       id="video-analysis"
       component={VideoAnalysisVideo}
       durationInFrames={920}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="academy-promo"
+      component={AcademyPromoVideo}
+      durationInFrames={735}
       fps={30}
       width={1080}
       height={1920}
