@@ -1,11 +1,15 @@
-import { mockPlayers, mockTrainingSessions } from '@/data/mockPlayers';
+import { usePlayers } from '@/hooks/usePlayers';
+import { useSeedPlayers } from '@/hooks/useSeedPlayers';
 import { StatCard } from '@/components/StatCard';
 import { CPIScoreDisplay } from '@/components/CPIScoreDisplay';
 import { CPIProgressChart } from '@/components/CPIProgressChart';
 import { PlayerRadarChart } from '@/components/PlayerRadarChart';
-import { Award, CalendarCheck, TrendingUp, Target, Clock, MapPin, Dumbbell, Swords, HeartPulse } from 'lucide-react';
+import { Award, CalendarCheck, TrendingUp, Target, Clock, MapPin, Dumbbell, Swords, HeartPulse, Database } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import { useScheduleSessions } from '@/hooks/useScheduleSessions';
 
 const statusColors: Record<string, string> = {
   'completed': 'bg-success/20 text-success border-success/30',
@@ -26,8 +30,44 @@ const typeColors: Record<string, string> = {
 };
 
 export default function ParentDashboard() {
-  const player = mockPlayers[0];
-  const upcomingSessions = mockTrainingSessions.filter(s => new Date(s.date) >= new Date('2026-03-13')).slice(0, 5);
+  const { data: players = [], isLoading } = usePlayers();
+  const { data: sessions = [] } = useScheduleSessions();
+  const seedMutation = useSeedPlayers();
+  const player = players[0];
+
+  const handleSeed = async () => {
+    try {
+      const result = await seedMutation.mutateAsync();
+      if (result.seeded) toast.success(`Seeded ${result.count} players!`);
+      else toast.info('Data already seeded');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to seed data');
+    }
+  };
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
+  }
+
+  if (!player) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <p className="text-muted-foreground text-sm">No player data available yet.</p>
+        <Button onClick={handleSeed} disabled={seedMutation.isPending} variant="outline" size="sm" className="gap-2">
+          <Database className="h-4 w-4" />
+          {seedMutation.isPending ? 'Seeding...' : 'Load Sample Data'}
+        </Button>
+      </div>
+    );
+  }
+
+  const upcomingSessions = sessions
+    .filter(s => new Date(s.session_date) >= new Date())
+    .slice(0, 5);
+
+  const cpiGrowth = player.cpiHistory.length >= 2
+    ? player.cpiHistory[player.cpiHistory.length - 1].score - player.cpiHistory[0].score
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -42,7 +82,7 @@ export default function ParentDashboard() {
         <StatCard title="CPI Score" value={player.cpiHistory[player.cpiHistory.length - 1]?.score ?? '—'} icon={Award} index={0} />
         <StatCard title="Attendance" value={`${player.attendance}%`} icon={CalendarCheck} index={1} />
         <StatCard title="Active Goals" value={player.goals.filter(g => g.status === 'in-progress').length} icon={Target} index={2} />
-        <StatCard title="CPI Growth" value={`+${player.cpiHistory[player.cpiHistory.length - 1].score - player.cpiHistory[0].score}`} icon={TrendingUp} index={3} />
+        <StatCard title="CPI Growth" value={`${cpiGrowth >= 0 ? '+' : ''}${cpiGrowth}`} icon={TrendingUp} index={3} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
@@ -107,6 +147,7 @@ export default function ParentDashboard() {
                   <p className="text-xs text-muted-foreground">{goal.description}</p>
                 </div>
               ))}
+              {player.goals.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No goals set yet</p>}
             </div>
           </motion.div>
 
@@ -115,26 +156,30 @@ export default function ParentDashboard() {
               <CalendarCheck className="h-4 w-4 text-primary" />Upcoming Schedule
             </h3>
             <div className="space-y-2">
-              {upcomingSessions.map((session) => {
-                const Icon = typeIcons[session.type];
-                return (
-                  <div key={session.id} className="p-3 rounded-lg bg-accent/50">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                      <div className="min-w-0">
-                        <h5 className="text-sm font-medium text-foreground truncate">{session.title}</h5>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
-                          <span>{new Date(session.date).toLocaleDateString()}</span>
-                          <span className="flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{session.time}</span>
-                          <span className="flex items-center gap-0.5"><MapPin className="h-2.5 w-2.5" />{session.location}</span>
+              {upcomingSessions.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-4">No upcoming sessions</p>
+              ) : (
+                upcomingSessions.map((session) => {
+                  const Icon = typeIcons[session.type] || Dumbbell;
+                  return (
+                    <div key={session.id} className="p-3 rounded-lg bg-accent/50">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                          <Icon className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <div className="min-w-0">
+                          <h5 className="text-sm font-medium text-foreground truncate">{session.title}</h5>
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+                            <span>{new Date(session.session_date).toLocaleDateString()}</span>
+                            <span className="flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{session.session_time}</span>
+                            {session.location && <span className="flex items-center gap-0.5"><MapPin className="h-2.5 w-2.5" />{session.location}</span>}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </motion.div>
         </div>

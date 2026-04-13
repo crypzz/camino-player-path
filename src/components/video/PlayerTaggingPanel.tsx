@@ -142,10 +142,10 @@ export default function PlayerTaggingPanel({
         </div>
       )}
 
-      {/* AI Placeholder */}
-      <div className="rounded-lg border border-dashed border-muted-foreground/30 p-3 text-center opacity-60">
+      {/* AI Info */}
+      <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-center">
         <Sparkles className="h-4 w-4 mx-auto mb-1 text-primary" />
-        <p className="text-[10px] text-muted-foreground">AI Auto-Detect coming soon</p>
+        <p className="text-[10px] text-muted-foreground">Use the <span className="text-primary font-medium">AI Analyze</span> button above to auto-detect players</p>
       </div>
 
       {/* Tracked players list */}
