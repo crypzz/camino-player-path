@@ -17,7 +17,7 @@ export function WaitlistForm() {
     setLoading(false);
     if (error) {
       if (error.code === '23505') {
-        toast({ title: "You're already on the list", description: 'We'll be in touch soon.' });
+        toast({ title: "You're already on the list", description: "We'll be in touch soon." });
         setSubmitted(true);
       } else {
         toast({ title: 'Something went wrong', description: 'Please try again.', variant: 'destructive' });
@@ -25,7 +25,7 @@ export function WaitlistForm() {
       return;
     }
     setSubmitted(true);
-    toast({ title: "You're in", description: 'We'll reach out when it's your turn.' });
+    toast({ title: "You're in", description: "We'll reach out when it's your turn." });
   };
 
   if (submitted) {
