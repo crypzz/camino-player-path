@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, AlertCircle, Upload } from 'lucide-react';
+import { Loader2, CheckCircle, AlertCircle, Upload, Brain } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
   uploading: {
@@ -8,8 +8,8 @@ const statusConfig: Record<string, { label: string; icon: React.ReactNode; class
     className: 'bg-info/20 text-info border-info/30',
   },
   processing: {
-    label: 'Processing',
-    icon: <Loader2 className="h-3 w-3 animate-spin" />,
+    label: 'AI Analyzing',
+    icon: <Brain className="h-3 w-3 animate-pulse" />,
     className: 'bg-warning/20 text-warning border-warning/30',
   },
   ready: {
@@ -21,6 +21,11 @@ const statusConfig: Record<string, { label: string; icon: React.ReactNode; class
     label: 'Error',
     icon: <AlertCircle className="h-3 w-3" />,
     className: 'bg-destructive/20 text-destructive border-destructive/30',
+  },
+  queued: {
+    label: 'Queued',
+    icon: <Loader2 className="h-3 w-3 animate-spin" />,
+    className: 'bg-muted text-muted-foreground border-muted-foreground/30',
   },
 };
 

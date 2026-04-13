@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useEffect } from 'react';
 
 export interface MatchVideo {
   id: string;
@@ -16,6 +17,8 @@ export interface MatchVideo {
   notes: string | null;
   status: string;
   age_group: string | null;
+  ai_processing_started_at: string | null;
+  ai_processing_error: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +48,33 @@ export function useMatchVideo(id: string | null) {
   });
 }
 
+/** Poll a video's status while it's processing */
+export function useVideoProcessingPoll(videoId: string | null, status: string | undefined) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!videoId || (status !== 'processing' && status !== 'queued')) return;
+
+    const interval = setInterval(async () => {
+      const { data } = await supabase
+        .from('match_videos')
+        .select('status, ai_processing_error')
+        .eq('id', videoId)
+        .single();
+
+      if (data && (data.status !== 'processing' && data.status !== 'queued')) {
+        queryClient.invalidateQueries({ queryKey: ['match-videos'] });
+        queryClient.invalidateQueries({ queryKey: ['match-video', videoId] });
+        queryClient.invalidateQueries({ queryKey: ['player-tracking', videoId] });
+        queryClient.invalidateQueries({ queryKey: ['match-player-stats', videoId] });
+        clearInterval(interval);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [videoId, status, queryClient]);
+}
+
 export function useCreateMatchVideo() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -70,5 +100,30 @@ export function useDeleteMatchVideo() {
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['match-videos'] }),
+  });
+}
+
+export function useAIAnalyzeVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (videoId: string) => {
+      // Set status to processing first
+      await supabase
+        .from('match_videos')
+        .update({ status: 'processing' })
+        .eq('id', videoId);
+
+      queryClient.invalidateQueries({ queryKey: ['match-videos'] });
+
+      const { data, error } = await supabase.functions.invoke('process-video', {
+        body: { video_id: videoId },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['match-videos'] });
+    },
   });
 }
