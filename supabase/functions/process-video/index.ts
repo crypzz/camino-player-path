@@ -6,43 +6,39 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-interface Detection {
-  tracking_id: string;
-  jersey_number?: string;
-  team_color?: string;
-  bbox: { x: number; y: number; width: number; height: number };
-  confidence: number;
-}
+const ANALYSIS_PROMPT = `You are a professional football/soccer match analyst AI. Analyze this match video and detect players at multiple timestamps throughout the video.
 
-interface FrameAnalysis {
-  players: Detection[];
-  ball?: { x: number; y: number };
-}
-
-const SYSTEM_PROMPT = `You are a football/soccer video frame analyzer. Analyze the frame and detect all visible players and the ball.
+For each timestamp you analyze, report all visible players on the pitch with their bounding box positions.
 
 Return a JSON object with this exact structure:
 {
-  "players": [
+  "frames": [
     {
-      "tracking_id": "player_1",
-      "jersey_number": "7",
-      "team_color": "red",
-      "bbox": { "x": 25.5, "y": 30.2, "width": 5.0, "height": 12.0 },
-      "confidence": 0.85
+      "timestamp_seconds": 0,
+      "players": [
+        {
+          "tracking_id": "player_1",
+          "jersey_number": "7",
+          "team_color": "red",
+          "bbox": { "x": 25.5, "y": 30.2, "width": 5.0, "height": 12.0 },
+          "confidence": 0.85
+        }
+      ],
+      "ball": { "x": 50.0, "y": 45.0 }
     }
-  ],
-  "ball": { "x": 50.0, "y": 45.0 }
+  ]
 }
 
 Rules:
+- Analyze the video at roughly 3-5 second intervals
 - bbox coordinates are PERCENTAGES of frame dimensions (0-100)
-- tracking_id should be consistent: use "player_N" where N is assigned left-to-right
-- team_color should describe the dominant jersey/kit color
+- tracking_id: try to keep consistent IDs for the same player across frames (use jersey number or position)
+- team_color: dominant jersey/kit color
 - If you can read a jersey number, include it; otherwise omit
-- confidence 0-1 for how sure you are this is a player
+- confidence 0-1
 - ball position as percentage coordinates, or null if not visible
-- Only detect actual players on the pitch, not spectators or officials if clearly distinguishable`;
+- Only detect actual players on the pitch, not spectators
+- Return as many frames as you can reasonably analyze`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -111,14 +107,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Extract frames using ffmpeg
     const videoDuration = video.duration_seconds || 90;
-    const frameInterval = Math.max(3, Math.ceil(videoDuration / 30)); // Max ~30 frames
-    const frameCount = Math.min(30, Math.ceil(videoDuration / frameInterval));
+    console.log(`Processing video: ${video.title}, duration: ${videoDuration}s`);
 
-    console.log(`Processing video: ${video.title}, duration: ${videoDuration}s, extracting ~${frameCount} frames every ${frameInterval}s`);
-
-    // Download video to temp file
+    // Download video and convert to base64
     const videoResponse = await fetch(signedData.signedUrl);
     if (!videoResponse.ok) {
       await supabase
@@ -132,220 +124,216 @@ Deno.serve(async (req) => {
     }
 
     const videoBytes = new Uint8Array(await videoResponse.arrayBuffer());
-    const tmpVideo = `/tmp/video_${video_id}.mp4`;
-    const tmpFrameDir = `/tmp/frames_${video_id}`;
+    
+    // Check size — Gemini supports up to ~20MB inline
+    const videoSizeMB = videoBytes.length / (1024 * 1024);
+    console.log(`Video size: ${videoSizeMB.toFixed(1)} MB`);
 
-    await Deno.writeFile(tmpVideo, videoBytes);
-    try {
-      await Deno.mkdir(tmpFrameDir, { recursive: true });
-    } catch { /* exists */ }
-
-    // Extract frames with ffmpeg
-    const ffmpegCmd = new Deno.Command("ffmpeg", {
-      args: [
-        "-i", tmpVideo,
-        "-vf", `fps=1/${frameInterval}`,
-        "-q:v", "5",
-        "-frames:v", String(frameCount),
-        `${tmpFrameDir}/frame_%03d.jpg`,
-      ],
-      stdout: "null",
-      stderr: "piped",
-    });
-
-    const ffmpegResult = await ffmpegCmd.output();
-    if (!ffmpegResult.success) {
-      const stderr = new TextDecoder().decode(ffmpegResult.stderr);
-      console.error("ffmpeg error:", stderr);
+    if (videoSizeMB > 20) {
       await supabase
         .from("match_videos")
-        .update({ status: "error", ai_processing_error: "Failed to extract frames" })
+        .update({ status: "error", ai_processing_error: "Video too large for AI analysis (max 20MB). Try a shorter clip." })
         .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Frame extraction failed" }), {
+      return new Response(JSON.stringify({ error: "Video too large (max 20MB)" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Convert to base64
+    let base64 = "";
+    const chunkSize = 32768;
+    for (let i = 0; i < videoBytes.length; i += chunkSize) {
+      const chunk = videoBytes.subarray(i, Math.min(i + chunkSize, videoBytes.length));
+      base64 += String.fromCharCode(...chunk);
+    }
+    base64 = btoa(base64);
+
+    console.log("Sending video to AI for analysis...");
+
+    // Send entire video to Gemini for multi-frame analysis
+    const aiResponse = await fetch(
+      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: ANALYSIS_PROMPT },
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `Analyze this ${videoDuration} second football match video. Detect all players and ball positions at multiple timestamps throughout. Sample every 3-5 seconds.`,
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: `data:video/mp4;base64,${base64}`,
+                  },
+                },
+              ],
+            },
+          ],
+          tools: [
+            {
+              type: "function",
+              function: {
+                name: "report_video_analysis",
+                description: "Report detected players and ball positions across multiple video frames",
+                parameters: {
+                  type: "object",
+                  properties: {
+                    frames: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          timestamp_seconds: { type: "number" },
+                          players: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                tracking_id: { type: "string" },
+                                jersey_number: { type: "string" },
+                                team_color: { type: "string" },
+                                bbox: {
+                                  type: "object",
+                                  properties: {
+                                    x: { type: "number" },
+                                    y: { type: "number" },
+                                    width: { type: "number" },
+                                    height: { type: "number" },
+                                  },
+                                  required: ["x", "y", "width", "height"],
+                                },
+                                confidence: { type: "number" },
+                              },
+                              required: ["tracking_id", "bbox", "confidence"],
+                            },
+                          },
+                          ball: {
+                            type: "object",
+                            properties: {
+                              x: { type: "number" },
+                              y: { type: "number" },
+                            },
+                          },
+                        },
+                        required: ["timestamp_seconds", "players"],
+                      },
+                    },
+                  },
+                  required: ["frames"],
+                },
+              },
+            },
+          ],
+          tool_choice: { type: "function", function: { name: "report_video_analysis" } },
+        }),
+      }
+    );
+
+    if (aiResponse.status === 429) {
+      await supabase
+        .from("match_videos")
+        .update({ status: "error", ai_processing_error: "AI rate limited — please try again in a minute" })
+        .eq("id", video_id);
+      return new Response(JSON.stringify({ error: "Rate limited" }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (aiResponse.status === 402) {
+      await supabase
+        .from("match_videos")
+        .update({ status: "error", ai_processing_error: "AI credits exhausted" })
+        .eq("id", video_id);
+      return new Response(JSON.stringify({ error: "Credits exhausted" }), {
+        status: 402,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      console.error("AI error:", aiResponse.status, errText);
+      await supabase
+        .from("match_videos")
+        .update({ status: "error", ai_processing_error: `AI analysis failed (${aiResponse.status})` })
+        .eq("id", video_id);
+      return new Response(JSON.stringify({ error: "AI analysis failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Read extracted frames
-    const frameFiles: string[] = [];
-    for await (const entry of Deno.readDir(tmpFrameDir)) {
-      if (entry.isFile && entry.name.endsWith(".jpg")) {
-        frameFiles.push(entry.name);
-      }
+    const aiData = await aiResponse.json();
+    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+
+    if (!toolCall?.function?.arguments) {
+      console.error("No tool call in AI response:", JSON.stringify(aiData).slice(0, 500));
+      await supabase
+        .from("match_videos")
+        .update({ status: "error", ai_processing_error: "AI returned no detections" })
+        .eq("id", video_id);
+      return new Response(JSON.stringify({ error: "No detections" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
-    frameFiles.sort();
 
-    console.log(`Extracted ${frameFiles.length} frames`);
+    let analysis: { frames: any[] };
+    try {
+      analysis = JSON.parse(toolCall.function.arguments);
+    } catch {
+      console.error("Failed to parse AI response");
+      await supabase
+        .from("match_videos")
+        .update({ status: "error", ai_processing_error: "Failed to parse AI response" })
+        .eq("id", video_id);
+      return new Response(JSON.stringify({ error: "Parse error" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
+    console.log(`AI returned ${analysis.frames?.length || 0} frames`);
+
+    // Convert to tracking rows
     const allTrackingRows: any[] = [];
-    const allBallPositions: Array<{ timestamp: number; x: number; y: number }> = [];
+    for (const frame of (analysis.frames || [])) {
+      const ts = frame.timestamp_seconds || 0;
+      const frameNumber = Math.round(ts * 30);
 
-    // Process each frame with AI
-    for (let i = 0; i < frameFiles.length; i++) {
-      const framePath = `${tmpFrameDir}/${frameFiles[i]}`;
-      const frameBytes = await Deno.readFile(framePath);
-      const base64 = btoa(String.fromCharCode(...frameBytes));
-      const timestampSeconds = i * frameInterval;
-
-      console.log(`Analyzing frame ${i + 1}/${frameFiles.length} at ${timestampSeconds}s`);
-
-      try {
-        const aiResponse = await fetch(
-          "https://ai.gateway.lovable.dev/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "google/gemini-2.5-flash",
-              messages: [
-                { role: "system", content: SYSTEM_PROMPT },
-                {
-                  role: "user",
-                  content: [
-                    {
-                      type: "text",
-                      text: `Analyze this football match frame captured at ${timestampSeconds} seconds. Detect all players and the ball position.`,
-                    },
-                    {
-                      type: "image_url",
-                      image_url: {
-                        url: `data:image/jpeg;base64,${base64}`,
-                      },
-                    },
-                  ],
-                },
-              ],
-              tools: [
-                {
-                  type: "function",
-                  function: {
-                    name: "report_detections",
-                    description: "Report detected players and ball position in the frame",
-                    parameters: {
-                      type: "object",
-                      properties: {
-                        players: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              tracking_id: { type: "string" },
-                              jersey_number: { type: "string" },
-                              team_color: { type: "string" },
-                              bbox: {
-                                type: "object",
-                                properties: {
-                                  x: { type: "number" },
-                                  y: { type: "number" },
-                                  width: { type: "number" },
-                                  height: { type: "number" },
-                                },
-                                required: ["x", "y", "width", "height"],
-                              },
-                              confidence: { type: "number" },
-                            },
-                            required: ["tracking_id", "bbox", "confidence"],
-                          },
-                        },
-                        ball: {
-                          type: "object",
-                          properties: {
-                            x: { type: "number" },
-                            y: { type: "number" },
-                          },
-                          required: ["x", "y"],
-                        },
-                      },
-                      required: ["players"],
-                    },
-                  },
-                },
-              ],
-              tool_choice: { type: "function", function: { name: "report_detections" } },
-            }),
-          }
-        );
-
-        if (aiResponse.status === 429) {
-          console.warn("Rate limited, waiting 5s...");
-          await new Promise((r) => setTimeout(r, 5000));
-          i--; // retry
-          continue;
-        }
-
-        if (aiResponse.status === 402) {
-          await supabase
-            .from("match_videos")
-            .update({ status: "error", ai_processing_error: "AI credits exhausted" })
-            .eq("id", video_id);
-          break;
-        }
-
-        if (!aiResponse.ok) {
-          const errText = await aiResponse.text();
-          console.error(`AI error on frame ${i}:`, errText);
-          continue;
-        }
-
-        const aiData = await aiResponse.json();
-        const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-
-        if (!toolCall?.function?.arguments) {
-          console.warn(`No detections for frame ${i}`);
-          continue;
-        }
-
-        let analysis: FrameAnalysis;
-        try {
-          analysis = JSON.parse(toolCall.function.arguments);
-        } catch {
-          console.warn(`Failed to parse AI response for frame ${i}`);
-          continue;
-        }
-
-        // Convert detections to tracking rows
-        const frameNumber = Math.round(timestampSeconds * 30); // assume 30fps
-        for (const det of analysis.players) {
-          allTrackingRows.push({
-            video_id,
-            tracking_id: `ai_${det.tracking_id}`,
-            player_id: null,
-            frame_number: frameNumber,
-            timestamp_seconds: timestampSeconds,
-            bbox_x: det.bbox.x,
-            bbox_y: det.bbox.y,
-            bbox_width: det.bbox.width,
-            bbox_height: det.bbox.height,
-            confidence: det.confidence,
-            source: "ai",
-            created_by: video.created_by,
-          });
-        }
-
-        if (analysis.ball) {
-          allBallPositions.push({
-            timestamp: timestampSeconds,
-            x: analysis.ball.x,
-            y: analysis.ball.y,
-          });
-        }
-
-        // Small delay between requests
-        if (i < frameFiles.length - 1) {
-          await new Promise((r) => setTimeout(r, 1000));
-        }
-      } catch (frameErr) {
-        console.error(`Error processing frame ${i}:`, frameErr);
+      for (const det of (frame.players || [])) {
+        if (!det.bbox) continue;
+        allTrackingRows.push({
+          video_id,
+          tracking_id: `ai_${det.tracking_id || 'unknown'}`,
+          player_id: null,
+          frame_number: frameNumber,
+          timestamp_seconds: ts,
+          bbox_x: det.bbox.x || 0,
+          bbox_y: det.bbox.y || 0,
+          bbox_width: det.bbox.width || 5,
+          bbox_height: det.bbox.height || 10,
+          confidence: det.confidence || 0.5,
+          source: "ai",
+          created_by: video.created_by,
+        });
       }
     }
 
     // Batch insert tracking data
     if (allTrackingRows.length > 0) {
-      // Insert in chunks of 100
       for (let i = 0; i < allTrackingRows.length; i += 100) {
         const chunk = allTrackingRows.slice(i, i + 100);
         const { error: insertErr } = await supabase
@@ -358,88 +346,24 @@ Deno.serve(async (req) => {
       console.log(`Inserted ${allTrackingRows.length} tracking records`);
     }
 
-    // Compute and store stats per unique tracking_id
-    const trackingByPlayer = new Map<string, any[]>();
-    for (const row of allTrackingRows) {
-      if (!trackingByPlayer.has(row.tracking_id)) {
-        trackingByPlayer.set(row.tracking_id, []);
-      }
-      trackingByPlayer.get(row.tracking_id)!.push(row);
-    }
-
-    // Note: stats computation is simplified here; the frontend can recompute with full engine
-    let statsCount = 0;
-    for (const [trackId, tracks] of trackingByPlayer) {
-      tracks.sort((a: any, b: any) => a.timestamp_seconds - b.timestamp_seconds);
-
-      let totalDist = 0;
-      let sprintCount = 0;
-      const speeds: number[] = [];
-      const heatmap: Array<{ x: number; y: number }> = [];
-
-      for (let i = 0; i < tracks.length; i++) {
-        heatmap.push({ x: tracks[i].bbox_x + tracks[i].bbox_width / 2, y: tracks[i].bbox_y + tracks[i].bbox_height / 2 });
-        if (i > 0) {
-          const dx = tracks[i].bbox_x - tracks[i - 1].bbox_x;
-          const dy = tracks[i].bbox_y - tracks[i - 1].bbox_y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const dt = tracks[i].timestamp_seconds - tracks[i - 1].timestamp_seconds;
-          totalDist += dist;
-          if (dt > 0) {
-            const speed = dist / dt;
-            speeds.push(speed);
-            if (speed > 5) sprintCount++;
-          }
-        }
-      }
-
-      const timeOnField = tracks.length >= 2 ? tracks[tracks.length - 1].timestamp_seconds - tracks[0].timestamp_seconds : videoDuration;
-      const movementIntensity = Math.min(100, Math.round((totalDist / Math.max(timeOnField, 1)) * 10));
-      const avgSpeed = speeds.length > 0 ? speeds.reduce((a: number, b: number) => a + b, 0) / speeds.length : 0;
-
-      // Estimate touches via ball proximity
-      let touchCount = 0;
-      for (const t of tracks) {
-        const cx = t.bbox_x + t.bbox_width / 2;
-        const cy = t.bbox_y + t.bbox_height / 2;
-        for (const ball of allBallPositions) {
-          if (Math.abs(ball.timestamp - t.timestamp_seconds) < frameInterval) {
-            const dist = Math.sqrt((cx - ball.x) ** 2 + (cy - ball.y) ** 2);
-            if (dist < 8) { touchCount++; break; }
-          }
-        }
-      }
-
-      const activityScore = Math.min(100, Math.round(touchCount * 8 + tracks.length * 2 + movementIntensity * 0.3));
-
-      // We don't have a player_id yet (coach assigns later), so we skip match_player_stats
-      // The frontend "Generate Stats" button will handle that after identity tagging
-      statsCount++;
-    }
-
-    // Clean up temp files
-    try { await Deno.remove(tmpVideo); } catch { /* ok */ }
-    try { await Deno.remove(tmpFrameDir, { recursive: true }); } catch { /* ok */ }
-
     // Mark as ready
     await supabase
       .from("match_videos")
       .update({
         status: "ready",
         ai_processing_error: null,
-        duration_seconds: videoDuration,
       })
       .eq("id", video_id);
 
-    console.log(`Processing complete: ${allTrackingRows.length} detections across ${frameFiles.length} frames`);
+    const uniqueTracks = new Set(allTrackingRows.map(r => r.tracking_id)).size;
+    console.log(`Processing complete: ${allTrackingRows.length} detections, ${uniqueTracks} unique players, ${analysis.frames?.length} frames`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        frames_processed: frameFiles.length,
+        frames_processed: analysis.frames?.length || 0,
         detections: allTrackingRows.length,
-        unique_tracks: trackingByPlayer.size,
-        ball_positions: allBallPositions.length,
+        unique_tracks: uniqueTracks,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -448,14 +372,13 @@ Deno.serve(async (req) => {
   } catch (err) {
     console.error("process-video error:", err);
 
-    // Try to mark as error
     try {
-      const body = await req.clone().json().catch(() => null);
-      if (body?.video_id) {
+      const { video_id } = await req.clone().json().catch(() => ({ video_id: null }));
+      if (video_id) {
         await supabase
           .from("match_videos")
           .update({ status: "error", ai_processing_error: String(err) })
-          .eq("id", body.video_id);
+          .eq("id", video_id);
       }
     } catch { /* ignore */ }
 
