@@ -83,5 +83,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="academy-promo"
+      component={AcademyPromoVideo}
+      durationInFrames={735}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
