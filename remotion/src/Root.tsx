@@ -8,6 +8,7 @@ import { PreLaunchHypeVideo } from "./PreLaunchHypeVideo";
 import { CountdownTeaser } from "./CountdownTeaser";
 import { GoProVideo } from "./GoProVideo";
 import { VideoAnalysisVideo } from "./VideoAnalysisVideo";
+import { AcademyPromoVideo } from "./AcademyPromoVideo";
 
 export const RemotionRoot = () => (
   <>
