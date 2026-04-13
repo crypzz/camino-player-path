@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { LeaderboardTable } from '@/components/LeaderboardTable';
 import { useRankings } from '@/hooks/useRankings';
 import heroPattern from '@/assets/hero-pattern.jpg';
+import { WaitlistForm } from '@/components/WaitlistForm';
 import caminoLogo from '@/assets/camino-logo.png';
 
 const features = [
