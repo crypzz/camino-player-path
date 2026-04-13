@@ -1,6 +1,6 @@
 /**
  * Video Stats Engine — Calculates player performance metrics from tracking data.
- * Designed as an abstraction layer so real AI models can replace the logic later.
+ * Supports both manual and AI-generated tracking with ball proximity for touch detection.
  */
 
 import { PlayerTracking } from '@/hooks/usePlayerTracking';
@@ -17,6 +17,8 @@ export interface ComputedPlayerStats {
   avgSpeed: number;            // px/s conceptual
   distanceCovered: number;     // arbitrary units
   heatmapData: Array<{ x: number; y: number }>;
+  possessionTime: number;      // seconds of ball proximity
+  source: 'manual' | 'ai' | 'mixed';
 }
 
 /** Compute stats for all players in a video from tracking + event data */
@@ -53,6 +55,11 @@ export function computePlayerStats(
     // Sort tracks by timestamp
     tracks.sort((a, b) => a.timestamp_seconds - b.timestamp_seconds);
 
+    // Determine source
+    const hasManual = tracks.some(t => t.source === 'manual');
+    const hasAI = tracks.some(t => t.source === 'ai');
+    const source: 'manual' | 'ai' | 'mixed' = hasManual && hasAI ? 'mixed' : hasAI ? 'ai' : 'manual';
+
     // Calculate distance from position changes
     let totalDistance = 0;
     let sprintCount = 0;
@@ -72,7 +79,9 @@ export function computePlayerStats(
         if (dt > 0) {
           const speed = dist / dt;
           speeds.push(speed);
-          if (speed > 15) sprintCount++; // threshold for "sprint"
+          // Adjust sprint threshold based on source (AI uses % coords, smaller values)
+          const sprintThreshold = source === 'ai' ? 5 : 15;
+          if (speed > sprintThreshold) sprintCount++;
         }
       }
     }
@@ -86,9 +95,20 @@ export function computePlayerStats(
     const touchEvents = ['touch', 'pass', 'shot', 'dribble', 'cross'];
     const estimatedTouches = playerEvents.filter(e => touchEvents.includes(e.event_type)).length;
 
+    // Possession time estimation (time near ball events)
+    let possessionTime = 0;
+    const ballEvents = playerEvents.filter(e => ['touch', 'pass', 'dribble', 'shot'].includes(e.event_type));
+    for (let i = 0; i < ballEvents.length; i++) {
+      const nextEvent = ballEvents[i + 1];
+      const holdDuration = nextEvent
+        ? Math.min(5, nextEvent.timestamp_seconds - ballEvents[i].timestamp_seconds)
+        : 2;
+      possessionTime += holdDuration;
+    }
+
     // Movement intensity: normalize distance over time (0–100)
     const movementIntensity = Math.min(100, Math.round(
-      (totalDistance / Math.max(timeOnField, 1)) * 10
+      (totalDistance / Math.max(timeOnField, 1)) * (source === 'ai' ? 30 : 10)
     ));
 
     // Activity score: combination of events + tracking density
@@ -111,6 +131,8 @@ export function computePlayerStats(
       avgSpeed: Math.round(avgSpeed * 10) / 10,
       distanceCovered: Math.round(totalDistance),
       heatmapData,
+      possessionTime: Math.round(possessionTime),
+      source,
     });
   }
 

@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { MatchVideo } from '@/hooks/useMatchVideos';
+import { MatchVideo, useVideoProcessingPoll, useAIAnalyzeVideo } from '@/hooks/useMatchVideos';
 import { useVideoEvents } from '@/hooks/useVideoEvents';
 import { useVideoAnnotations } from '@/hooks/useVideoAnnotations';
 import { useVideoStats } from '@/hooks/useVideoStats';
@@ -37,6 +37,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const [isTagging, setIsTagging] = useState(false);
   const [pendingTag, setPendingTag] = useState<{ x: number; y: number } | null>(null);
   const [activeTab, setActiveTab] = useState('events');
+  const [liveStatus, setLiveStatus] = useState(video.status);
 
   const { data: events = [] } = useVideoEvents(video.id);
   const { data: annotations = [] } = useVideoAnnotations(video.id);
@@ -51,8 +52,39 @@ export default function VideoWorkspace({ video, onBack }: Props) {
 
   const stats = useVideoStats(events, players);
   const upsertStats = useUpsertMatchPlayerStats();
+  const aiAnalyze = useAIAnalyzeVideo();
 
-  // Cache signed URL — only regenerate when video changes
+  // Poll processing status
+  useVideoProcessingPoll(video.id, liveStatus);
+
+  // Sync live status from polling
+  useEffect(() => {
+    setLiveStatus(video.status);
+  }, [video.status]);
+
+  // Poll status locally too
+  useEffect(() => {
+    if (liveStatus !== 'processing' && liveStatus !== 'queued') return;
+    const interval = setInterval(async () => {
+      const { data } = await supabase
+        .from('match_videos')
+        .select('status, ai_processing_error')
+        .eq('id', video.id)
+        .single();
+      if (data) {
+        setLiveStatus(data.status);
+        if (data.status === 'ready') {
+          toast.success('AI analysis complete! Check the Tracking tab.');
+          setActiveTab('tracking');
+        } else if (data.status === 'error') {
+          toast.error(data.ai_processing_error || 'AI analysis failed');
+        }
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [liveStatus, video.id]);
+
+  // Cache signed URL
   useEffect(() => {
     let cancelled = false;
     const getUrl = async () => {
@@ -111,6 +143,19 @@ export default function VideoWorkspace({ video, onBack }: Props) {
     }
   };
 
+  const handleAIAnalyze = async () => {
+    try {
+      setLiveStatus('processing');
+      toast.info('AI analysis started — this may take a few minutes...');
+      await aiAnalyze.mutateAsync(video.id);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to start AI analysis');
+      setLiveStatus('error');
+    }
+  };
+
+  const isProcessing = liveStatus === 'processing' || liveStatus === 'queued';
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -119,12 +164,22 @@ export default function VideoWorkspace({ video, onBack }: Props) {
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
             {video.title}
-            <ProcessingStatusBadge status={(video as any).status || 'ready'} />
+            <ProcessingStatusBadge status={liveStatus} />
           </h2>
           <p className="text-xs text-muted-foreground">
             {video.team}{video.opponent ? ` vs ${video.opponent}` : ''} · {video.match_date ? new Date(video.match_date).toLocaleDateString() : ''}
           </p>
         </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
+          onClick={handleAIAnalyze}
+          disabled={isProcessing || aiAnalyze.isPending}
+        >
+          <Brain className="h-3.5 w-3.5" />
+          {isProcessing ? 'Analyzing...' : 'AI Analyze'}
+        </Button>
         <Button size="sm" className="gap-1.5 text-xs" onClick={handleGenerateStats} disabled={upsertStats.isPending}>
           <Wand2 className="h-3.5 w-3.5" />
           {upsertStats.isPending ? 'Generating...' : 'Generate Stats'}

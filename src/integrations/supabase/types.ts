@@ -445,6 +445,8 @@ export type Database = {
       match_videos: {
         Row: {
           age_group: string | null
+          ai_processing_error: string | null
+          ai_processing_started_at: string | null
           created_at: string
           created_by: string
           duration_seconds: number | null
@@ -462,6 +464,8 @@ export type Database = {
         }
         Insert: {
           age_group?: string | null
+          ai_processing_error?: string | null
+          ai_processing_started_at?: string | null
           created_at?: string
           created_by: string
           duration_seconds?: number | null
@@ -479,6 +483,8 @@ export type Database = {
         }
         Update: {
           age_group?: string | null
+          ai_processing_error?: string | null
+          ai_processing_started_at?: string | null
           created_at?: string
           created_by?: string
           duration_seconds?: number | null
