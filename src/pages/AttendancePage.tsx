@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import { usePlayers } from '@/hooks/usePlayers';
+import { useAttendanceRecords, useUpsertAttendance } from '@/hooks/useAttendance';
 import { motion } from 'framer-motion';
 import { CalendarCheck, X, Check, Dumbbell, Swords, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useMemo } from 'react';
 
 const typeIcons: Record<string, typeof Dumbbell> = {
   training: Dumbbell,
@@ -16,7 +17,7 @@ const typeColors: Record<string, string> = {
   fitness: 'bg-success/20 text-success border-success/30',
 };
 
-// Generate sessions based on current date
+// Generate sessions based on current date (these are the sessions to track against)
 function generateSessions() {
   const sessions = [];
   const types: Array<'training' | 'match' | 'fitness'> = ['training', 'match', 'fitness'];
@@ -43,16 +44,41 @@ function generateSessions() {
   return sessions;
 }
 
-interface AttendanceRecord {
-  sessionId: string;
-  playerId: string;
-  present: boolean;
-}
-
 export default function AttendancePage() {
-  const { data: players = [], isLoading } = usePlayers();
-  const sessions = generateSessions();
-  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const { data: players = [], isLoading: playersLoading } = usePlayers();
+  const { data: records = [], isLoading: recordsLoading } = useAttendanceRecords();
+  const upsertAttendance = useUpsertAttendance();
+  const sessions = useMemo(() => generateSessions(), []);
+
+  const isLoading = playersLoading || recordsLoading;
+
+  // Build a lookup map: "date|title|playerId" -> record
+  const recordMap = useMemo(() => {
+    const map = new Map<string, boolean>();
+    records.forEach(r => {
+      map.set(`${r.session_date}|${r.session_title}|${r.player_id}`, r.present);
+    });
+    return map;
+  }, [records]);
+
+  const getAttendance = (sessionDate: string, sessionTitle: string, playerId: string) => {
+    const key = `${sessionDate}|${sessionTitle}|${playerId}`;
+    if (recordMap.has(key)) return recordMap.get(key)!;
+    return undefined;
+  };
+
+  const toggleAttendance = (session: typeof sessions[0], playerId: string) => {
+    const current = getAttendance(session.date, session.title, playerId);
+    const newPresent = current === undefined ? true : !current;
+    
+    upsertAttendance.mutate({
+      session_date: session.date,
+      session_type: session.type,
+      session_title: session.title,
+      player_id: playerId,
+      present: newPresent,
+    });
+  };
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">Loading...</div>;
@@ -69,25 +95,11 @@ export default function AttendancePage() {
     );
   }
 
-  const toggleAttendance = (sessionId: string, playerId: string) => {
-    setAttendance(prev => {
-      const existing = prev.find(a => a.sessionId === sessionId && a.playerId === playerId);
-      if (existing) {
-        return prev.map(a => a.sessionId === sessionId && a.playerId === playerId ? { ...a, present: !a.present } : a);
-      }
-      return [...prev, { sessionId, playerId, present: true }];
-    });
-  };
-
-  const getAttendance = (sessionId: string, playerId: string) => {
-    return attendance.find(a => a.sessionId === sessionId && a.playerId === playerId);
-  };
-
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">Attendance Tracking</h1>
-        <p className="text-muted-foreground text-sm mt-1">Track player attendance across sessions</p>
+        <p className="text-muted-foreground text-sm mt-1">Track player attendance across sessions — data saves automatically</p>
       </motion.div>
 
       <div className="glass-card rounded-xl overflow-hidden">
@@ -112,7 +124,7 @@ export default function AttendancePage() {
             <tbody>
               {sessions.map((session, i) => {
                 const Icon = typeIcons[session.type];
-                const presentCount = players.filter(p => getAttendance(session.id, p.id)?.present).length;
+                const presentCount = players.filter(p => getAttendance(session.date, session.title, p.id) === true).length;
                 const rate = players.length > 0 ? Math.round((presentCount / players.length) * 100) : 0;
 
                 return (
@@ -138,22 +150,22 @@ export default function AttendancePage() {
                       </div>
                     </td>
                     {players.map(player => {
-                      const record = getAttendance(session.id, player.id);
-                      const isPresent = record?.present;
+                      const present = getAttendance(session.date, session.title, player.id);
 
                       return (
                         <td key={player.id} className="p-4 text-center">
                           <button
-                            onClick={() => toggleAttendance(session.id, player.id)}
+                            onClick={() => toggleAttendance(session, player.id)}
+                            disabled={upsertAttendance.isPending}
                             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                              isPresent
+                              present === true
                                 ? 'bg-success/20 text-success hover:bg-success/30'
-                                : record
+                                : present === false
                                   ? 'bg-destructive/20 text-destructive hover:bg-destructive/30'
                                   : 'bg-secondary text-muted-foreground hover:bg-accent'
                             }`}
                           >
-                            {isPresent ? <Check className="h-4 w-4" /> : record ? <X className="h-4 w-4" /> : <span className="text-xs">–</span>}
+                            {present === true ? <Check className="h-4 w-4" /> : present === false ? <X className="h-4 w-4" /> : <span className="text-xs">–</span>}
                           </button>
                         </td>
                       );

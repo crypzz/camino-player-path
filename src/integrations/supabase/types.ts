@@ -87,6 +87,67 @@ export type Database = {
           },
         ]
       }
+      attendance_records: {
+        Row: {
+          created_at: string
+          id: string
+          player_id: string
+          present: boolean
+          recorded_by: string
+          session_date: string
+          session_id: string | null
+          session_title: string
+          session_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          player_id: string
+          present?: boolean
+          recorded_by: string
+          session_date: string
+          session_id?: string | null
+          session_title?: string
+          session_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          player_id?: string
+          present?: boolean
+          recorded_by?: string
+          session_date?: string
+          session_id?: string | null
+          session_title?: string
+          session_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_assignments: {
         Row: {
           assigned_at: string
@@ -991,6 +1052,45 @@ export type Database = {
           role?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      schedule_sessions: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          location: string
+          notes: string | null
+          session_date: string
+          session_time: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          location?: string
+          notes?: string | null
+          session_date?: string
+          session_time?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          location?: string
+          notes?: string | null
+          session_date?: string
+          session_time?: string
+          title?: string
+          type?: string
+          updated_at?: string
         }
         Relationships: []
       }
