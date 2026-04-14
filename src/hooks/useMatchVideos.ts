@@ -107,23 +107,19 @@ export function useAIAnalyzeVideo() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (videoId: string) => {
-      // Set status to processing first
-      await supabase
-        .from('match_videos')
-        .update({ status: 'processing' })
-        .eq('id', videoId);
-
-      queryClient.invalidateQueries({ queryKey: ['match-videos'] });
-
       const { data, error } = await supabase.functions.invoke('process-video', {
         body: { video_id: videoId },
       });
 
       if (error) throw error;
+      if (data && typeof data === 'object' && 'error' in data && data.error) {
+        throw new Error(String(data.error));
+      }
       return data;
     },
-    onSuccess: () => {
+    onSettled: (_data, _error, videoId) => {
       queryClient.invalidateQueries({ queryKey: ['match-videos'] });
+      queryClient.invalidateQueries({ queryKey: ['match-video', videoId] });
     },
   });
 }

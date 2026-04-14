@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Video, Plus, Play, Calendar, Users, BarChart3 } from 'lucide-react';
+import { Video, Plus, Play, Calendar, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,6 +8,7 @@ import { useMatchVideos, MatchVideo } from '@/hooks/useMatchVideos';
 import VideoUploadDialog from '@/components/video/VideoUploadDialog';
 import VideoWorkspace from '@/components/video/VideoWorkspace';
 import ProcessingStatusBadge from '@/components/video/ProcessingStatusBadge';
+import { getVideoDisplayStatus } from '@/lib/videoProcessing';
 
 const typeColors: Record<string, string> = {
   match: 'bg-primary/20 text-primary border-primary/30',
@@ -83,7 +84,7 @@ export default function VideoAnalysisPage() {
                   <Play className="h-6 w-6 text-primary ml-1" />
                 </div>
                 <div className="absolute top-3 right-3 z-10">
-                  <ProcessingStatusBadge status={(v as any).status || 'ready'} />
+                  <ProcessingStatusBadge status={getVideoDisplayStatus(v)} />
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10">
                   <Badge variant="outline" className={typeColors[v.type] || typeColors.match}>{v.type}</Badge>
