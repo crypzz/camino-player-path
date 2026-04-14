@@ -27,6 +27,11 @@ const statusConfig: Record<string, { label: string; icon: React.ReactNode; class
     icon: <Loader2 className="h-3 w-3 animate-spin" />,
     className: 'bg-muted text-muted-foreground border-muted-foreground/30',
   },
+  stalled: {
+    label: 'Needs Retry',
+    icon: <AlertCircle className="h-3 w-3" />,
+    className: 'bg-warning/20 text-warning border-warning/30',
+  },
 };
 
 export default function ProcessingStatusBadge({ status }: { status: string }) {

@@ -22,6 +22,7 @@ import PlayerTaggingPanel from './PlayerTaggingPanel';
 import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
 import { toast } from 'sonner';
+import { getVideoDisplayStatus, isVideoProcessingStale, isVideoProcessingStatus } from '@/lib/videoProcessing';
 
 interface Props {
   video: MatchVideo;
@@ -38,6 +39,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const [pendingTag, setPendingTag] = useState<{ x: number; y: number } | null>(null);
   const [activeTab, setActiveTab] = useState('events');
   const [liveStatus, setLiveStatus] = useState(video.status);
+  const [processingStartedAt, setProcessingStartedAt] = useState(video.ai_processing_started_at);
+  const [liveError, setLiveError] = useState(video.ai_processing_error);
 
   const { data: events = [] } = useVideoEvents(video.id);
   const { data: annotations = [] } = useVideoAnnotations(video.id);
@@ -60,19 +63,23 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   // Sync live status from polling
   useEffect(() => {
     setLiveStatus(video.status);
-  }, [video.status]);
+    setProcessingStartedAt(video.ai_processing_started_at);
+    setLiveError(video.ai_processing_error);
+  }, [video.id, video.status, video.ai_processing_started_at, video.ai_processing_error]);
 
   // Poll status locally too
   useEffect(() => {
-    if (liveStatus !== 'processing' && liveStatus !== 'queued') return;
+    if (!isVideoProcessingStatus(liveStatus)) return;
     const interval = setInterval(async () => {
       const { data } = await supabase
         .from('match_videos')
-        .select('status, ai_processing_error')
+        .select('status, ai_processing_error, ai_processing_started_at')
         .eq('id', video.id)
         .single();
       if (data) {
         setLiveStatus(data.status);
+        setProcessingStartedAt(data.ai_processing_started_at);
+        setLiveError(data.ai_processing_error);
         if (data.status === 'ready') {
           toast.success('AI analysis complete! Check the Tracking tab.');
           setActiveTab('tracking');
@@ -83,6 +90,12 @@ export default function VideoWorkspace({ video, onBack }: Props) {
     }, 3000);
     return () => clearInterval(interval);
   }, [liveStatus, video.id]);
+
+  useEffect(() => {
+    if (!isVideoProcessingStale({ status: liveStatus, ai_processing_started_at: processingStartedAt })) return;
+    setLiveStatus('stalled');
+    setLiveError(prev => prev || 'Analysis got stuck. Retry with a shorter clip under 20MB.');
+  }, [liveStatus, processingStartedAt]);
 
   // Cache signed URL
   useEffect(() => {
@@ -145,16 +158,24 @@ export default function VideoWorkspace({ video, onBack }: Props) {
 
   const handleAIAnalyze = async () => {
     try {
-      setLiveStatus('processing');
-      toast.info('AI analysis started — this may take a few minutes...');
+      setLiveStatus('queued');
+      setProcessingStartedAt(new Date().toISOString());
+      setLiveError(null);
+      toast.info('AI analysis queued — this may take a few minutes...');
       await aiAnalyze.mutateAsync(video.id);
     } catch (err: any) {
       toast.error(err.message || 'Failed to start AI analysis');
       setLiveStatus('error');
+      setLiveError(err.message || 'Failed to start AI analysis');
     }
   };
 
-  const isProcessing = liveStatus === 'processing' || liveStatus === 'queued';
+  const displayStatus = getVideoDisplayStatus({
+    status: liveStatus,
+    ai_processing_started_at: processingStartedAt,
+  });
+  const isStaleProcessing = displayStatus === 'stalled';
+  const isProcessing = isVideoProcessingStatus(liveStatus);
 
   return (
     <div className="space-y-4">
@@ -164,11 +185,17 @@ export default function VideoWorkspace({ video, onBack }: Props) {
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
             {video.title}
-            <ProcessingStatusBadge status={liveStatus} />
+            <ProcessingStatusBadge status={displayStatus} />
           </h2>
           <p className="text-xs text-muted-foreground">
             {video.team}{video.opponent ? ` vs ${video.opponent}` : ''} · {video.match_date ? new Date(video.match_date).toLocaleDateString() : ''}
           </p>
+          {displayStatus === 'stalled' && (
+            <p className="text-xs text-warning mt-1">Analysis got stuck. Retry it with a shorter clip under 20MB.</p>
+          )}
+          {liveStatus === 'error' && liveError && (
+            <p className="text-xs text-destructive mt-1">{liveError}</p>
+          )}
         </div>
         <Button
           size="sm"
@@ -178,7 +205,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
           disabled={isProcessing || aiAnalyze.isPending}
         >
           <Brain className="h-3.5 w-3.5" />
-          {isProcessing ? 'Analyzing...' : 'AI Analyze'}
+          {isProcessing ? 'Analyzing...' : isStaleProcessing ? 'Retry AI Analyze' : 'AI Analyze'}
         </Button>
         <Button size="sm" className="gap-1.5 text-xs" onClick={handleGenerateStats} disabled={upsertStats.isPending}>
           <Wand2 className="h-3.5 w-3.5" />

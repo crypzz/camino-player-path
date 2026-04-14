@@ -6,6 +6,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const JSON_HEADERS = {
+  ...corsHeaders,
+  "Content-Type": "application/json",
+};
+
+const MAX_INLINE_VIDEO_BYTES = 20 * 1024 * 1024;
+const MAX_INLINE_VIDEO_MB = 20;
+const ACTIVE_JOB_WINDOW_MS = 10 * 60 * 1000;
+
 const ANALYSIS_PROMPT = `You are a professional football/soccer match analyst AI. Analyze this match video and detect players at multiple timestamps throughout the video.
 
 For each timestamp you analyze, report all visible players on the pitch with their bounding box positions.
@@ -40,107 +49,207 @@ Rules:
 - Only detect actual players on the pitch, not spectators
 - Return as many frames as you can reasonably analyze`;
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+type MatchVideoRow = {
+  id: string;
+  title: string;
+  created_by: string;
+  video_url: string;
+  duration_seconds: number | null;
+  status: string;
+  ai_processing_started_at: string | null;
+};
+
+type EdgeRuntimeLike = {
+  waitUntil: (promise: Promise<unknown>) => void;
+};
+
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: JSON_HEADERS,
+  });
+}
+
+function createAdminClient() {
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+    throw new Error("Backend credentials are missing");
   }
 
+  return createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+}
+
+function getEdgeRuntime() {
+  return (globalThis as typeof globalThis & { EdgeRuntime?: EdgeRuntimeLike }).EdgeRuntime;
+}
+
+function parsePositiveNumber(value: unknown) {
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function splitStoragePath(path: string) {
+  const segments = path.split("/").filter(Boolean);
+  const fileName = segments.pop() ?? "";
+  return {
+    directory: segments.join("/"),
+    fileName,
+  };
+}
+
+function isActiveProcessingJob(video: Pick<MatchVideoRow, "status" | "ai_processing_started_at">) {
+  if ((video.status !== "processing" && video.status !== "queued") || !video.ai_processing_started_at) {
+    return false;
+  }
+
+  const startedAt = new Date(video.ai_processing_started_at).getTime();
+  return Number.isFinite(startedAt) && Date.now() - startedAt < ACTIVE_JOB_WINDOW_MS;
+}
+
+async function updateVideoStatus(
+  supabase: ReturnType<typeof createAdminClient>,
+  videoId: string,
+  updates: Record<string, unknown>
+) {
+  const { error } = await supabase
+    .from("match_videos")
+    .update(updates)
+    .eq("id", videoId);
+
+  if (error) {
+    console.error("Failed to update video status:", error);
+  }
+}
+
+async function failVideo(
+  supabase: ReturnType<typeof createAdminClient>,
+  videoId: string,
+  message: string
+) {
+  await updateVideoStatus(supabase, videoId, {
+    status: "error",
+    ai_processing_error: message,
+  });
+}
+
+async function resolveVideoSizeBytes(
+  supabase: ReturnType<typeof createAdminClient>,
+  videoPath: string,
+  signedUrl: string
+) {
+  const { directory, fileName } = splitStoragePath(videoPath);
+
+  if (fileName) {
+    const { data: files, error } = await supabase.storage
+      .from("match-videos")
+      .list(directory, { search: fileName, limit: 100 });
+
+    if (error) {
+      console.warn("Storage size lookup failed:", error.message);
+    } else {
+      const exactMatch = (files?.find((file) => file.name === fileName) ?? files?.[0]) as
+        | { metadata?: { size?: number | string } }
+        | undefined;
+      const metadataSize = parsePositiveNumber(exactMatch?.metadata?.size);
+      if (metadataSize) {
+        return metadataSize;
+      }
+    }
+  }
+
+  const headResponse = await fetch(signedUrl, { method: "HEAD" });
+  if (headResponse.ok) {
+    const contentLength = parsePositiveNumber(headResponse.headers.get("content-length"));
+    if (contentLength) {
+      return contentLength;
+    }
+  }
+
+  return null;
+}
+
+async function processVideoInBackground(videoId: string) {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-  const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = createAdminClient();
 
   if (!LOVABLE_API_KEY) {
-    return new Response(JSON.stringify({ error: "AI not configured" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    await failVideo(supabase, videoId, "AI not configured");
+    return;
   }
 
-  const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
-
   try {
-    const { video_id } = await req.json();
-    if (!video_id) {
-      return new Response(JSON.stringify({ error: "video_id required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Get video record
     const { data: video, error: videoErr } = await supabase
       .from("match_videos")
       .select("*")
-      .eq("id", video_id)
+      .eq("id", videoId)
       .single();
 
     if (videoErr || !video) {
-      return new Response(JSON.stringify({ error: "Video not found" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      console.error("Video not found for background processing:", videoErr);
+      return;
     }
 
-    // Mark as processing
-    await supabase
-      .from("match_videos")
-      .update({
-        status: "processing",
-        ai_processing_started_at: new Date().toISOString(),
-        ai_processing_error: null,
-      })
-      .eq("id", video_id);
+    await updateVideoStatus(supabase, videoId, {
+      status: "processing",
+      ai_processing_started_at: new Date().toISOString(),
+      ai_processing_error: null,
+    });
 
-    // Get signed URL for the video
-    const { data: signedData } = await supabase.storage
+    const { data: signedData, error: signedUrlError } = await supabase.storage
       .from("match-videos")
       .createSignedUrl(video.video_url, 3600);
 
-    if (!signedData?.signedUrl) {
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "Could not access video file" })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Could not access video" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (signedUrlError || !signedData?.signedUrl) {
+      await failVideo(supabase, videoId, "Could not access video file");
+      return;
+    }
+
+    const sizeBytes = await resolveVideoSizeBytes(supabase, video.video_url, signedData.signedUrl);
+    if (sizeBytes && sizeBytes > MAX_INLINE_VIDEO_BYTES) {
+      const sizeMB = (sizeBytes / (1024 * 1024)).toFixed(1);
+      await failVideo(
+        supabase,
+        videoId,
+        `Video is ${sizeMB}MB. AI analysis currently supports clips up to ${MAX_INLINE_VIDEO_MB}MB.`
+      );
+      return;
     }
 
     const videoDuration = video.duration_seconds || 90;
     console.log(`Processing video: ${video.title}, duration: ${videoDuration}s`);
 
-    // Download video and convert to base64
     const videoResponse = await fetch(signedData.signedUrl);
     if (!videoResponse.ok) {
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "Failed to download video" })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Failed to download video" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await failVideo(supabase, videoId, "Failed to download video");
+      return;
+    }
+
+    const contentLength = parsePositiveNumber(videoResponse.headers.get("content-length"));
+    if (contentLength && contentLength > MAX_INLINE_VIDEO_BYTES) {
+      await failVideo(
+        supabase,
+        videoId,
+        `Video is ${(contentLength / (1024 * 1024)).toFixed(1)}MB. AI analysis currently supports clips up to ${MAX_INLINE_VIDEO_MB}MB.`
+      );
+      await videoResponse.body?.cancel();
+      return;
     }
 
     const videoBytes = new Uint8Array(await videoResponse.arrayBuffer());
-    
-    // Check size — Gemini supports up to ~20MB inline
     const videoSizeMB = videoBytes.length / (1024 * 1024);
     console.log(`Video size: ${videoSizeMB.toFixed(1)} MB`);
 
-    if (videoSizeMB > 20) {
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "Video too large for AI analysis (max 20MB). Try a shorter clip." })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Video too large (max 20MB)" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (videoBytes.length > MAX_INLINE_VIDEO_BYTES) {
+      await failVideo(
+        supabase,
+        videoId,
+        `Video is ${videoSizeMB.toFixed(1)}MB. AI analysis currently supports clips up to ${MAX_INLINE_VIDEO_MB}MB.`
+      );
+      return;
     }
 
-    // Convert to base64
     let base64 = "";
     const chunkSize = 32768;
     for (let i = 0; i < videoBytes.length; i += chunkSize) {
@@ -151,128 +260,106 @@ Deno.serve(async (req) => {
 
     console.log("Sending video to AI for analysis...");
 
-    // Send entire video to Gemini for multi-frame analysis
-    const aiResponse = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: ANALYSIS_PROMPT },
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `Analyze this ${videoDuration} second football match video. Detect all players and ball positions at multiple timestamps throughout. Sample every 3-5 seconds.`,
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: `data:video/mp4;base64,${base64}`,
-                  },
-                },
-              ],
-            },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "report_video_analysis",
-                description: "Report detected players and ball positions across multiple video frames",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    frames: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          timestamp_seconds: { type: "number" },
-                          players: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                tracking_id: { type: "string" },
-                                jersey_number: { type: "string" },
-                                team_color: { type: "string" },
-                                bbox: {
-                                  type: "object",
-                                  properties: {
-                                    x: { type: "number" },
-                                    y: { type: "number" },
-                                    width: { type: "number" },
-                                    height: { type: "number" },
-                                  },
-                                  required: ["x", "y", "width", "height"],
-                                },
-                                confidence: { type: "number" },
-                              },
-                              required: ["tracking_id", "bbox", "confidence"],
-                            },
-                          },
-                          ball: {
-                            type: "object",
-                            properties: {
-                              x: { type: "number" },
-                              y: { type: "number" },
-                            },
-                          },
-                        },
-                        required: ["timestamp_seconds", "players"],
-                      },
-                    },
-                  },
-                  required: ["frames"],
+    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: ANALYSIS_PROMPT },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Analyze this ${videoDuration} second football match video. Detect all players and ball positions at multiple timestamps throughout. Sample every 3-5 seconds.`,
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:video/mp4;base64,${base64}`,
                 },
               },
+            ],
+          },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "report_video_analysis",
+              description: "Report detected players and ball positions across multiple video frames",
+              parameters: {
+                type: "object",
+                properties: {
+                  frames: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        timestamp_seconds: { type: "number" },
+                        players: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              tracking_id: { type: "string" },
+                              jersey_number: { type: "string" },
+                              team_color: { type: "string" },
+                              bbox: {
+                                type: "object",
+                                properties: {
+                                  x: { type: "number" },
+                                  y: { type: "number" },
+                                  width: { type: "number" },
+                                  height: { type: "number" },
+                                },
+                                required: ["x", "y", "width", "height"],
+                              },
+                              confidence: { type: "number" },
+                            },
+                            required: ["tracking_id", "bbox", "confidence"],
+                          },
+                        },
+                        ball: {
+                          type: "object",
+                          properties: {
+                            x: { type: "number" },
+                            y: { type: "number" },
+                          },
+                        },
+                      },
+                      required: ["timestamp_seconds", "players"],
+                    },
+                  },
+                },
+                required: ["frames"],
+              },
             },
-          ],
-          tool_choice: { type: "function", function: { name: "report_video_analysis" } },
-        }),
-      }
-    );
+          },
+        ],
+        tool_choice: { type: "function", function: { name: "report_video_analysis" } },
+      }),
+    });
 
     if (aiResponse.status === 429) {
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "AI rate limited — please try again in a minute" })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Rate limited" }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await failVideo(supabase, videoId, "AI rate limited — please try again in a minute");
+      return;
     }
 
     if (aiResponse.status === 402) {
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "AI credits exhausted" })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Credits exhausted" }), {
-        status: 402,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await failVideo(supabase, videoId, "AI credits exhausted");
+      return;
     }
 
     if (!aiResponse.ok) {
       const errText = await aiResponse.text();
       console.error("AI error:", aiResponse.status, errText);
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: `AI analysis failed (${aiResponse.status})` })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "AI analysis failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await failVideo(supabase, videoId, `AI analysis failed (${aiResponse.status})`);
+      return;
     }
 
     const aiData = await aiResponse.json();
@@ -280,14 +367,8 @@ Deno.serve(async (req) => {
 
     if (!toolCall?.function?.arguments) {
       console.error("No tool call in AI response:", JSON.stringify(aiData).slice(0, 500));
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "AI returned no detections" })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "No detections" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await failVideo(supabase, videoId, "AI returned no detections");
+      return;
     }
 
     let analysis: { frames: any[] };
@@ -295,29 +376,22 @@ Deno.serve(async (req) => {
       analysis = JSON.parse(toolCall.function.arguments);
     } catch {
       console.error("Failed to parse AI response");
-      await supabase
-        .from("match_videos")
-        .update({ status: "error", ai_processing_error: "Failed to parse AI response" })
-        .eq("id", video_id);
-      return new Response(JSON.stringify({ error: "Parse error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await failVideo(supabase, videoId, "Failed to parse AI response");
+      return;
     }
 
     console.log(`AI returned ${analysis.frames?.length || 0} frames`);
 
-    // Convert to tracking rows
     const allTrackingRows: any[] = [];
-    for (const frame of (analysis.frames || [])) {
+    for (const frame of analysis.frames || []) {
       const ts = frame.timestamp_seconds || 0;
       const frameNumber = Math.round(ts * 30);
 
-      for (const det of (frame.players || [])) {
+      for (const det of frame.players || []) {
         if (!det.bbox) continue;
         allTrackingRows.push({
-          video_id,
-          tracking_id: `ai_${det.tracking_id || 'unknown'}`,
+          video_id: videoId,
+          tracking_id: `ai_${det.tracking_id || "unknown"}`,
           player_id: null,
           frame_number: frameNumber,
           timestamp_seconds: ts,
@@ -332,62 +406,109 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Batch insert tracking data
+    const { error: cleanupError } = await supabase
+      .from("player_tracking")
+      .delete()
+      .eq("video_id", videoId)
+      .eq("source", "ai");
+
+    if (cleanupError) {
+      throw cleanupError;
+    }
+
     if (allTrackingRows.length > 0) {
       for (let i = 0; i < allTrackingRows.length; i += 100) {
         const chunk = allTrackingRows.slice(i, i + 100);
         const { error: insertErr } = await supabase
           .from("player_tracking")
           .insert(chunk);
+
         if (insertErr) {
-          console.error("Tracking insert error:", insertErr);
+          throw insertErr;
         }
       }
       console.log(`Inserted ${allTrackingRows.length} tracking records`);
     }
 
-    // Mark as ready
-    await supabase
-      .from("match_videos")
-      .update({
-        status: "ready",
-        ai_processing_error: null,
-      })
-      .eq("id", video_id);
+    await updateVideoStatus(supabase, videoId, {
+      status: "ready",
+      ai_processing_error: null,
+    });
 
-    const uniqueTracks = new Set(allTrackingRows.map(r => r.tracking_id)).size;
-    console.log(`Processing complete: ${allTrackingRows.length} detections, ${uniqueTracks} unique players, ${analysis.frames?.length} frames`);
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        frames_processed: analysis.frames?.length || 0,
-        detections: allTrackingRows.length,
-        unique_tracks: uniqueTracks,
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+    const uniqueTracks = new Set(allTrackingRows.map((row) => row.tracking_id)).size;
+    console.log(
+      `Processing complete: ${allTrackingRows.length} detections, ${uniqueTracks} unique players, ${analysis.frames?.length || 0} frames`
     );
   } catch (err) {
-    console.error("process-video error:", err);
+    console.error("process-video background error:", err);
+    await failVideo(
+      supabase,
+      videoId,
+      err instanceof Error ? err.message : "Unknown error"
+    );
+  }
+}
 
-    try {
-      const { video_id } = await req.clone().json().catch(() => ({ video_id: null }));
-      if (video_id) {
-        await supabase
-          .from("match_videos")
-          .update({ status: "error", ai_processing_error: String(err) })
-          .eq("id", video_id);
-      }
-    } catch { /* ignore */ }
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
 
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+  if (!Deno.env.get("LOVABLE_API_KEY")) {
+    return jsonResponse({ error: "AI not configured" }, 500);
+  }
+
+  try {
+    const body = await req.json().catch(() => ({}));
+    const videoId = typeof body.video_id === "string" ? body.video_id : "";
+
+    if (!videoId) {
+      return jsonResponse({ error: "video_id required" }, 400);
+    }
+
+    const supabase = createAdminClient();
+    const { data: video, error: videoErr } = await supabase
+      .from("match_videos")
+      .select("id, status, ai_processing_started_at")
+      .eq("id", videoId)
+      .single();
+
+    if (videoErr || !video) {
+      return jsonResponse({ error: "Video not found" }, 404);
+    }
+
+    if (isActiveProcessingJob(video)) {
+      return jsonResponse({ success: true, already_running: true, video_id: videoId }, 202);
+    }
+
+    const { error: queueError } = await supabase
+      .from("match_videos")
+      .update({
+        status: "queued",
+        ai_processing_error: null,
+        ai_processing_started_at: null,
+      })
+      .eq("id", videoId);
+
+    if (queueError) {
+      throw queueError;
+    }
+
+    const backgroundTask = processVideoInBackground(videoId);
+    const edgeRuntime = getEdgeRuntime();
+
+    if (edgeRuntime?.waitUntil) {
+      edgeRuntime.waitUntil(backgroundTask);
+    } else {
+      void backgroundTask;
+    }
+
+    return jsonResponse({ success: true, queued: true, video_id: videoId }, 202);
+  } catch (err) {
+    console.error("process-video request error:", err);
+    return jsonResponse(
+      { error: err instanceof Error ? err.message : "Unknown error" },
+      500
     );
   }
 });
