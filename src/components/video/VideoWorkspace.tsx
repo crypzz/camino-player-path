@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2, Brain } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { MatchVideo, useVideoProcessingPoll, useAIAnalyzeVideo } from '@/hooks/useMatchVideos';
 import { useVideoEvents } from '@/hooks/useVideoEvents';
@@ -21,6 +22,7 @@ import AnnotationsPanel from './AnnotationsPanel';
 import PlayerTaggingPanel from './PlayerTaggingPanel';
 import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
+import AIProcessingPanel from './AIProcessingPanel';
 import { toast } from 'sonner';
 import { getVideoDisplayStatus, isVideoProcessingStale, isVideoProcessingStatus } from '@/lib/videoProcessing';
 
