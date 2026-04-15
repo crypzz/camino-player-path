@@ -199,16 +199,23 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             <p className="text-xs text-destructive mt-1">{liveError}</p>
           )}
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
-          onClick={handleAIAnalyze}
-          disabled={isProcessing || aiAnalyze.isPending}
-        >
-          <Brain className="h-3.5 w-3.5" />
-          {isProcessing ? 'Analyzing...' : isStaleProcessing ? 'Retry AI Analyze' : 'AI Analyze'}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
+              onClick={handleAIAnalyze}
+              disabled={isProcessing || aiAnalyze.isPending}
+            >
+              <Brain className="h-3.5 w-3.5" />
+              {isProcessing ? 'Analyzing...' : isStaleProcessing ? 'Retry AI Analyze' : 'AI Analyze'}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[220px] text-center">
+            AI detects players and tracks their positions across the video automatically
+          </TooltipContent>
+        </Tooltip>
         <Button size="sm" className="gap-1.5 text-xs" onClick={handleGenerateStats} disabled={upsertStats.isPending}>
           <Wand2 className="h-3.5 w-3.5" />
           {upsertStats.isPending ? 'Generating...' : 'Generate Stats'}
