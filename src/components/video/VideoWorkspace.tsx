@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2, Brain } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { MatchVideo, useVideoProcessingPoll, useAIAnalyzeVideo } from '@/hooks/useMatchVideos';
 import { useVideoEvents } from '@/hooks/useVideoEvents';
@@ -21,6 +22,7 @@ import AnnotationsPanel from './AnnotationsPanel';
 import PlayerTaggingPanel from './PlayerTaggingPanel';
 import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
+import AIProcessingPanel from './AIProcessingPanel';
 import { toast } from 'sonner';
 import { getVideoDisplayStatus, isVideoProcessingStale, isVideoProcessingStatus } from '@/lib/videoProcessing';
 
@@ -51,6 +53,11 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const players = useMemo(
     () => playersRaw.map(p => ({ id: p.id, name: p.name })),
     [playersRaw]
+  );
+
+  const uniqueTrackingPlayers = useMemo(
+    () => new Set(tracking.map(t => t.tracking_id)).size,
+    [tracking]
   );
 
   const stats = useVideoStats(events, players);
@@ -197,21 +204,30 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             <p className="text-xs text-destructive mt-1">{liveError}</p>
           )}
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
-          onClick={handleAIAnalyze}
-          disabled={isProcessing || aiAnalyze.isPending}
-        >
-          <Brain className="h-3.5 w-3.5" />
-          {isProcessing ? 'Analyzing...' : isStaleProcessing ? 'Retry AI Analyze' : 'AI Analyze'}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
+              onClick={handleAIAnalyze}
+              disabled={isProcessing || aiAnalyze.isPending}
+            >
+              <Brain className="h-3.5 w-3.5" />
+              {isProcessing ? 'Analyzing...' : isStaleProcessing ? 'Retry AI Analyze' : 'AI Analyze'}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[220px] text-center">
+            AI detects players and tracks their positions across the video automatically
+          </TooltipContent>
+        </Tooltip>
         <Button size="sm" className="gap-1.5 text-xs" onClick={handleGenerateStats} disabled={upsertStats.isPending}>
           <Wand2 className="h-3.5 w-3.5" />
           {upsertStats.isPending ? 'Generating...' : 'Generate Stats'}
         </Button>
       </div>
+
+      <AIProcessingPanel status={liveStatus} trackingCount={tracking.length} uniquePlayers={uniqueTrackingPlayers} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4">
         {/* Left: Video + Timeline + Tagger */}
