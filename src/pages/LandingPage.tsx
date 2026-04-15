@@ -120,26 +120,26 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background" style={{ scrollBehavior: 'smooth' }}>
       {/* Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/95 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
-        <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={caminoLogo} alt="Camino" className="h-8 w-8 rounded-md object-contain" />
-            <span className="font-display font-bold text-foreground text-sm tracking-tight">Camino</span>
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <img src={caminoLogo} alt="Camino" className="h-9 w-9 rounded-md object-contain" />
+            <span className="font-display font-bold text-foreground text-base tracking-tight">Camino</span>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium">
             <button onClick={() => scrollTo('rankings')} className="hover:text-foreground transition-colors">Rankings</button>
             <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
             <button onClick={() => scrollTo('how-it-works')} className="hover:text-foreground transition-colors">How It Works</button>
             <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-muted-foreground text-[13px] h-8">
+              <Button variant="ghost" size="sm" className="text-muted-foreground text-sm h-9">
                 Log in
               </Button>
             </Link>
             <Link to="/auth">
-              <Button size="sm" className="h-8 text-[13px] font-semibold gap-1.5">
-                Get Started <ArrowRight className="h-3.5 w-3.5" />
+              <Button size="sm" className="h-9 px-5 text-sm font-semibold gap-1.5">
+                Get Started <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -147,29 +147,29 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative pt-14">
+      <section className="relative pt-16">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/75 to-background z-10" />
           <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-60" />
         </div>
 
-        <div className="relative z-20 max-w-6xl mx-auto px-5 pt-20 pb-24 lg:pt-28 lg:pb-32">
-          <div className="max-w-2xl">
+        <div className="relative z-20 max-w-[1400px] mx-auto px-6 lg:px-10 pt-24 pb-28 lg:pt-32 lg:pb-36">
+          <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-7"
             >
-              <Zap className="h-3 w-3 text-primary" />
-              <span className="text-[11px] font-medium text-primary tracking-wide">PLAYER DEVELOPMENT PLATFORM</span>
+              <Zap className="h-3.5 w-3.5 text-primary" />
+              <span className="text-xs font-medium text-primary tracking-wide">PLAYER DEVELOPMENT PLATFORM</span>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl lg:text-5xl font-display font-extrabold text-foreground leading-[1.1] tracking-tight"
+              className="text-5xl md:text-6xl xl:text-7xl font-display font-extrabold text-foreground leading-[1.05] tracking-tight"
             >
               Your progress,{' '}
               <span className="text-primary">proven.</span>
@@ -179,7 +179,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-5 text-[15px] text-muted-foreground leading-relaxed max-w-lg"
+              className="mt-6 text-base lg:text-lg text-muted-foreground leading-relaxed max-w-2xl"
             >
               Camino is the all-in-one platform where academies evaluate, communicate, and develop talent.
               Track 23 performance metrics. Build verified player profiles. Replace guesswork with proof.
@@ -189,17 +189,17 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-8 flex items-center gap-3"
+              className="mt-10 flex items-center gap-4"
             >
               <Link to="/auth">
-                <Button size="lg" className="h-11 px-6 text-[13px] font-semibold gap-2">
+                <Button size="lg" className="h-12 px-8 text-sm font-semibold gap-2">
                   Start Free <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Button
                 variant="outline"
                 size="lg"
-                className="h-11 px-6 text-[13px] font-semibold border-border text-muted-foreground hover:text-foreground"
+                className="h-12 px-8 text-sm font-semibold border-border text-muted-foreground hover:text-foreground"
                 onClick={() => scrollTo('how-it-works')}
               >
                 See How It Works
@@ -212,12 +212,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
-            className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-lg overflow-hidden"
+            className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden"
           >
             {stats.map((stat) => (
-              <div key={stat.label} className="bg-card p-5 text-center">
-                <div className="text-2xl font-display font-bold text-primary tracking-tight">{stat.value}</div>
-                <div className="text-[11px] text-muted-foreground font-medium mt-0.5 uppercase tracking-wider">{stat.label}</div>
+              <div key={stat.label} className="bg-card p-6 text-center">
+                <div className="text-3xl font-display font-bold text-primary tracking-tight">{stat.value}</div>
+                <div className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wider">{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -237,7 +237,7 @@ export default function LandingPage() {
             <h3 className="font-display font-bold text-foreground text-lg tracking-tight">
               See player development beyond match day
             </h3>
-            <p className="mt-1.5 text-[13px] text-muted-foreground">
+            <p className="mt-1.5 text-sm text-muted-foreground">
               Request early access to Camino.
             </p>
             <WaitlistForm />
@@ -247,7 +247,7 @@ export default function LandingPage() {
 
       {/* Live Rankings */}
       <section id="rankings" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -256,12 +256,12 @@ export default function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Trophy className="h-3 w-3 text-primary" />
-              <span className="text-[11px] font-medium text-primary tracking-wide">LIVE RANKINGS</span>
+              <span className="text-xs font-medium text-primary tracking-wide">LIVE RANKINGS</span>
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
               The Leaderboard Is Live
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground max-w-md mx-auto">
               Rankings update after every evaluation. Weighted by CPI, consistency, and improvement trajectory.
             </motion.p>
           </motion.div>
@@ -294,20 +294,20 @@ export default function LandingPage() {
 
       {/* Features */}
       <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-14"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
               Platform
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
               Everything your club needs. Nothing it doesn't.
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-lg mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground max-w-lg mx-auto">
               Evaluations, communication, fitness, video analysis, and player profiles — unified in a single platform built for youth football.
             </motion.p>
           </motion.div>
@@ -329,7 +329,7 @@ export default function LandingPage() {
                   <feature.icon className="h-4 w-4 text-primary" />
                 </div>
                 <h3 className="font-display font-semibold text-foreground text-sm mb-1.5">{feature.title}</h3>
-                <p className="text-[12.5px] text-muted-foreground leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -338,20 +338,20 @@ export default function LandingPage() {
 
       {/* CPI Section */}
       <section id="cpi" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-80px' }}
             >
-              <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
                 Camino Player Index
               </motion.p>
-              <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+              <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
                 One score. Complete picture.
               </motion.h2>
-              <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground leading-relaxed">
+              <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground leading-relaxed">
                 The CPI distills 23 performance metrics into a single 0–100 score. Coaches evaluate. The system quantifies. Players own their proof.
               </motion.p>
 
@@ -365,8 +365,8 @@ export default function LandingPage() {
                   <div key={item.label} className="flex items-start gap-3 p-3 rounded-md bg-card border border-border/50">
                     <span className="text-xs font-display font-bold text-primary bg-primary/10 px-2 py-0.5 rounded shrink-0">{item.weight}</span>
                     <div>
-                      <h4 className="text-[13px] font-semibold text-foreground">{item.label}</h4>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{item.desc}</p>
+                      <h4 className="text-sm font-semibold text-foreground">{item.label}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -394,23 +394,23 @@ export default function LandingPage() {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-5xl font-display font-extrabold text-primary tracking-tight">73</span>
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium mt-1">CPI Score</span>
+                    <span className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground font-medium mt-1">CPI Score</span>
                   </div>
                 </div>
                 <div className="absolute -top-2 -right-4 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[10px] text-muted-foreground">Technical</div>
+                  <div className="text-[11px] text-muted-foreground">Technical</div>
                   <div className="text-sm font-display font-bold text-foreground">7.5</div>
                 </div>
                 <div className="absolute top-16 -left-8 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[10px] text-muted-foreground">Tactical</div>
+                  <div className="text-[11px] text-muted-foreground">Tactical</div>
                   <div className="text-sm font-display font-bold text-info">6.8</div>
                 </div>
                 <div className="absolute bottom-16 -right-6 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[10px] text-muted-foreground">Physical</div>
+                  <div className="text-[11px] text-muted-foreground">Physical</div>
                   <div className="text-sm font-display font-bold text-success">7.8</div>
                 </div>
                 <div className="absolute -bottom-2 -left-2 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[10px] text-muted-foreground">Mental</div>
+                  <div className="text-[11px] text-muted-foreground">Mental</div>
                   <div className="text-sm font-display font-bold text-accent-foreground">7.2</div>
                 </div>
               </div>
@@ -421,17 +421,17 @@ export default function LandingPage() {
 
       {/* How It Works */}
       <section id="how-it-works" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-14"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
               How It Works
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
               Three steps. Full visibility.
             </motion.h2>
           </motion.div>
@@ -454,7 +454,7 @@ export default function LandingPage() {
                   <span className="text-xs font-display font-bold text-primary">{step.num}</span>
                 </div>
                 <h3 className="font-display font-bold text-foreground text-sm mb-2">{step.title}</h3>
-                <p className="text-[12.5px] text-muted-foreground leading-relaxed">{step.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -463,20 +463,20 @@ export default function LandingPage() {
 
       {/* Roles Section */}
       <section id="roles" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-14"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
               Built for everyone
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
               Four roles. One platform.
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground max-w-md mx-auto">
               Every stakeholder in the development pathway gets a dedicated experience.
             </motion.p>
           </motion.div>
@@ -523,10 +523,10 @@ export default function LandingPage() {
                   <item.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="font-display font-bold text-foreground text-sm mb-1.5">{item.role}</h3>
-                <p className="text-[11.5px] text-muted-foreground leading-relaxed mb-3">{item.desc}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-3">{item.desc}</p>
                 <ul className="space-y-1">
                   {item.features.map(f => (
-                    <li key={f} className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+                    <li key={f} className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                       <CheckCircle2 className="h-3 w-3 text-primary/60" />
                       {f}
                     </li>
@@ -540,17 +540,17 @@ export default function LandingPage() {
 
       {/* Testimonials */}
       <section className="relative py-20 lg:py-28 border-t border-border/40">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-14"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
               From the field
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
               Proof, not promises.
             </motion.h2>
           </motion.div>
@@ -568,14 +568,14 @@ export default function LandingPage() {
                 custom={i + 2}
                 className="glass-card p-6"
               >
-                <p className="text-[13px] text-foreground/90 leading-relaxed italic mb-4">"{t.quote}"</p>
+                <p className="text-sm text-foreground/90 leading-relaxed italic mb-4">"{t.quote}"</p>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <Award className="h-3.5 w-3.5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[12px] font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{t.org}</p>
+                    <p className="text-xs font-semibold text-foreground">{t.name}</p>
+                    <p className="text-[11px] text-muted-foreground">{t.org}</p>
                   </div>
                 </div>
               </motion.div>
@@ -586,26 +586,26 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="relative py-20 lg:py-28 border-t border-border/40">
-        <div className="max-w-6xl mx-auto px-5 text-center">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <motion.h2 variants={fadeUp} custom={0} className="text-2xl lg:text-3xl font-display font-bold text-foreground tracking-tight">
+            <motion.h2 variants={fadeUp} custom={0} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
               Stop guessing. Start proving.
             </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="mt-3 text-[14px] text-muted-foreground max-w-md mx-auto">
+            <motion.p variants={fadeUp} custom={1} className="mt-3 text-base text-muted-foreground max-w-md mx-auto">
               Camino is the operating system for player development. Set up your club in minutes. Start evaluating today.
             </motion.p>
             <motion.div variants={fadeUp} custom={2} className="mt-8 flex items-center justify-center gap-3">
               <Link to="/auth">
-                <Button size="lg" className="h-11 px-8 text-[13px] font-semibold gap-2">
+                <Button size="lg" className="h-11 px-8 text-sm font-semibold gap-2">
                   Get Started Free <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             </motion.div>
-            <motion.div variants={fadeUp} custom={3} className="mt-12 flex items-center justify-center gap-8 text-[11px] text-muted-foreground/60 flex-wrap">
+            <motion.div variants={fadeUp} custom={3} className="mt-12 flex items-center justify-center gap-8 text-xs text-muted-foreground/60 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Globe className="h-3.5 w-3.5" />
                 Multi-club support
@@ -629,12 +629,12 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-8">
-        <div className="max-w-6xl mx-auto px-5 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={caminoLogo} alt="Camino" className="h-6 w-6 rounded object-contain" />
             <span className="font-display font-semibold text-foreground text-xs">Camino</span>
           </div>
-          <p className="text-[11px] text-muted-foreground/50">© 2026 Camino. The Pathway to Elite Football.</p>
+          <p className="text-xs text-muted-foreground/50">© 2026 Camino. The Pathway to Elite Football.</p>
         </div>
       </footer>
 
