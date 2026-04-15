@@ -8,6 +8,8 @@ interface Props {
   videoWidth: number;
   videoHeight: number;
   showOverlays: boolean;
+  showHeatmap?: boolean;
+  heatmapPlayerId?: string | null;
   onCanvasClick?: (x: number, y: number) => void;
   isTagging?: boolean;
 }
@@ -33,6 +35,8 @@ export default function VideoOverlayCanvas({
   currentTime,
   players,
   showOverlays,
+  showHeatmap,
+  heatmapPlayerId,
   onCanvasClick,
   isTagging,
 }: Props) {
