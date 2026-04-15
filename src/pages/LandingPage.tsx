@@ -120,26 +120,26 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background" style={{ scrollBehavior: 'smooth' }}>
       {/* Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/95 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
-        <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={caminoLogo} alt="Camino" className="h-8 w-8 rounded-md object-contain" />
-            <span className="font-display font-bold text-foreground text-sm tracking-tight">Camino</span>
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <img src={caminoLogo} alt="Camino" className="h-9 w-9 rounded-md object-contain" />
+            <span className="font-display font-bold text-foreground text-base tracking-tight">Camino</span>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-[12px] text-muted-foreground">
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium">
             <button onClick={() => scrollTo('rankings')} className="hover:text-foreground transition-colors">Rankings</button>
             <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
             <button onClick={() => scrollTo('how-it-works')} className="hover:text-foreground transition-colors">How It Works</button>
             <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-muted-foreground text-[13px] h-8">
+              <Button variant="ghost" size="sm" className="text-muted-foreground text-sm h-9">
                 Log in
               </Button>
             </Link>
             <Link to="/auth">
-              <Button size="sm" className="h-8 text-[13px] font-semibold gap-1.5">
-                Get Started <ArrowRight className="h-3.5 w-3.5" />
+              <Button size="sm" className="h-9 px-5 text-sm font-semibold gap-1.5">
+                Get Started <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -147,29 +147,29 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative pt-14">
+      <section className="relative pt-16">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/75 to-background z-10" />
           <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-60" />
         </div>
 
-        <div className="relative z-20 max-w-6xl mx-auto px-5 pt-20 pb-24 lg:pt-28 lg:pb-32">
-          <div className="max-w-2xl">
+        <div className="relative z-20 max-w-[1400px] mx-auto px-6 lg:px-10 pt-24 pb-28 lg:pt-32 lg:pb-36">
+          <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-7"
             >
-              <Zap className="h-3 w-3 text-primary" />
-              <span className="text-[11px] font-medium text-primary tracking-wide">PLAYER DEVELOPMENT PLATFORM</span>
+              <Zap className="h-3.5 w-3.5 text-primary" />
+              <span className="text-xs font-medium text-primary tracking-wide">PLAYER DEVELOPMENT PLATFORM</span>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl lg:text-5xl font-display font-extrabold text-foreground leading-[1.1] tracking-tight"
+              className="text-5xl md:text-6xl xl:text-7xl font-display font-extrabold text-foreground leading-[1.05] tracking-tight"
             >
               Your progress,{' '}
               <span className="text-primary">proven.</span>
@@ -179,7 +179,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-5 text-[15px] text-muted-foreground leading-relaxed max-w-lg"
+              className="mt-6 text-base lg:text-lg text-muted-foreground leading-relaxed max-w-2xl"
             >
               Camino is the all-in-one platform where academies evaluate, communicate, and develop talent.
               Track 23 performance metrics. Build verified player profiles. Replace guesswork with proof.
@@ -189,17 +189,17 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-8 flex items-center gap-3"
+              className="mt-10 flex items-center gap-4"
             >
               <Link to="/auth">
-                <Button size="lg" className="h-11 px-6 text-[13px] font-semibold gap-2">
+                <Button size="lg" className="h-12 px-8 text-sm font-semibold gap-2">
                   Start Free <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Button
                 variant="outline"
                 size="lg"
-                className="h-11 px-6 text-[13px] font-semibold border-border text-muted-foreground hover:text-foreground"
+                className="h-12 px-8 text-sm font-semibold border-border text-muted-foreground hover:text-foreground"
                 onClick={() => scrollTo('how-it-works')}
               >
                 See How It Works
@@ -212,12 +212,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
-            className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-lg overflow-hidden"
+            className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden"
           >
             {stats.map((stat) => (
-              <div key={stat.label} className="bg-card p-5 text-center">
-                <div className="text-2xl font-display font-bold text-primary tracking-tight">{stat.value}</div>
-                <div className="text-[11px] text-muted-foreground font-medium mt-0.5 uppercase tracking-wider">{stat.label}</div>
+              <div key={stat.label} className="bg-card p-6 text-center">
+                <div className="text-3xl font-display font-bold text-primary tracking-tight">{stat.value}</div>
+                <div className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wider">{stat.label}</div>
               </div>
             ))}
           </motion.div>
