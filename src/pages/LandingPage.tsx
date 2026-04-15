@@ -247,7 +247,7 @@ export default function LandingPage() {
 
       {/* Live Rankings */}
       <section id="rankings" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -294,7 +294,7 @@ export default function LandingPage() {
 
       {/* Features */}
       <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -338,7 +338,7 @@ export default function LandingPage() {
 
       {/* CPI Section */}
       <section id="cpi" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial="hidden"
@@ -421,7 +421,7 @@ export default function LandingPage() {
 
       {/* How It Works */}
       <section id="how-it-works" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -463,7 +463,7 @@ export default function LandingPage() {
 
       {/* Roles Section */}
       <section id="roles" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -540,7 +540,7 @@ export default function LandingPage() {
 
       {/* Testimonials */}
       <section className="relative py-20 lg:py-28 border-t border-border/40">
-        <div className="max-w-6xl mx-auto px-5">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -586,7 +586,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="relative py-20 lg:py-28 border-t border-border/40">
-        <div className="max-w-6xl mx-auto px-5 text-center">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -629,7 +629,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-8">
-        <div className="max-w-6xl mx-auto px-5 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={caminoLogo} alt="Camino" className="h-6 w-6 rounded object-contain" />
             <span className="font-display font-semibold text-foreground text-xs">Camino</span>
