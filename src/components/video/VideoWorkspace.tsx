@@ -55,6 +55,11 @@ export default function VideoWorkspace({ video, onBack }: Props) {
     [playersRaw]
   );
 
+  const uniqueTrackingPlayers = useMemo(
+    () => new Set(tracking.map(t => t.tracking_id)).size,
+    [tracking]
+  );
+
   const stats = useVideoStats(events, players);
   const upsertStats = useUpsertMatchPlayerStats();
   const aiAnalyze = useAIAnalyzeVideo();
@@ -221,6 +226,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
           {upsertStats.isPending ? 'Generating...' : 'Generate Stats'}
         </Button>
       </div>
+
+      <AIProcessingPanel status={liveStatus} trackingCount={tracking.length} uniquePlayers={uniqueTrackingPlayers} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4">
         {/* Left: Video + Timeline + Tagger */}
