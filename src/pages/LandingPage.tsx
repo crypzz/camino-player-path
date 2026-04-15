@@ -126,10 +126,10 @@ export default function LandingPage() {
             <span className="font-display font-bold text-foreground text-base tracking-tight">Camino</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium">
-            <button onClick={() => scrollTo('rankings')} className="hover:text-foreground transition-colors">Rankings</button>
-            <button onClick={() => scrollTo('features')} className="hover:text-foreground transition-colors">Features</button>
-            <button onClick={() => scrollTo('how-it-works')} className="hover:text-foreground transition-colors">How It Works</button>
-            <button onClick={() => scrollTo('roles')} className="hover:text-foreground transition-colors">Roles</button>
+            <button onClick={() => scrollTo('rankings')} className="transition-colors text-secondary-foreground">Rankings</button>
+            <button onClick={() => scrollTo('features')} className="transition-colors text-secondary-foreground">Features</button>
+            <button onClick={() => scrollTo('how-it-works')} className="transition-colors text-secondary-foreground">How It Works</button>
+            <button onClick={() => scrollTo('roles')} className="transition-colors text-secondary-foreground">Roles</button>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth">
