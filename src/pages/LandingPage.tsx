@@ -149,8 +149,8 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative pt-14">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background z-10" />
-          <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background z-10" />
+          <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-60" />
         </div>
 
         <div className="relative z-20 max-w-6xl mx-auto px-5 pt-20 pb-24 lg:pt-28 lg:pb-32">
