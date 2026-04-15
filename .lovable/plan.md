@@ -1,92 +1,50 @@
 
 
-# AI-Powered Video Analysis Pipeline
+# Fix Video Tracking Overlays + AI Analyze UX
 
-## What This Builds
+## Problems Found
 
-Based on your architecture diagram, this adds an automated AI analysis pipeline that processes uploaded match videos to detect players, track movement, and generate stats -- replacing the current manual-only tagging workflow.
+**1. Bounding boxes are misaligned ("all over the place")**
 
-Since Lovable runs client-side + Supabase Edge Functions (no Python/FastAPI server), we adapt the pipeline to use **AI vision models via Lovable AI Gateway** for frame analysis, with Edge Functions orchestrating the processing.
+The canvas scaling math double-counts the device pixel ratio. The `ResizeObserver` sets `canvas.width = cssWidth * dpr` and then calls `ctx.scale(dpr, dpr)`. But the `draw()` function computes `scaleX = canvas.width / 100` which equals `cssWidth * dpr / 100`. Since `ctx.scale(dpr)` is already applied, coordinates get multiplied by DPR twice, causing boxes to appear in wrong positions -- especially on Retina displays (2x).
 
-## Architecture (Adapted)
+**Fix**: Use CSS dimensions (`canvasSize.w / 100` and `canvasSize.h / 100`) instead of `canvas.width` for scaling, since the context already has the DPR transform applied.
 
-```text
-Coach uploads MP4
-       │
-       ▼
-┌─────────────────────┐
-│  Upload handler      │  (existing VideoUploadDialog)
-│  Sets status=queued  │
-└────────┬────────────┘
-         ▼
-┌─────────────────────┐
-│  Edge Fn: process-   │  Orchestrator
-│  video               │
-│  1. Extract frames   │  (ffmpeg → snapshots)
-│  2. Send to AI       │  (Gemini vision model)
-│  3. Parse detections │  (bounding boxes)
-│  4. Write tracking   │  (player_tracking table)
-│  5. Compute stats    │  (match_player_stats)
-└─────────────────────┘
-         │
-         ▼
-┌─────────────────────┐
-│  Frontend polls      │  status: queued → processing → ready
-│  Shows results       │  Overlays, stats, analytics
-└─────────────────────┘
+**2. AI Analyze button gives no feedback or explanation**
+
+The button just says "AI Analyze" with no context about what it does, what to expect, or what's happening during processing. No progress steps, no estimated time, no description of the output.
+
+## Plan
+
+### Step 1: Fix overlay coordinate scaling (VideoOverlayCanvas.tsx)
+
+Replace the broken DPR-doubled scaling:
+```
+scaleX = canvas.width / (100 * dpr) * dpr  // simplifies to canvas.width/100 = cssW*dpr/100 -- WRONG
+```
+With correct CSS-based scaling:
+```
+scaleX = canvasSize.w / 100  // correct: percentage -> CSS pixels (ctx.scale handles DPR)
+scaleY = canvasSize.h / 100
 ```
 
-## Implementation Steps
+### Step 2: Improve AI Analyze button UX (VideoWorkspace.tsx)
 
-### 1. Edge Function: `process-video`
-- Accepts `{ video_id }` via POST
-- Downloads the video from `match-videos` storage bucket
-- Uses **ffmpeg** (available in Deno/sandbox) to extract keyframes (1 frame every 2-3 seconds)
-- Sends each frame to **Gemini 2.5 Flash** (vision model) with a structured prompt asking it to identify player positions as bounding boxes with jersey numbers/colors
-- Parses the AI response into `player_tracking` rows (tracking_id, bbox coordinates, confidence, source='ai')
-- Runs the stats engine logic server-side to populate `match_player_stats`
-- Updates `match_videos.status` from `queued` → `processing` → `ready`
+- Add a tooltip/description below the button explaining what it does: "AI will detect players and track their positions across the video"
+- During processing, show step-by-step progress text: "Downloading video...", "Detecting players...", "Saving results..."
+- After completion, show a summary: "Found X players across Y timestamps"
+- Add a small info section in the Tracking tab explaining what the AI detected and how to assign player names
 
-### 2. Database Changes
-- Add `ai_processing_started_at`, `ai_processing_error` columns to `match_videos` for job tracking
-- Add index on `player_tracking(video_id, timestamp_seconds)` for query performance
+### Step 3: Add processing detail panel
 
-### 3. Frontend: Auto-Analyze Button
-- Add "AI Analyze" button to `VideoWorkspace` header (next to existing "Generate Stats")
-- Calls the edge function, shows processing status via `ProcessingStatusBadge`
-- Poll `match_videos.status` every 3s while processing
-- When complete, auto-refresh tracking data and switch to Analytics tab
+- When status is `processing` or `queued`, show a small card below the header with animated steps explaining what's happening
+- Include estimated time ("Usually takes 30-60 seconds for short clips")
 
-### 4. Frontend: Processing Queue View
-- Update `VideoAnalysisPage` to show processing status on video cards
-- Disable "AI Analyze" when already processing
-
-### 5. Identity Tagging (Coach Links track_id → player)
-- Already exists in `PlayerTaggingPanel` -- the AI generates `tracking_id`s, coaches click overlays to assign player names
-- No changes needed, the existing manual tagging workflow becomes the "identity store" from your diagram
-
-### 6. Stats Pipeline Enhancement
-- Enhance `videoStatsEngine.ts` to also compute **touch detection** (proximity of player bbox to ball bbox from AI), **distance tracking** (centroid deltas scaled to pitch dimensions), and **possession time** (consecutive frames near ball)
-- Add these new metrics to the `ComputedPlayerStats` interface and `MatchAnalyticsDashboard`
-
-## Technical Details
-
-- **AI Model**: `google/gemini-2.5-flash` -- fast, multimodal, no API key needed (Lovable AI Gateway)
-- **Frame extraction**: ffmpeg in the Edge Function runtime to grab PNGs from the video at intervals
-- **Prompt engineering**: Structured JSON output requesting player positions, jersey info, ball position per frame
-- **Rate limiting**: Process frames sequentially with small delays to avoid hitting rate limits
-- **Video size**: For large videos, sample every 3-5 seconds (not every frame) to keep processing time reasonable
-- **Source tagging**: All AI-generated tracking rows use `source: 'ai'` vs existing `source: 'manual'`
-
-## What Changes
+## Files Changed
 
 | File | Change |
 |------|--------|
-| `supabase/functions/process-video/index.ts` | New edge function -- orchestrates the pipeline |
-| `src/hooks/useMatchVideos.ts` | Add polling hook for processing status |
-| `src/components/video/VideoWorkspace.tsx` | Add "AI Analyze" button + polling |
-| `src/lib/videoStatsEngine.ts` | Add touch/possession/distance metrics |
-| `src/components/video/MatchAnalyticsDashboard.tsx` | Display new metrics |
-| `src/components/video/ProcessingStatusBadge.tsx` | Add `analyzing` status |
-| Migration SQL | Add columns + index |
+| `src/components/video/VideoOverlayCanvas.tsx` | Fix scaleX/scaleY to use CSS dimensions |
+| `src/components/video/VideoWorkspace.tsx` | Add AI analysis explanation, progress steps, completion summary |
+| `src/components/video/ProcessingStatusBadge.tsx` | Add descriptive text for each status |
 
