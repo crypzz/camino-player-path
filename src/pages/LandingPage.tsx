@@ -133,7 +133,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-muted-foreground text-sm h-9">
+              <Button variant="ghost" size="sm" className="text-primary text-sm h-9 hover:text-primary">
                 Log in
               </Button>
             </Link>
