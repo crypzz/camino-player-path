@@ -72,8 +72,9 @@ export default function VideoOverlayCanvas({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!showOverlays || currentBoxes.size === 0) return;
 
-    const scaleX = canvas.width / (100 * window.devicePixelRatio) * window.devicePixelRatio;
-    const scaleY = canvas.height / (100 * window.devicePixelRatio) * window.devicePixelRatio;
+    // Use CSS dimensions — ctx.scale(dpr) already handles pixel ratio
+    const scaleX = canvasSize.w / 100;
+    const scaleY = canvasSize.h / 100;
 
     for (const [, t] of currentBoxes) {
       const color = getColorForTrackingId(t.tracking_id, allTrackingIds);
