@@ -8,6 +8,8 @@ interface Props {
   videoWidth: number;
   videoHeight: number;
   showOverlays: boolean;
+  showHeatmap?: boolean;
+  heatmapPlayerId?: string | null;
   onCanvasClick?: (x: number, y: number) => void;
   isTagging?: boolean;
 }
@@ -33,6 +35,8 @@ export default function VideoOverlayCanvas({
   currentTime,
   players,
   showOverlays,
+  showHeatmap,
+  heatmapPlayerId,
   onCanvasClick,
   isTagging,
 }: Props) {
@@ -63,6 +67,33 @@ export default function VideoOverlayCanvas({
     return map;
   }, [tracking, currentTime]);
 
+  // Heatmap points: aggregate all positions for the selected player (or all)
+  const heatmapPoints = useMemo(() => {
+    if (!showHeatmap) return [];
+    return tracking
+      .filter(t => !heatmapPlayerId || t.player_id === heatmapPlayerId || t.tracking_id === heatmapPlayerId)
+      .map(t => ({ x: t.bbox_x + t.bbox_width / 2, y: t.bbox_y + t.bbox_height / 2 }));
+  }, [tracking, showHeatmap, heatmapPlayerId]);
+
+  const drawHeatmap = useCallback((ctx: CanvasRenderingContext2D) => {
+    if (heatmapPoints.length === 0) return;
+    const scaleX = canvasSize.w / 100;
+    const scaleY = canvasSize.h / 100;
+    const radius = Math.max(20, canvasSize.w / 15);
+
+    // Draw each point as a radial gradient blob
+    for (const pt of heatmapPoints) {
+      const x = pt.x * scaleX;
+      const y = pt.y * scaleY;
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grad.addColorStop(0, 'rgba(255, 200, 0, 0.12)');
+      grad.addColorStop(0.5, 'rgba(255, 100, 0, 0.06)');
+      grad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+  }, [heatmapPoints, canvasSize]);
+
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -70,9 +101,14 @@ export default function VideoOverlayCanvas({
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw heatmap first (underneath boxes)
+    if (showHeatmap) {
+      drawHeatmap(ctx);
+    }
+
     if (!showOverlays || currentBoxes.size === 0) return;
 
-    // Use CSS dimensions — ctx.scale(dpr) already handles pixel ratio
     const scaleX = canvasSize.w / 100;
     const scaleY = canvasSize.h / 100;
 
@@ -108,7 +144,7 @@ export default function VideoOverlayCanvas({
       ctx.setLineDash([4, 4]);
       ctx.lineWidth = 1;
     }
-  }, [currentBoxes, showOverlays, playerMap, allTrackingIds, isTagging]);
+  }, [currentBoxes, showOverlays, showHeatmap, drawHeatmap, playerMap, allTrackingIds, isTagging, canvasSize]);
 
   useEffect(() => { draw(); }, [draw]);
 

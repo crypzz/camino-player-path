@@ -39,6 +39,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const [showOverlays, setShowOverlays] = useState(true);
   const [isTagging, setIsTagging] = useState(false);
   const [pendingTag, setPendingTag] = useState<{ x: number; y: number } | null>(null);
+  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [heatmapPlayerId, setHeatmapPlayerId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('events');
   const [liveStatus, setLiveStatus] = useState(video.status);
   const [processingStartedAt, setProcessingStartedAt] = useState(video.ai_processing_started_at);
@@ -248,6 +250,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               videoWidth={1920}
               videoHeight={1080}
               showOverlays={showOverlays}
+              showHeatmap={showHeatmap}
+              heatmapPlayerId={heatmapPlayerId}
               onCanvasClick={handleCanvasClick}
               isTagging={isTagging}
             />
@@ -283,6 +287,10 @@ export default function VideoWorkspace({ video, onBack }: Props) {
                 onToggleTagging={() => setIsTagging(!isTagging)}
                 pendingTag={pendingTag}
                 onClearPendingTag={() => setPendingTag(null)}
+                showHeatmap={showHeatmap}
+                onToggleHeatmap={() => setShowHeatmap(!showHeatmap)}
+                heatmapPlayerId={heatmapPlayerId}
+                onSetHeatmapPlayer={setHeatmapPlayerId}
               />
             </TabsContent>
             <TabsContent value="stats" className="m-0">
