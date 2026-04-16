@@ -49,14 +49,14 @@ export default function PlayerDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center font-display font-bold text-primary text-xl">
+    <div className="space-y-5">
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center font-display font-bold text-primary text-lg">
           {player.name.split(' ').map(n => n[0]).join('')}
         </div>
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">{player.name}</h1>
-          <p className="text-muted-foreground text-sm">{player.position} · {player.team} · Age {player.age} · {player.nationality}</p>
+          <h1 className="text-xl font-display font-bold text-foreground tracking-tight">{player.name}</h1>
+          <p className="text-muted-foreground text-[13px] mt-0.5">{player.position} · {player.team} · Age {player.age} · {player.nationality}</p>
         </div>
       </motion.div>
 

@@ -15,12 +15,12 @@ export default function DirectorDashboard() {
   }
 
   const metrics = [
-    { label: 'Total Players', value: stats?.totalPlayers || 0, icon: Users, color: 'text-blue-500' },
-    { label: 'Total Teams', value: stats?.totalTeams || 0, icon: Shield, color: 'text-emerald-500' },
-    { label: 'Active (30d)', value: stats?.activePlayers || 0, icon: Activity, color: 'text-amber-500' },
-    { label: 'Avg CPI', value: stats?.avgCPI || 0, icon: TrendingUp, color: 'text-purple-500' },
-    { label: 'Top Ranked', value: stats?.topRanked?.name || '—', icon: Trophy, color: 'text-yellow-500', sub: stats?.topRanked ? `CPI: ${stats.topRanked.rating}` : '' },
-    { label: 'Most Improved', value: stats?.mostImproved?.name || '—', icon: Star, color: 'text-rose-500' },
+    { label: 'Total Players', value: stats?.totalPlayers || 0, icon: Users, color: 'text-info' },
+    { label: 'Total Teams', value: stats?.totalTeams || 0, icon: Shield, color: 'text-success' },
+    { label: 'Active (30d)', value: stats?.activePlayers || 0, icon: Activity, color: 'text-warning' },
+    { label: 'Avg CPI', value: stats?.avgCPI || 0, icon: TrendingUp, color: 'text-primary' },
+    { label: 'Top Ranked', value: stats?.topRanked?.name || '—', icon: Trophy, color: 'text-primary', sub: stats?.topRanked ? `CPI: ${stats.topRanked.rating}` : '' },
+    { label: 'Most Improved', value: stats?.mostImproved?.name || '—', icon: Star, color: 'text-info' },
   ];
 
   const handleExport = () => {
@@ -35,14 +35,14 @@ export default function DirectorDashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Club Overview</h1>
-          <p className="text-sm text-muted-foreground mt-1">High-level performance analytics for your academy</p>
+          <h1 className="text-xl font-display font-bold text-foreground tracking-tight">Club Overview</h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5">High-level performance analytics for your academy</p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleExport}>
-          <Download className="h-4 w-4 mr-1" /> Export CSV
+        <Button variant="outline" size="sm" onClick={handleExport} className="gap-1.5">
+          <Download className="h-4 w-4" /> Export CSV
         </Button>
       </div>
 
@@ -71,20 +71,20 @@ export default function DirectorDashboard() {
         <CardContent>
           <div className="space-y-2">
             {(stats?.activePlayers || 0) < (stats?.totalPlayers || 0) && (
-              <div className="flex items-center gap-2 text-sm p-2 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-400">
-                <Activity className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-sm p-2.5 rounded-md bg-warning/10 text-warning border border-warning/20">
+                <Activity className="h-4 w-4 shrink-0" />
                 {(stats?.totalPlayers || 0) - (stats?.activePlayers || 0)} players have been inactive for 30+ days
               </div>
             )}
             {stats?.totalTeams === 0 && (
-              <div className="flex items-center gap-2 text-sm p-2 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-400">
-                <Shield className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-sm p-2.5 rounded-md bg-info/10 text-info border border-info/20">
+                <Shield className="h-4 w-4 shrink-0" />
                 No teams registered yet. Head to Teams to create your first team.
               </div>
             )}
             {(stats?.totalPlayers || 0) > 0 && (
-              <div className="flex items-center gap-2 text-sm p-2 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
-                <TrendingUp className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-sm p-2.5 rounded-md bg-success/10 text-success border border-success/20">
+                <TrendingUp className="h-4 w-4 shrink-0" />
                 Club average CPI is {stats?.avgCPI}. {stats?.topRanked?.name} leads the rankings.
               </div>
             )}
