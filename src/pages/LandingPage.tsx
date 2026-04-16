@@ -153,7 +153,7 @@ export default function LandingPage() {
           <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-60" />
         </div>
 
-        <div className="relative z-20 max-w-[1400px] mx-auto px-6 lg:px-10 pt-24 pb-28 lg:pt-32 lg:pb-36">
+        <div className="relative z-20 max-w-[1400px] mx-auto px-6 lg:px-10 pt-24 pb-20 lg:pt-32 lg:pb-24">
           <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -605,7 +605,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
             </motion.div>
-            <motion.div variants={fadeUp} custom={3} className="mt-12 flex items-center justify-center gap-8 text-xs text-muted-foreground/60 flex-wrap">
+            <motion.div variants={fadeUp} custom={3} className="mt-10 flex items-center justify-center gap-8 text-xs text-muted-foreground/70 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Globe className="h-3.5 w-3.5" />
                 Multi-club support
