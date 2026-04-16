@@ -199,7 +199,7 @@ export default function LandingPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="h-12 px-8 text-sm font-semibold border-border text-muted-foreground hover:text-foreground"
+                className="h-12 px-8 text-sm font-semibold border-border/80 bg-card/40 text-foreground hover:bg-card hover:border-primary/30"
                 onClick={() => scrollTo('how-it-works')}
               >
                 See How It Works
@@ -539,7 +539,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="relative py-20 lg:py-28 border-t border-border/40">
+      <section className="relative py-16 lg:py-20 border-t border-border/40">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
@@ -585,7 +585,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-20 lg:py-28 border-t border-border/40">
+      <section className="relative py-16 lg:py-20 border-t border-border/40">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
           <motion.div
             initial="hidden"
