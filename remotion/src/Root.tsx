@@ -9,6 +9,7 @@ import { CountdownTeaser } from "./CountdownTeaser";
 import { GoProVideo } from "./GoProVideo";
 import { VideoAnalysisVideo } from "./VideoAnalysisVideo";
 import { AcademyPromoVideo } from "./AcademyPromoVideo";
+import { ProfessionalPromoVideo } from "./ProfessionalPromoVideo";
 
 export const RemotionRoot = () => (
   <>
@@ -91,6 +92,14 @@ export const RemotionRoot = () => (
       fps={30}
       width={1080}
       height={1920}
+    />
+    <Composition
+      id="professional-promo"
+      component={ProfessionalPromoVideo}
+      durationInFrames={1780}
+      fps={30}
+      width={1920}
+      height={1080}
     />
   </>
 );
