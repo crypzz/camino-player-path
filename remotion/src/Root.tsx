@@ -10,6 +10,7 @@ import { GoProVideo } from "./GoProVideo";
 import { VideoAnalysisVideo } from "./VideoAnalysisVideo";
 import { AcademyPromoVideo } from "./AcademyPromoVideo";
 import { ProfessionalPromoVideo } from "./ProfessionalPromoVideo";
+import { ReelComparisonVideo } from "./ReelComparisonVideo";
 
 export const RemotionRoot = () => (
   <>
@@ -100,6 +101,14 @@ export const RemotionRoot = () => (
       fps={30}
       width={1920}
       height={1080}
+    />
+    <Composition
+      id="reel-comparison"
+      component={ReelComparisonVideo}
+      durationInFrames={700}
+      fps={30}
+      width={1080}
+      height={1920}
     />
   </>
 );
