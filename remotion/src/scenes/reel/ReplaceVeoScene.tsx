@@ -57,83 +57,83 @@ export const ReplaceTemplate = ({
   const mockS = spring({ frame: frame - 48, fps, config: { damping: 18, stiffness: 140 } });
   const mockY = interpolate(mockS, [0, 1], [200, 0]);
 
+  // Card slides up and fades out as it gets stamped
+  const cardExitY = interpolate(frame, [50, 70], [0, -300], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const stampOpacity = interpolate(frame, [26, 36, 60, 70], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+
   return (
     <AbsoluteFill style={{ background: "#0D1117", fontFamily: body }}>
-      {/* Top: competitor card */}
+      {/* Camino mock — fills screen, behind card */}
       <div style={{
-        position: "absolute", top: 120, left: 80, right: 80, height: 600,
-        transform: `scale(${cardScale}) translateX(${cardShake}px)`,
-        opacity: cardOpacity * cardS,
-      }}>
-        <div style={{
-          width: "100%", height: "100%",
-          background: `linear-gradient(135deg, ${brandColor}, ${brandColor}99)`,
-          borderRadius: 32, padding: 48, display: "flex", flexDirection: "column", justifyContent: "space-between",
-          boxShadow: `0 30px 80px ${brandColor}60`,
-        }}>
-          <div>
-            <div style={{ fontFamily: body, fontSize: 28, color: "rgba(255,255,255,0.7)", fontWeight: 600, marginBottom: 12 }}>
-              You're paying for
-            </div>
-            <div style={{ fontFamily: display, fontWeight: 800, fontSize: 180, color: "#fff", lineHeight: 1 }}>
-              {brandName}
-            </div>
-            <div style={{ fontFamily: body, fontSize: 32, color: "rgba(255,255,255,0.85)", marginTop: 16, fontWeight: 600 }}>
-              {brandTagline}
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 12 }}>
-            {["$$$", "Limited", "Siloed"].map((t) => (
-              <div key={t} style={{ padding: "10px 18px", background: "rgba(0,0,0,0.3)", borderRadius: 8, fontSize: 22, color: "#fff", fontWeight: 600 }}>{t}</div>
-            ))}
-          </div>
-        </div>
-
-        {/* REPLACED stamp */}
-        {frame >= 32 && (
-          <div style={{
-            position: "absolute", top: "40%", left: "50%",
-            transform: `translate(-50%, -50%) rotate(${stampRot}deg) scale(${stampScale})`,
-            opacity: Math.min(1, stampS),
-          }}>
-            <div style={{
-              padding: "20px 60px", border: "8px solid #DC2626", color: "#DC2626",
-              fontFamily: display, fontWeight: 800, fontSize: 100, letterSpacing: 4,
-              background: "rgba(13,17,23,0.85)", borderRadius: 8,
-              boxShadow: "0 0 60px rgba(220,38,38,0.6)",
-            }}>
-              REPLACED
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Bottom: Camino mock */}
-      <div style={{
-        position: "absolute", bottom: 60, left: 60, right: 60, height: 1100,
+        position: "absolute", inset: 0, padding: "120px 60px 60px",
         transform: `translateY(${mockY}px)`, opacity: mockS,
       }}>
         <div style={{ marginBottom: 24, textAlign: "center" }}>
-          <div style={{ fontFamily: body, fontSize: 28, color: "#E8B400", fontWeight: 600, letterSpacing: 4, textTransform: "uppercase" }}>
+          <div style={{ fontFamily: body, fontSize: 30, color: "#E8B400", fontWeight: 600, letterSpacing: 4, textTransform: "uppercase" }}>
             Camino delivers
           </div>
-          <div style={{ fontFamily: display, fontWeight: 800, fontSize: 76, color: "#fff", marginTop: 8 }}>
+          <div style={{ fontFamily: display, fontWeight: 800, fontSize: 96, color: "#fff", marginTop: 12, lineHeight: 1 }}>
             {caminoTitle}
           </div>
-          <div style={{ fontFamily: body, fontSize: 28, color: "rgba(255,255,255,0.7)", marginTop: 8 }}>
+          <div style={{ fontFamily: body, fontSize: 32, color: "rgba(255,255,255,0.7)", marginTop: 12 }}>
             {caminoSubtitle}
           </div>
         </div>
         <div style={{
-          width: "100%", height: 820,
+          width: "100%", height: 1480,
           background: "linear-gradient(180deg, #161B22, #0D1117)",
-          borderRadius: 24, border: "1px solid rgba(232,180,0,0.3)",
-          boxShadow: "0 20px 60px rgba(232,180,0,0.15)",
+          borderRadius: 28, border: "1px solid rgba(232,180,0,0.4)",
+          boxShadow: "0 20px 80px rgba(232,180,0,0.2)",
           overflow: "hidden",
         }}>
           {mockContent}
         </div>
       </div>
+
+      {/* Competitor card — centered, slams in then exits up */}
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", padding: 80, opacity: cardOpacity }}>
+        <div style={{
+          width: "100%", maxWidth: 920, position: "relative",
+          transform: `scale(${cardScale}) translateY(${cardExitY}px) translateX(${cardShake}px)`,
+        }}>
+          <div style={{
+            background: `linear-gradient(135deg, ${brandColor}, ${brandColor}cc)`,
+            borderRadius: 32, padding: 56, display: "flex", flexDirection: "column", gap: 24,
+            boxShadow: `0 30px 80px ${brandColor}80`,
+          }}>
+            <div style={{ fontFamily: body, fontSize: 30, color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>
+              You're paying for
+            </div>
+            <div style={{ fontFamily: display, fontWeight: 800, fontSize: 160, color: "#fff", lineHeight: 0.95 }}>
+              {brandName}
+            </div>
+            <div style={{ fontFamily: body, fontSize: 34, color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
+              {brandTagline}
+            </div>
+            <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+              {["$$$", "Limited", "Siloed"].map((t) => (
+                <div key={t} style={{ padding: "10px 20px", background: "rgba(0,0,0,0.35)", borderRadius: 8, fontSize: 22, color: "#fff", fontWeight: 600 }}>{t}</div>
+              ))}
+            </div>
+          </div>
+
+          {/* REPLACED stamp */}
+          <div style={{
+            position: "absolute", top: "50%", left: "50%",
+            transform: `translate(-50%, -50%) rotate(${stampRot}deg) scale(${stampScale})`,
+            opacity: stampOpacity,
+          }}>
+            <div style={{
+              padding: "24px 70px", border: "10px solid #DC2626", color: "#DC2626",
+              fontFamily: display, fontWeight: 800, fontSize: 110, letterSpacing: 4,
+              background: "rgba(13,17,23,0.9)", borderRadius: 10,
+              boxShadow: "0 0 80px rgba(220,38,38,0.7)",
+            }}>
+              REPLACED
+            </div>
+          </div>
+        </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
