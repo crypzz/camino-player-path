@@ -59,7 +59,6 @@ export const ReplaceTemplate = ({
 
   // Card slides up and fades out as it gets stamped
   const cardExitY = interpolate(frame, [50, 70], [0, -300], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const stampOpacity = interpolate(frame, [26, 36, 60, 70], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
     <AbsoluteFill style={{ background: "#0D1117", fontFamily: body }}>
