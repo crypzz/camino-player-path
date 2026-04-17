@@ -46,14 +46,15 @@ export const ReplaceTemplate = ({
   // Phase 3 (55-110): Camino mock slides up, card fades
   const cardS = spring({ frame, fps, config: { damping: 8, stiffness: 200 } });
   const cardScale = interpolate(cardS, [0, 1], [1.4, 1]);
-  const cardShake = frame >= 30 && frame < 50 ? Math.sin(frame * 1.2) * 8 : 0;
-  const cardOpacity = interpolate(frame, [55, 75], [1, 0.15], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const cardShake = frame >= 25 && frame < 45 ? Math.sin(frame * 1.2) * 8 : 0;
+  const cardOpacity = interpolate(frame, [45, 65], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-  const stampS = spring({ frame: frame - 32, fps, config: { damping: 6, stiffness: 180 } });
+  const stampS = spring({ frame: frame - 26, fps, config: { damping: 6, stiffness: 180 } });
   const stampScale = interpolate(stampS, [0, 1], [3, 1]);
   const stampRot = interpolate(stampS, [0, 1], [-30, -12]);
+  const stampOpacity = interpolate(frame, [26, 36, 60, 70], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-  const mockS = spring({ frame: frame - 58, fps, config: { damping: 18, stiffness: 140 } });
+  const mockS = spring({ frame: frame - 48, fps, config: { damping: 18, stiffness: 140 } });
   const mockY = interpolate(mockS, [0, 1], [200, 0]);
 
   return (
