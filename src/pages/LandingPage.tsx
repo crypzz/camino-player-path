@@ -162,10 +162,14 @@ export default function LandingPage() {
 
       {/* HERO — 3D Pitch */}
       <motion.section ref={heroRef} style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        {/* 3D Canvas */}
-        <Suspense fallback={null}>
-          <Hero3DPitch />
-        </Suspense>
+        {/* 3D Canvas (desktop) / lightweight gradient (mobile) */}
+        {isMobile ? (
+          <HeroMobileFallback />
+        ) : (
+          <Suspense fallback={null}>
+            <Hero3DPitch />
+          </Suspense>
+        )}
 
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" />
