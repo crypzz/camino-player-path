@@ -113,6 +113,7 @@ export default function LandingPage() {
   const [navSolid, setNavSolid] = useState(false);
   const [activeQuote, setActiveQuote] = useState(0);
   const { data: rankings = [] } = useRankings();
+  const isMobile = useIsMobile();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
