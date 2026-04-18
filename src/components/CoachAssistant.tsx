@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sparkles, Send, Loader2, X, MessageSquare } from 'lucide-react';
+import { Sparkles, Send, Loader2, X, MessageSquare, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { WeeklyReportDialog } from '@/components/WeeklyReportDialog';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -20,6 +21,7 @@ const SUGGESTED = [
 
 export function CoachAssistant() {
   const [open, setOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -149,9 +151,21 @@ export function CoachAssistant() {
                   <p className="text-[10px] text-muted-foreground">Knows your roster</p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setOpen(false)}>
-                <X className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 gap-1.5 text-xs px-2"
+                  onClick={() => setReportOpen(true)}
+                  title="Generate weekly report"
+                >
+                  <FileText className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Weekly Report</span>
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setOpen(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Messages */}
