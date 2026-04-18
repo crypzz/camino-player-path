@@ -1,107 +1,97 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target,
-  TrendingUp, Zap, Globe, ChevronRight, Star, Trophy, MessageSquare,
-  Activity, CheckCircle2, Building2, Dumbbell, Award
+  TrendingUp, Zap, Globe, Star, Trophy, MessageSquare,
+  Activity, CheckCircle2, Building2, Dumbbell, Award, Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LeaderboardTable } from '@/components/LeaderboardTable';
 import { useRankings } from '@/hooks/useRankings';
-import heroPattern from '@/assets/hero-pattern.jpg';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import caminoLogo from '@/assets/camino-logo.png';
+import { KineticHeadline } from '@/components/landing/KineticHeadline';
+import { MagneticButton } from '@/components/landing/MagneticButton';
+import { TiltCard } from '@/components/landing/TiltCard';
+import { LiveTickerBar } from '@/components/landing/LiveTickerBar';
+import { MetricOrbit } from '@/components/landing/MetricOrbit';
+import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
+
+const Hero3DPitch = lazy(() => import('@/components/landing/Hero3DPitch').then(m => ({ default: m.Hero3DPitch })));
+const ParticleBurst = lazy(() => import('@/components/landing/ParticleBurst').then(m => ({ default: m.ParticleBurst })));
 
 const features = [
-  {
-    icon: BarChart3,
-    title: 'Camino Player Index',
-    description: 'A proprietary 0–100 score combining 23 metrics across technical, tactical, physical, and mental domains. One number. Full clarity.',
-  },
-  {
-    icon: Target,
-    title: 'Player Evaluations',
-    description: 'Rate athletes across every dimension with interactive radar charts, real-time CPI calculations, and exportable reports.',
-  },
-  {
-    icon: Video,
-    title: 'Video Analysis',
-    description: 'Upload match footage, tag key moments by player, overlay coach commentary, and generate per-player performance stats.',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Communication Hub',
-    description: 'Club-wide announcements, direct messaging, team channels, and structured player feedback — all in one place. Replace WhatsApp.',
-  },
-  {
-    icon: Dumbbell,
-    title: 'Fitness Testing',
-    description: 'Record sprint times, agility, vertical jump, and endurance tests. Results auto-update player physical ratings.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Progress Tracking',
-    description: 'Visualize development over time with trend graphs, level progression, and automated performance insights.',
-  },
-];
-
-const stats = [
-  { value: '23', label: 'Performance Metrics' },
-  { value: '4', label: 'User Roles' },
-  { value: '100', label: 'CPI Score Range' },
-  { value: '10', label: 'Player Levels' },
+  { icon: BarChart3, title: 'Camino Player Index', description: 'A proprietary 0–100 score combining 23 metrics across technical, tactical, physical, and mental domains.', color: 'from-primary/30 to-primary/5' },
+  { icon: Target, title: 'Player Evaluations', description: 'Rate athletes across every dimension with interactive radar charts and real-time CPI calculations.', color: 'from-info/30 to-info/5' },
+  { icon: Video, title: 'Video Analysis', description: 'Upload match footage, AI-tag key moments by player, overlay coach commentary, and generate stats.', color: 'from-success/30 to-success/5' },
+  { icon: MessageSquare, title: 'Communication Hub', description: 'Club-wide announcements, direct messaging, team channels, and structured player feedback.', color: 'from-primary/30 to-primary/5' },
+  { icon: Dumbbell, title: 'Fitness Testing', description: 'Record sprint times, agility, vertical jump, and endurance tests. Auto-update player ratings.', color: 'from-info/30 to-info/5' },
+  { icon: TrendingUp, title: 'Progress Tracking', description: 'Visualize development over time with trend graphs, level progression, and automated insights.', color: 'from-success/30 to-success/5' },
 ];
 
 const steps = [
-  {
-    num: '01',
-    title: 'Onboard your club',
-    description: 'Create your academy, set up teams by age group, and invite coaches, players, and parents to the platform.',
-  },
-  {
-    num: '02',
-    title: 'Evaluate & track',
-    description: 'Run evaluations, record fitness tests, upload match video, and watch CPI scores update in real time.',
-  },
-  {
-    num: '03',
-    title: 'Develop & prove',
-    description: 'Players build verified profiles. Parents stay informed. Coaches make data-driven decisions. Everyone levels up.',
-  },
+  { num: '01', title: 'Onboard your club', description: 'Create your academy, set up teams by age group, and invite coaches, players, and parents.' },
+  { num: '02', title: 'Evaluate & track', description: 'Run evaluations, record fitness tests, upload match video, and watch CPI scores update in real time.' },
+  { num: '03', title: 'Develop & prove', description: 'Players build verified profiles. Parents stay informed. Coaches make data-driven decisions.' },
 ];
 
 const testimonials = [
-  {
-    quote: "Camino replaced three separate tools for us. Evaluations, video, and parent communication — all in one place.",
-    name: 'Technical Director',
-    org: 'Youth Academy',
-  },
-  {
-    quote: "My son's CPI went from 42 to 67 in one season. For the first time I could actually see his progress clearly.",
-    name: 'Parent',
-    org: 'U-14 Player',
-  },
-  {
-    quote: "The player profiles gave our kids something to own. They share their cards, check their rankings — it drives motivation.",
-    name: 'Head Coach',
-    org: 'Club Program',
-  },
+  { quote: "Camino replaced three separate tools for us. Evaluations, video, and parent communication — all in one place.", name: 'Technical Director', org: 'Youth Academy' },
+  { quote: "My son's CPI went from 42 to 67 in one season. For the first time I could actually see his progress clearly.", name: 'Parent', org: 'U-14 Player' },
+  { quote: "The player profiles gave our kids something to own. They share their cards, check their rankings — it drives motivation.", name: 'Head Coach', org: 'Club Program' },
 ];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
+    opacity: 1, y: 0,
     transition: { delay: i * 0.08, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
   }),
 };
 
+function CountUp({ to, duration = 1.6 }: { to: number; duration?: number }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let raf: number;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / (duration * 1000));
+      const eased = 1 - Math.pow(1 - t, 3);
+      setVal(Math.round(to * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to, duration]);
+  return <span>{val}</span>;
+}
+
+function TypingQuote({ text }: { text: string }) {
+  const [shown, setShown] = useState('');
+  useEffect(() => {
+    setShown('');
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setShown(text.slice(0, i));
+      if (i >= text.length) clearInterval(id);
+    }, 25);
+    return () => clearInterval(id);
+  }, [text]);
+  return <span>{shown}<span className="inline-block w-[2px] h-[1em] bg-primary align-middle ml-0.5 animate-pulse" /></span>;
+}
+
 export default function LandingPage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [navSolid, setNavSolid] = useState(false);
+  const [activeQuote, setActiveQuote] = useState(0);
   const { data: rankings = [] } = useRankings();
+
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
+  const heroScale = useTransform(heroProgress, [0, 1], [1, 0.95]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -112,165 +102,263 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const id = setInterval(() => setActiveQuote((q) => (q + 1) % testimonials.length), 5500);
+    return () => clearInterval(id);
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-background" style={{ scrollBehavior: 'smooth' }}>
+    <div className="min-h-screen bg-background overflow-x-hidden" style={{ scrollBehavior: 'smooth' }}>
       {/* Navigation */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/95 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/85 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src={caminoLogo} alt="Camino" className="h-9 w-9 rounded-md object-contain" />
             <span className="font-display font-bold text-foreground text-base tracking-tight">Camino</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium">
-            <button onClick={() => scrollTo('rankings')} className="transition-colors text-secondary-foreground">Rankings</button>
-            <button onClick={() => scrollTo('features')} className="transition-colors text-secondary-foreground">Features</button>
-            <button onClick={() => scrollTo('how-it-works')} className="transition-colors text-secondary-foreground">How It Works</button>
-            <button onClick={() => scrollTo('roles')} className="transition-colors text-secondary-foreground">Roles</button>
+            <button onClick={() => scrollTo('rankings')} className="hover:text-primary transition-colors">Rankings</button>
+            <button onClick={() => scrollTo('cpi')} className="hover:text-primary transition-colors">CPI</button>
+            <button onClick={() => scrollTo('features')} className="hover:text-primary transition-colors">Features</button>
+            <button onClick={() => scrollTo('roles')} className="hover:text-primary transition-colors">Roles</button>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-primary text-sm h-9">
-                Log in
-              </Button>
-            </Link>
-            <Link to="/auth">
-              <Button size="sm" className="h-9 px-5 text-sm font-semibold gap-1.5">
-                Get Started <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <Link to="/auth"><Button variant="ghost" size="sm" className="text-primary text-sm h-9">Log in</Button></Link>
+            <Link to="/auth"><Button size="sm" className="h-9 px-5 text-sm font-semibold gap-1.5">Get Started <ArrowRight className="h-4 w-4" /></Button></Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative pt-16">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/75 to-background z-10" />
-          <img src={heroPattern} alt="" className="w-full h-full object-cover opacity-60" />
+      {/* HERO — 3D Pitch */}
+      <motion.section ref={heroRef} style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+        {/* 3D Canvas */}
+        <Suspense fallback={null}>
+          <Hero3DPitch />
+        </Suspense>
+
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_0%,hsl(var(--background))_75%)] pointer-events-none" />
+
+        {/* AI Tracking overlays - decorative */}
+        <div className="absolute inset-0 pointer-events-none hidden lg:block">
+          {[
+            { x: '12%', y: '32%', label: 'P-07', xc: 1225, yc: 252, delay: 0.6 },
+            { x: '78%', y: '48%', label: 'P-22', xc: 894, yc: 410, delay: 0.9 },
+            { x: '24%', y: '68%', label: 'P-11', xc: 532, yc: 712, delay: 1.2 },
+          ].map((b, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: b.delay, duration: 0.6 }}
+              style={{ left: b.x, top: b.y }}
+              className="absolute"
+            >
+              <div className="relative w-20 h-24 border-2 border-primary/70 rounded">
+                <div className="absolute -top-6 left-0 px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-mono font-bold rounded-sm">{b.label}</div>
+                <motion.div animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+              </div>
+              <div className="mt-1 font-mono text-[10px] text-primary/80">x:{b.xc} y:{b.yc}</div>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="relative z-20 max-w-[1400px] mx-auto px-6 lg:px-10 pt-24 pb-20 lg:pt-32 lg:pb-24">
-          <div className="max-w-3xl">
+        {/* Hero content */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 w-full">
+          <div className="max-w-4xl">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-7"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm mb-7"
             >
-              <Zap className="h-3.5 w-3.5 text-primary" />
-              <span className="text-xs font-medium text-primary tracking-wide">PLAYER DEVELOPMENT PLATFORM</span>
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="text-xs font-semibold text-primary tracking-wide">AI-POWERED PLAYER DEVELOPMENT</span>
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-5xl md:text-6xl xl:text-7xl font-display font-extrabold text-foreground leading-[1.05] tracking-tight"
-            >
-              Your progress,{' '}
-              <span className="text-primary">proven.</span>
-            </motion.h1>
+            <KineticHeadline
+              text="Your progress, proven."
+              highlightWords={['proven.']}
+              className="text-[clamp(2.75rem,8vw,6.5rem)] text-foreground"
+            />
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-6 text-base lg:text-lg text-muted-foreground leading-relaxed max-w-2xl"
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="mt-7 text-base lg:text-xl text-muted-foreground leading-relaxed max-w-2xl"
             >
-              Camino is the all-in-one platform where academies evaluate, communicate, and develop talent.
-              Track 23 performance metrics. Build verified player profiles. Replace guesswork with proof.
+              Camino tracks <span className="text-foreground font-semibold">23 performance metrics</span>, replaces every disconnected tool your club uses, and turns every player's journey into verified proof.
             </motion.p>
+
+            {/* CPI counter */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+              className="mt-8 flex items-center gap-4"
+            >
+              <div className="px-4 py-3 rounded-xl bg-card/70 backdrop-blur-md border border-primary/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Live CPI</div>
+                <div className="font-display font-extrabold text-primary text-3xl leading-none mt-1"><CountUp to={87} /></div>
+              </div>
+              <div className="h-12 w-px bg-border" />
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Avg Improvement</div>
+                <div className="font-display font-bold text-foreground text-xl mt-1">+<CountUp to={24} duration={1.4} />%</div>
+              </div>
+              <div className="h-12 w-px bg-border hidden sm:block" />
+              <div className="hidden sm:block">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Tracked Players</div>
+                <div className="font-display font-bold text-foreground text-xl mt-1"><CountUp to={1247} duration={2} /></div>
+              </div>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-10 flex items-center gap-4"
+              transition={{ duration: 0.6, delay: 1.1 }}
+              className="mt-10 flex items-center gap-4 flex-wrap"
             >
               <Link to="/auth">
-                <Button size="lg" className="h-12 px-8 text-sm font-semibold gap-2">
+                <MagneticButton>
                   Start Free <ArrowRight className="h-4 w-4" />
-                </Button>
+                </MagneticButton>
               </Link>
               <Button
                 variant="outline"
                 size="lg"
-                className="h-12 px-8 text-sm font-semibold border-border/80 bg-card/40 text-foreground hover:bg-card hover:border-primary/30"
-                onClick={() => scrollTo('how-it-works')}
+                className="h-12 px-8 text-sm font-semibold border-border/80 bg-card/40 backdrop-blur text-foreground hover:bg-card hover:border-primary/30"
+                onClick={() => scrollTo('cpi')}
               >
-                See How It Works
+                See the CPI
               </Button>
             </motion.div>
           </div>
+        </div>
 
-          {/* Stats bar */}
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground/60"
+        >
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45 }}
-            className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-6 h-10 rounded-full border-2 border-muted-foreground/40 flex justify-center pt-2"
           >
-            {stats.map((stat) => (
-              <div key={stat.label} className="bg-card p-6 text-center">
-                <div className="text-3xl font-display font-bold text-primary tracking-tight">{stat.value}</div>
-                <div className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wider">{stat.label}</div>
-              </div>
-            ))}
+            <div className="w-1 h-2 bg-primary rounded-full" />
           </motion.div>
+        </motion.div>
+      </motion.section>
+
+      {/* Live Ticker */}
+      <LiveTickerBar />
+
+      {/* Floating Player Cards */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.08),transparent_60%)]" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
+              Verified Performance
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
+              Every player.<br /><span className="text-primary">A digital passport.</span>
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="mt-5 text-base lg:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Live CPI scores. Coach-verified stats. Shareable profiles. Every athlete's progress, captured and proven.
+            </motion.p>
+          </motion.div>
+
+          <FloatingPlayerCards />
         </div>
       </section>
 
-      {/* Waitlist Section */}
-      <section className="relative py-14 scroll-mt-16">
-        <div className="max-w-xl mx-auto px-5">
+      {/* Big Stat — Metric Orbit */}
+      <section id="cpi" className="relative py-28 lg:py-36 border-t border-border/40 overflow-hidden scroll-mt-16">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.06),transparent_70%)]" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="relative rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 text-center shadow-sm"
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
           >
-            <h3 className="font-display font-bold text-foreground text-lg tracking-tight">
-              See player development beyond match day
-            </h3>
-            <p className="mt-1.5 text-sm text-muted-foreground">
-              Request early access to Camino.
+            <p className="text-xs font-bold text-primary uppercase tracking-[0.3em] mb-5">The Camino Player Index</p>
+            <h2 className="text-5xl lg:text-7xl xl:text-8xl font-display font-extrabold text-foreground tracking-tighter leading-[0.95]">
+              1 number.<br /><span className="text-primary">23 metrics.</span>
+            </h2>
+            <p className="mt-7 text-base lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Technical, tactical, physical, and mental — every dimension of an athlete distilled into a single, weighted score.
             </p>
-            <WaitlistForm />
           </motion.div>
+
+          <MetricOrbit />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-16 max-w-4xl mx-auto">
+            {[
+              { weight: '40%', label: 'Technical', color: 'text-primary' },
+              { weight: '30%', label: 'Tactical', color: 'text-info' },
+              { weight: '20%', label: 'Physical', color: 'text-success' },
+              { weight: '10%', label: 'Mental', color: 'text-foreground' },
+            ].map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="text-center p-5 rounded-xl bg-card/60 border border-border/50 backdrop-blur"
+              >
+                <div className={`font-display font-extrabold text-3xl ${item.color}`}>{item.weight}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-widest mt-1.5">{item.label}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Live Rankings */}
-      <section id="rankings" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
+      <section id="rankings" className="relative py-24 lg:py-28 border-t border-border/40 scroll-mt-16">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
-            className="text-center mb-10"
+            className="text-center mb-12"
           >
-            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              <Trophy className="h-3 w-3 text-primary" />
-              <span className="text-xs font-medium text-primary tracking-wide">LIVE RANKINGS</span>
+            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
+              <Trophy className="h-3.5 w-3.5 text-primary" />
+              <span className="text-xs font-semibold text-primary tracking-wide">LIVE RANKINGS</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse ml-1" />
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-              The Leaderboard Is Live
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-5xl font-display font-extrabold text-foreground tracking-tight">
+              The leaderboard <span className="text-primary">is live.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground max-w-md mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="mt-4 text-base lg:text-lg text-muted-foreground max-w-lg mx-auto">
               Rankings update after every evaluation. Weighted by CPI, consistency, and improvement trajectory.
             </motion.p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             className="glass-card p-4 max-w-2xl mx-auto"
           >
             {rankings.length > 0 ? (
@@ -282,353 +370,296 @@ export default function LandingPage() {
             )}
           </motion.div>
 
-          <div className="text-center mt-6">
+          <div className="text-center mt-8">
             <Link to="/auth">
-              <Button variant="outline" size="sm" className="gap-2 text-xs">
-                Join & Get Ranked <ArrowRight className="h-3.5 w-3.5" />
+              <Button variant="outline" size="default" className="gap-2">
+                Join & Get Ranked <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="relative py-20 lg:py-28 scroll-mt-16">
+      {/* Features — Tilt Cards */}
+      <section id="features" className="relative py-24 lg:py-32 border-t border-border/40 scroll-mt-16">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
-            className="text-center mb-14"
+            className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
               Platform
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-              Everything your club needs. Nothing it doesn't.
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
+              Everything your club needs.<br /><span className="text-muted-foreground">Nothing it doesn't.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground max-w-lg mx-auto">
-              Evaluations, communication, fitness, video analysis, and player profiles — unified in a single platform built for youth football.
-            </motion.p>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feature, i) => (
               <motion.div
                 key={feature.title}
-                variants={fadeUp}
-                custom={i + 3}
-                className="glass-card p-5 group hover:border-primary/20 transition-colors duration-200"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ delay: i * 0.08, duration: 0.6 }}
               >
-                <div className="w-8 h-8 rounded-md bg-primary/8 flex items-center justify-center mb-3.5 group-hover:bg-primary/12 transition-colors">
-                  <feature.icon className="h-4 w-4 text-primary" />
-                </div>
-                <h3 className="font-display font-semibold text-foreground text-sm mb-1.5">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                <TiltCard className="h-full p-6">
+                  <div className={`absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl bg-gradient-to-br ${feature.color} opacity-50`} />
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 border border-primary/20">
+                      <feature.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="font-display font-bold text-foreground text-lg mb-2.5 tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </div>
+                </TiltCard>
               </motion.div>
             ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CPI Section */}
-      <section id="cpi" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-            >
-              <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
-                Camino Player Index
-              </motion.p>
-              <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-                One score. Complete picture.
-              </motion.h2>
-              <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground leading-relaxed">
-                The CPI distills 23 performance metrics into a single 0–100 score. Coaches evaluate. The system quantifies. Players own their proof.
-              </motion.p>
-
-              <motion.div variants={fadeUp} custom={3} className="mt-6 space-y-3">
-                {[
-                  { weight: '40%', label: 'Technical Ability', desc: 'First touch, dribbling, passing, crossing, finishing, heading, weak foot, free kicks' },
-                  { weight: '30%', label: 'Tactical Intelligence', desc: 'Positioning, decision making, game reading, pressing, transition play' },
-                  { weight: '20%', label: 'Physical Performance', desc: '10m & 30m sprint, agility, vertical jump, endurance — auto-scored from fitness tests' },
-                  { weight: '10%', label: 'Mental Attributes', desc: 'Composure, leadership, work rate, resilience, communication' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-start gap-3 p-3 rounded-md bg-card border border-border/50">
-                    <span className="text-xs font-display font-bold text-primary bg-primary/10 px-2 py-0.5 rounded shrink-0">{item.weight}</span>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">{item.label}</h4>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="flex justify-center"
-            >
-              <div className="relative">
-                <div className="w-64 h-64 relative">
-                  <svg width="256" height="256" className="-rotate-90">
-                    <circle cx="128" cy="128" r="110" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
-                    <circle
-                      cx="128" cy="128" r="110" fill="none"
-                      stroke="hsl(var(--primary))" strokeWidth="8"
-                      strokeLinecap="round"
-                      strokeDasharray={2 * Math.PI * 110}
-                      strokeDashoffset={2 * Math.PI * 110 * (1 - 0.73)}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-5xl font-display font-extrabold text-primary tracking-tight">73</span>
-                    <span className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground font-medium mt-1">CPI Score</span>
-                  </div>
-                </div>
-                <div className="absolute -top-2 -right-4 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[11px] text-muted-foreground">Technical</div>
-                  <div className="text-sm font-display font-bold text-foreground">7.5</div>
-                </div>
-                <div className="absolute top-16 -left-8 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[11px] text-muted-foreground">Tactical</div>
-                  <div className="text-sm font-display font-bold text-info">6.8</div>
-                </div>
-                <div className="absolute bottom-16 -right-6 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[11px] text-muted-foreground">Physical</div>
-                  <div className="text-sm font-display font-bold text-success">7.8</div>
-                </div>
-                <div className="absolute -bottom-2 -left-2 bg-card border border-border rounded-md px-2.5 py-1.5 shadow-lg">
-                  <div className="text-[11px] text-muted-foreground">Mental</div>
-                  <div className="text-sm font-display font-bold text-accent-foreground">7.2</div>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
+      <section id="how-it-works" className="relative py-24 lg:py-32 border-t border-border/40 scroll-mt-16">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
-            className="text-center mb-14"
+            className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
               How It Works
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-              Three steps. Full visibility.
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
+              Three steps. <span className="text-primary">Full visibility.</span>
             </motion.h2>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
+          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Connecting line */}
+            <div className="hidden md:block absolute top-20 left-[16%] right-[16%] h-px">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: 0.3 }}
+                style={{ transformOrigin: 'left' }}
+                className="h-full bg-gradient-to-r from-transparent via-primary to-transparent"
+              />
+            </div>
+
             {steps.map((step, i) => (
               <motion.div
                 key={step.num}
-                variants={fadeUp}
-                custom={i + 2}
-                className="relative glass-card p-6 group"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ delay: i * 0.15, duration: 0.6 }}
+                className="relative"
               >
-                <span className="text-3xl font-display font-extrabold text-primary/15 absolute top-4 right-5">{step.num}</span>
-                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
-                  <span className="text-xs font-display font-bold text-primary">{step.num}</span>
+                <div className="relative glass-card p-7 group h-full">
+                  <span
+                    className="absolute -top-2 right-5 text-7xl font-display font-extrabold text-primary/10 leading-none select-none"
+                    style={{ textShadow: '0 0 30px hsl(var(--primary) / 0.15)' }}
+                  >
+                    {step.num}
+                  </span>
+                  <motion.div
+                    animate={{ scale: [1, 1.08, 1] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
+                    className="relative w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-5"
+                  >
+                    <span className="text-base font-display font-extrabold text-primary">{step.num}</span>
+                  </motion.div>
+                  <h3 className="font-display font-bold text-foreground text-lg mb-2.5 tracking-tight">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
                 </div>
-                <h3 className="font-display font-bold text-foreground text-sm mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Roles Section */}
-      <section id="roles" className="relative py-20 lg:py-28 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+      {/* Roles — Hologram cards */}
+      <section id="roles" className="relative py-24 lg:py-32 border-t border-border/40 scroll-mt-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,hsl(var(--primary)/0.06),transparent_60%)]" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
-            className="text-center mb-14"
+            className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
               Built for everyone
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-              Four roles. One platform.
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
+              Four roles. <span className="text-primary">One platform.</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="mt-3 text-base text-muted-foreground max-w-md mx-auto">
-              Every stakeholder in the development pathway gets a dedicated experience.
-            </motion.p>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              {
-                icon: Shield,
-                role: 'Coach',
-                desc: 'Evaluate players, run fitness tests, analyze video, communicate with parents, and generate development reports.',
-                features: ['Evaluations & CPI', 'Video analysis', 'Fitness testing', 'Player feedback'],
-              },
-              {
-                icon: Star,
-                role: 'Player',
-                desc: 'Own your profile. Track your CPI, view radar charts, set goals, and share your verified stats with anyone.',
-                features: ['CPI dashboard', 'Skill breakdowns', 'Goal tracking', 'Public profile'],
-              },
-              {
-                icon: Users,
-                role: 'Parent',
-                desc: 'Stay informed with real-time progress updates, coach feedback, announcements, and direct messaging.',
-                features: ['Progress reports', 'Coach messaging', 'Announcements', 'Performance trends'],
-              },
-              {
-                icon: Building2,
-                role: 'Director',
-                desc: 'Oversee all teams, manage coaches, track club-wide performance, and drive development strategy with data.',
-                features: ['Club overview', 'Coach management', 'Cross-team analytics', 'Player exports'],
-              },
+              { icon: Shield, role: 'Coach', desc: 'Evaluate players, run fitness tests, analyze video, and generate development reports.', features: ['Evaluations & CPI', 'Video analysis', 'Fitness testing', 'Player feedback'] },
+              { icon: Star, role: 'Player', desc: 'Own your profile. Track your CPI, view radar charts, set goals, and share verified stats.', features: ['CPI dashboard', 'Skill breakdowns', 'Goal tracking', 'Public profile'] },
+              { icon: Users, role: 'Parent', desc: 'Stay informed with real-time updates, coach feedback, announcements, and messaging.', features: ['Progress reports', 'Coach messaging', 'Announcements', 'Performance trends'] },
+              { icon: Building2, role: 'Director', desc: 'Oversee all teams, manage coaches, track club-wide performance with data.', features: ['Club overview', 'Coach management', 'Cross-team analytics', 'Player exports'] },
             ].map((item, i) => (
               <motion.div
                 key={item.role}
-                variants={fadeUp}
-                custom={i + 3}
-                className="glass-card p-5 text-center group hover:border-primary/20 transition-colors"
+                initial={{ opacity: 0, y: 40, rotateY: -15 }}
+                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
               >
-                <div className="w-10 h-10 rounded-lg bg-primary/8 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/12 transition-colors">
-                  <item.icon className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="font-display font-bold text-foreground text-sm mb-1.5">{item.role}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-3">{item.desc}</p>
-                <ul className="space-y-1">
-                  {item.features.map(f => (
-                    <li key={f} className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-                      <CheckCircle2 className="h-3 w-3 text-primary/60" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 4 + i * 0.3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
+                  className="group relative h-full p-6 rounded-2xl bg-gradient-to-b from-card/95 to-card/60 backdrop-blur-xl border border-primary/15 hover:border-primary/40 transition-all overflow-hidden"
+                >
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+                  <div className="absolute -bottom-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
+
+                  <div className="relative">
+                    <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 border border-primary/25">
+                      <item.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-display font-bold text-foreground text-lg mb-2 tracking-tight">{item.role}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">{item.desc}</p>
+                    <ul className="space-y-1.5">
+                      {item.features.map(f => (
+                        <li key={f} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <CheckCircle2 className="h-3 w-3 text-primary/70 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="relative py-16 lg:py-20 border-t border-border/40">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            className="text-center mb-14"
-          >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
-              From the field
-            </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-              Proof, not promises.
-            </motion.h2>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                custom={i + 2}
-                className="glass-card p-6"
-              >
-                <p className="text-sm text-foreground/90 leading-relaxed italic mb-4">"{t.quote}"</p>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Award className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[11px] text-muted-foreground">{t.org}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="relative py-16 lg:py-20 border-t border-border/40">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
+      {/* Testimonials — Cinematic Quote */}
+      <section className="relative py-24 lg:py-32 border-t border-border/40 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.05),transparent_70%)]" />
+        <div className="relative max-w-[1100px] mx-auto px-6 lg:px-10">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            className="text-xs font-bold text-primary uppercase tracking-[0.3em] mb-8 text-center"
           >
-            <motion.h2 variants={fadeUp} custom={0} className="text-3xl lg:text-4xl font-display font-bold text-foreground tracking-tight">
-              Stop guessing. Start proving.
-            </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="mt-3 text-base text-muted-foreground max-w-md mx-auto">
-              Camino is the operating system for player development. Set up your club in minutes. Start evaluating today.
-            </motion.p>
-            <motion.div variants={fadeUp} custom={2} className="mt-8 flex items-center justify-center gap-3">
+            From the field
+          </motion.p>
+
+          <div className="min-h-[280px] flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeQuote}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.6 }}
+                className="text-center"
+              >
+                <p className="font-display font-bold text-2xl md:text-4xl lg:text-5xl text-foreground tracking-tight leading-[1.2]">
+                  "<TypingQuote text={testimonials[activeQuote].quote} />"
+                </p>
+                <div className="mt-8 flex items-center justify-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center border border-primary/25">
+                    <Award className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-foreground">{testimonials[activeQuote].name}</p>
+                    <p className="text-xs text-muted-foreground">{testimonials[activeQuote].org}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-8">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveQuote(i)}
+                className={`h-1.5 rounded-full transition-all ${i === activeQuote ? 'w-8 bg-primary' : 'w-1.5 bg-muted-foreground/30'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Waitlist */}
+      <section className="relative py-20 scroll-mt-16">
+        <div className="max-w-xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5 }}
+            className="relative rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-md p-9 text-center shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]"
+          >
+            <div className="absolute -top-px left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+            <h3 className="font-display font-bold text-foreground text-xl tracking-tight">
+              See player development beyond match day
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Request early access to Camino.
+            </p>
+            <WaitlistForm />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Final CTA — Particle Burst */}
+      <section className="relative py-32 lg:py-40 border-t border-border/40 overflow-hidden">
+        <Suspense fallback={null}>
+          <ParticleBurst />
+        </Suspense>
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
+
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.8 }}
+          >
+            <img src={caminoLogo} alt="" className="h-16 w-16 mx-auto mb-8 rounded-xl" />
+            <h2 className="text-4xl lg:text-7xl font-display font-extrabold text-foreground tracking-tighter leading-[1.02]">
+              Stop guessing.<br /><span className="text-primary">Start proving.</span>
+            </h2>
+            <p className="mt-6 text-base lg:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Camino is the operating system for player development. Set up your club in minutes.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-3">
               <Link to="/auth">
-                <Button size="lg" className="h-11 px-8 text-sm font-semibold gap-2">
-                  Get Started Free <ArrowRight className="h-4 w-4" />
-                </Button>
+                <MagneticButton>
+                  Get Early Access <ArrowRight className="h-4 w-4" />
+                </MagneticButton>
               </Link>
-            </motion.div>
-            <motion.div variants={fadeUp} custom={3} className="mt-10 flex items-center justify-center gap-8 text-xs text-muted-foreground/70 flex-wrap">
-              <div className="flex items-center gap-1.5">
-                <Globe className="h-3.5 w-3.5" />
-                Multi-club support
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Shield className="h-3.5 w-3.5" />
-                Privacy-first
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Activity className="h-3.5 w-3.5" />
-                Real-time data
-              </div>
-              <div className="flex items-center gap-1.5">
-                <MessageSquare className="h-3.5 w-3.5" />
-                Built-in comms
-              </div>
-            </motion.div>
+            </div>
+            <div className="mt-12 flex items-center justify-center gap-x-8 gap-y-3 text-xs text-muted-foreground/70 flex-wrap">
+              <div className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" />Multi-club support</div>
+              <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5" />Privacy-first</div>
+              <div className="flex items-center gap-1.5"><Activity className="h-3.5 w-3.5" />Real-time data</div>
+              <div className="flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5" />Built-in comms</div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/40 py-8">
+      <footer className="border-t border-border/40 py-8 relative z-10 bg-background">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={caminoLogo} alt="Camino" className="h-6 w-6 rounded object-contain" />
@@ -647,7 +678,7 @@ export default function LandingPage() {
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.2 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:brightness-110 transition-all"
+            className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.6)] hover:brightness-110 transition-all"
           >
             <ArrowUp className="h-4 w-4" />
           </motion.button>
