@@ -250,6 +250,8 @@ export function CoachAssistant() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <WeeklyReportDialog open={reportOpen} onOpenChange={setReportOpen} />
     </>
   );
 }
