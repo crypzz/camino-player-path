@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { calculateCPI } from '@/types/player';
 import { Button } from '@/components/ui/button';
 import { AddPlayerDialog } from '@/components/AddPlayerDialog';
+import { CoachAssistant } from '@/components/CoachAssistant';
 import { toast } from 'sonner';
 
 export default function CoachDashboard() {
@@ -101,6 +102,8 @@ export default function CoachDashboard() {
           )}
         </div>
       )}
+
+      <CoachAssistant />
     </div>
   );
 }
