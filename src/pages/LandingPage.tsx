@@ -17,9 +17,35 @@ import { TiltCard } from '@/components/landing/TiltCard';
 import { LiveTickerBar } from '@/components/landing/LiveTickerBar';
 import { MetricOrbit } from '@/components/landing/MetricOrbit';
 import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Hero3DPitch = lazy(() => import('@/components/landing/Hero3DPitch').then(m => ({ default: m.Hero3DPitch })));
 const ParticleBurst = lazy(() => import('@/components/landing/ParticleBurst').then(m => ({ default: m.ParticleBurst })));
+
+function HeroMobileFallback() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Static pitch gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.18)_0%,transparent_55%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary)/0.08)_50%,transparent_100%)]" />
+      {/* Subtle pitch line */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] aspect-[16/10] border border-primary/20 rounded-[40%] opacity-40" />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border border-primary/30 rounded-full opacity-50" />
+      {/* Animated glowing dots — lightweight */}
+      {[
+        { left: '20%', top: '38%', delay: '0s' },
+        { left: '70%', top: '52%', delay: '0.6s' },
+        { left: '45%', top: '65%', delay: '1.2s' },
+      ].map((d, i) => (
+        <div
+          key={i}
+          className="absolute w-2 h-2 rounded-full bg-primary shadow-[0_0_16px_hsl(var(--primary))] animate-pulse"
+          style={{ left: d.left, top: d.top, animationDelay: d.delay }}
+        />
+      ))}
+    </div>
+  );
+}
 
 const features = [
   { icon: BarChart3, title: 'Camino Player Index', description: 'A proprietary 0–100 score combining 23 metrics across technical, tactical, physical, and mental domains.', color: 'from-primary/30 to-primary/5' },
@@ -87,6 +113,7 @@ export default function LandingPage() {
   const [navSolid, setNavSolid] = useState(false);
   const [activeQuote, setActiveQuote] = useState(0);
   const { data: rankings = [] } = useRankings();
+  const isMobile = useIsMobile();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -135,10 +162,14 @@ export default function LandingPage() {
 
       {/* HERO — 3D Pitch */}
       <motion.section ref={heroRef} style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        {/* 3D Canvas */}
-        <Suspense fallback={null}>
-          <Hero3DPitch />
-        </Suspense>
+        {/* 3D Canvas (desktop) / lightweight gradient (mobile) */}
+        {isMobile ? (
+          <HeroMobileFallback />
+        ) : (
+          <Suspense fallback={null}>
+            <Hero3DPitch />
+          </Suspense>
+        )}
 
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" />
