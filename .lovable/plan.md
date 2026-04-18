@@ -1,67 +1,108 @@
 
-## Plan: "One App To Rule Them All" — Viral IG Reel
 
-A 9:16 vertical Remotion video (~25s) that positions Camino as the single replacement for Veo, TeamSnap, Hudl, and spreadsheets. Designed to feel like a punchy TikTok/Reel: fast cuts, big type, satisfying "delete" moments, and a strong payoff.
+## Plan: Cinematic 3D Landing Page Overhaul
 
-### Concept & Hook
-**Hook (0-3s):** "Your club is paying for 4 apps. Here's why you only need 1."
-**Build (3-15s):** Show each competitor app card slamming in → get stamped "REPLACED BY CAMINO" → swipe off screen
-**Payoff (15-22s):** All 4 logos collapse into the Camino logo → quick montage of Camino features that replace each one
-**CTA (22-25s):** "One app. Everything your club needs." + handle
+Transform the landing page into an immersive, high-engagement experience inspired by PlayVision's cinematic AI aesthetic — every scroll triggers a "wow moment."
 
-### Apps to Compare
-- **Veo** → Camino's Video Analysis (AI tagging, highlights, match footage)
-- **TeamSnap** → Camino's Communication Hub + Schedule + Attendance
-- **Hudl** → Camino's Video Intelligence + Player Profiles
-- **Spreadsheets/WhatsApp** → Camino's CPI tracking + structured dashboards
+### Inspiration takeaways from PlayVision
+- Dark cinematic hero with **silhouetted players + live tracking overlays** (bounding boxes, x/y coords)
+- Big editorial typography ("AI Moneyball for Sports") with YC-style credibility tag
+- Section-by-section **scroll-driven reveals** with massive numbers ("1 Million Data Points")
+- Minimal palette, high contrast, lots of negative space + dramatic motion
 
-### Visual Direction
-- **Aesthetic:** Kinetic Energy — fast cuts, bold type, snappy springs, high contrast
-- **Palette:** Camino dark navy `#0D1117` + gold `#E8B400` + alert red `#DC2626` for "REPLACED" stamps + white text
-- **Type:** Plus Jakarta Sans 800 (display) + Inter 600 (body) — matches existing brand
-- **Motion motifs:**
-  - Competitor cards slam in with shake → red "REPLACED" stamp rotates in → card fades/slides off
-  - Payoff: 4 logos magnet-pull into center → morph into Camino logo with gold burst
-- **Format:** 1080x1920 vertical (IG Reel native), 30fps, ~750 frames (25s)
+### Engagement strategy: "Something happens every 2 seconds"
+Every section will have a continuous motion loop OR a scroll-triggered animation so the eye never rests.
 
-### Scene Breakdown
-| # | Duration | Scene | Beat |
-|---|---|---|---|
-| 1 | 90f (3s) | `ReelHookScene` | "Your club pays for 4 apps?" — punchy text reveal with money emoji counter |
-| 2 | 110f | `ReplaceVeoScene` | Veo card slams in → "REPLACED" stamp → Camino video UI mock slides up |
-| 3 | 110f | `ReplaceTeamSnapScene` | TeamSnap card → "REPLACED" → Camino comms/schedule mock |
-| 4 | 110f | `ReplaceHudlScene` | Hudl card → "REPLACED" → Camino player profile mock |
-| 5 | 90f | `ReplaceSpreadsheetScene` | Excel/WhatsApp → "REPLACED" → Camino CPI dashboard |
-| 6 | 130f | `MergeScene` | All 4 logos pull into center, burst into Camino logo |
-| 7 | 110f | `ReelCTAScene` | "One app. Everything." + URL + tagline |
+### Sections (top → bottom)
 
-Total: ~750 frames = 25s (accounting for transition overlaps)
+**1. Hero — 3D Tracked Player Field**
+- Three.js `Canvas` with a 3D football pitch tilted in perspective
+- Animated player nodes (glowing dots) moving in passing patterns
+- Live AI tracking overlays (bounding boxes + "x: 1225 y: 252" coords) floating in 3D space
+- Headline: **"Your progress, proven."** with kinetic text reveal (word-by-word stagger)
+- CPI score counter ticking 0 → 87 on load
+- Subtle parallax — mouse move tilts the pitch
 
-### Technical Plan
-**New files in `remotion/`:**
-- `src/ReelComparisonVideo.tsx` — composition wrapper with TransitionSeries (fast cuts, ~10f fade transitions)
-- `src/scenes/reel/ReelHookScene.tsx`
-- `src/scenes/reel/ReplaceVeoScene.tsx`
-- `src/scenes/reel/ReplaceTeamSnapScene.tsx`
-- `src/scenes/reel/ReplaceHudlScene.tsx`
-- `src/scenes/reel/ReplaceSpreadsheetScene.tsx`
-- `src/scenes/reel/MergeScene.tsx`
-- `src/scenes/reel/ReelCTAScene.tsx`
+**2. Live CPI Showcase — Floating Stat Cards**
+- 3 floating glassmorphic player cards in 3D space, gently rotating
+- Cards orbit slowly, react to mouse hover (tilt + glow)
+- Shows real player + CPI score + radar chart preview
 
-**Edited files:**
-- `remotion/src/Root.tsx` — register new `reel-comparison` composition (1080x1920, 30fps, 750 frames)
-- `remotion/scripts/render-remotion.mjs` — add output mapping for `reel-comparison` → `/mnt/documents/camino-reel-comparison.mp4`
+**3. "1 Number. 23 Metrics." — Big Stat Reveal**
+- PlayVision-style massive typography
+- Number "**100**" scales in with scroll (CPI max score)
+- 23 metric chips orbit around it, each labeled (Pace, Vision, Finishing...)
+- Continuous orbital animation
 
-**Reusable scene template:** Each "Replace[App]" scene follows identical structure (slam-in card → red stamp → Camino mock reveal) for visual consistency — only logo/color/mock content differs. This is the rhythm that makes it feel viral.
+**4. Feature Pillars — 3D Card Stack**
+- 6 features as 3D tilting cards (mouse-reactive, react-tilt style)
+- Each card has its own micro-animation (icon morphs, line draws)
+- Scroll-snap horizontal carousel on mobile
 
-**Render:** `cd remotion && node scripts/render-remotion.mjs reel-comparison` → outputs MP4 to `/mnt/documents/`
+**5. "How It Works" — Animated Path**
+- 3-step journey with an animated SVG line connecting them
+- Numbers "01 / 02 / 03" rendered huge, in 3D depth
+- Each step icon has a continuous pulse
 
-### Viral Mechanics Built In
-1. **Hook in first 1.5s** — "Your club pays for 4 apps?" creates instant curiosity
-2. **Repetitive satisfying pattern** — 4× "REPLACED" stamps train the viewer to anticipate the next reveal
-3. **Payoff moment** — 4 logos merging into 1 is the dopamine hit
-4. **Loop-friendly** — final CTA frame visually echoes the hook so it loops cleanly on IG
-5. **Mute-friendly** — readable with sound off (huge text, visual storytelling)
+**6. Live Leaderboard — Scrolling Ticker**
+- Real rankings table + a **continuous marquee ticker** above it showing live CPI updates
+- Rows fade-in on scroll with gold highlight pulse on top 3
 
-### Caption (delivered with the video)
-A short, punchy IG caption + 3 hashtags for the user to copy/paste.
+**7. Roles — 4 Holographic Cards**
+- Director, Coach, Player, Parent — each as a hologram-style card
+- Cards float and gently rotate, responding to scroll direction
+
+**8. Testimonials — Cinematic Quote Reveal**
+- One quote at a time, full-screen, with letter-by-letter typing animation
+- Auto-advances every 4s, big editorial type
+
+**9. Final CTA — Particle Burst**
+- Particle field (Three.js) that converges into the Camino logo as you scroll into view
+- Big "Get Early Access" button with magnetic hover effect
+
+### Tech stack additions
+- `@react-three/fiber@^8.18` + `@react-three/drei@^9.122.0` + `three@^0.160` for 3D scenes
+- Existing `framer-motion` for scroll-triggered reveals (`whileInView`, `useScroll`, `useTransform`)
+- New components in `src/components/landing/`:
+  - `Hero3DPitch.tsx` — Three.js pitch + tracked players
+  - `FloatingPlayerCards.tsx` — orbiting 3D cards
+  - `MetricOrbit.tsx` — 23 metrics orbiting "100"
+  - `TiltCard.tsx` — mouse-reactive 3D card wrapper
+  - `MagneticButton.tsx` — buttons that follow cursor
+  - `ParticleBurst.tsx` — final CTA particles
+  - `KineticHeadline.tsx` — word-stagger text reveals
+  - `LiveTickerBar.tsx` — marquee of CPI updates
+
+### Performance guardrails
+- Lazy-load Three.js scenes with `React.Suspense`
+- Cap pixel ratio at 1.5, `dpr={[1, 1.5]}`
+- Pause 3D animation when section out of viewport (IntersectionObserver)
+- Respect `prefers-reduced-motion` — fall back to static hero image
+
+### Files
+**New:**
+- `src/components/landing/Hero3DPitch.tsx`
+- `src/components/landing/FloatingPlayerCards.tsx`
+- `src/components/landing/MetricOrbit.tsx`
+- `src/components/landing/TiltCard.tsx`
+- `src/components/landing/MagneticButton.tsx`
+- `src/components/landing/ParticleBurst.tsx`
+- `src/components/landing/KineticHeadline.tsx`
+- `src/components/landing/LiveTickerBar.tsx`
+
+**Edited:**
+- `src/pages/LandingPage.tsx` — full restructure with new sections + 3D mounts
+- `package.json` — add three, @react-three/fiber, @react-three/drei (pinned versions)
+- `tailwind.config.ts` — add `marquee`, `float`, `tilt` keyframes
+
+### Engagement checklist
+- Word-stagger reveal in hero (every 100ms)
+- 3D pitch always animating (passing patterns loop)
+- Floating cards rotate continuously
+- Metric orbit spins indefinitely
+- Tilt cards react to every cursor move
+- Marquee ticker scrolls forever
+- Letter-by-letter testimonials
+- Particle burst on final CTA
+→ **Result:** something visually changing every <2s of scroll
+
