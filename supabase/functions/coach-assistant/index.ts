@@ -114,11 +114,16 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch coach's players + related data
-    const { data: players } = await supabase
+    // Fetch all players visible to this coach (RLS already restricts visibility)
+    const { data: players, error: playersErr } = await supabase
       .from("players")
       .select("id,name,age,position,team,attendance,technical,tactical,physical,mental")
-      .eq("created_by", userId);
+      .order("name");
+
+    if (playersErr) {
+      console.error("players query error:", playersErr);
+    }
+    console.log(`coach-assistant: loaded ${players?.length ?? 0} players for user ${userId}`);
 
     const playerIds = (players ?? []).map((p) => p.id);
 
