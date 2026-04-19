@@ -11,6 +11,7 @@ import { VideoAnalysisVideo } from "./VideoAnalysisVideo";
 import { AcademyPromoVideo } from "./AcademyPromoVideo";
 import { ProfessionalPromoVideo } from "./ProfessionalPromoVideo";
 import { ReelComparisonVideo } from "./ReelComparisonVideo";
+import { AICoachReelVideo } from "./AICoachReelVideo";
 
 export const RemotionRoot = () => (
   <>
@@ -106,6 +107,14 @@ export const RemotionRoot = () => (
       id="reel-comparison"
       component={ReelComparisonVideo}
       durationInFrames={700}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="ai-coach-reel"
+      component={AICoachReelVideo}
+      durationInFrames={900}
       fps={30}
       width={1080}
       height={1920}
