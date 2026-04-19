@@ -11,66 +11,73 @@ export const AICoachCTAScene = () => {
 
   const eyebrow = interpolate(frame, [0, 15], [0, 1], { extrapolateRight: "clamp" });
   const titleS = spring({ frame: frame - 8, fps, config: { damping: 14, stiffness: 140 } });
-  const lineW = interpolate(frame, [20, 45], [0, 100], { extrapolateRight: "clamp" });
-  const urlS = spring({ frame: frame - 60, fps, config: { damping: 18 } });
-  const breathe = 1 + Math.sin(frame / 12) * 0.02;
+  const lineW = interpolate(frame, [30, 60], [0, 100], { extrapolateRight: "clamp" });
+  const subS = spring({ frame: frame - 55, fps, config: { damping: 18 } });
+  const wordS = spring({ frame: frame - 90, fps, config: { damping: 10, stiffness: 160 } });
+  const breathe = 1 + Math.sin(frame / 14) * 0.015;
 
   return (
     <AbsoluteFill style={{
-      background: "linear-gradient(180deg, #0D1117 0%, #161B22 100%)",
+      background: "linear-gradient(180deg, #07090F 0%, #0D1117 50%, #161B22 100%)",
       fontFamily: body, alignItems: "center", justifyContent: "center", padding: 80,
     }}>
       {/* Gold radial */}
       <div style={{
         position: "absolute", inset: 0,
-        background: "radial-gradient(circle at 50% 55%, rgba(232,180,0,0.18), transparent 60%)",
+        background: "radial-gradient(circle at 50% 50%, rgba(232,180,0,0.22), transparent 60%)",
+      }} />
+
+      {/* Vignette */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%)",
       }} />
 
       <div style={{
-        fontFamily: body, fontWeight: 600, fontSize: 34, color: "#E8B400",
-        letterSpacing: 6, textTransform: "uppercase", marginBottom: 30,
+        fontFamily: body, fontWeight: 600, fontSize: 30, color: "#E8B400",
+        letterSpacing: 8, textTransform: "uppercase", marginBottom: 50,
         opacity: eyebrow,
       }}>
-        Your AI co-coach
+        Camino AI
       </div>
 
       <div style={{
-        fontFamily: display, fontWeight: 800, fontSize: 200, color: "#fff",
+        fontFamily: display, fontWeight: 800, fontSize: 170, color: "#fff",
         lineHeight: 0.92, letterSpacing: -5, textAlign: "center",
-        transform: `scale(${interpolate(titleS, [0, 1], [0.7, 1]) * breathe})`,
+        transform: `scale(${interpolate(titleS, [0, 1], [0.75, 1]) * breathe})`,
         opacity: titleS,
-        textShadow: "0 0 80px rgba(232,180,0,0.4)",
+        textShadow: "0 0 100px rgba(232,180,0,0.4)",
       }}>
-        Coach<br />
-        <span style={{
-          background: "linear-gradient(135deg, #FFD340, #E8B400)",
-          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>smarter.</span>
+        Coach
       </div>
 
       <div style={{
-        width: `${lineW}%`, maxWidth: 600, height: 4,
+        width: `${lineW}%`, maxWidth: 280, height: 3,
         background: "linear-gradient(90deg, transparent, #E8B400, transparent)",
-        marginTop: 40, borderRadius: 2,
+        marginTop: 30, marginBottom: 30,
       }} />
 
       <div style={{
-        marginTop: 50, fontFamily: body, fontWeight: 500, fontSize: 32,
-        color: "rgba(255,255,255,0.7)", textAlign: "center", maxWidth: 800, lineHeight: 1.3,
-        opacity: interpolate(frame, [40, 60], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        fontFamily: display, fontWeight: 800, fontSize: 220,
+        lineHeight: 0.92, letterSpacing: -6, textAlign: "center",
+        background: "linear-gradient(135deg, #FFD340 0%, #E8B400 50%, #B8860B 100%)",
+        WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+        opacity: wordS,
+        transform: `scale(${interpolate(wordS, [0, 1], [0.7, 1]) * breathe})`,
+        filter: `drop-shadow(0 0 60px rgba(232,180,0,${0.5 * wordS}))`,
       }}>
-        Built into Camino. No setup.<br />Just ask.
+        smarter.
       </div>
 
       <div style={{
-        marginTop: 70, padding: "26px 56px",
-        background: "linear-gradient(135deg, #E8B400, #FFD340)",
-        borderRadius: 100, fontFamily: display, fontWeight: 800, fontSize: 40,
-        color: "#0D1117", letterSpacing: 1,
-        opacity: urlS, transform: `scale(${interpolate(urlS, [0, 1], [0.8, 1]) * breathe})`,
-        boxShadow: "0 20px 60px rgba(232,180,0,0.4)",
+        marginTop: 70, fontFamily: body, fontWeight: 500, fontSize: 32,
+        color: "rgba(255,255,255,0.65)", textAlign: "center", maxWidth: 800, lineHeight: 1.35,
+        letterSpacing: 1,
+        opacity: subS,
+        transform: `translateY(${interpolate(subS, [0, 1], [20, 0])}px)`,
       }}>
-        camino-player-path.lovable.app
+        Your AI co-coach.<br />
+        <span style={{ color: "#E8B400", fontWeight: 600 }}>Built into Camino.</span>
       </div>
     </AbsoluteFill>
   );
