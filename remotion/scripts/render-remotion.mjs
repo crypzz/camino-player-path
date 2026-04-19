@@ -30,6 +30,7 @@ const outputMap = {
   "go-pro": "/mnt/documents/camino-go-pro.mp4",
   "video-analysis": "/mnt/documents/camino-video-analysis.mp4",
   "reel-comparison": "/mnt/documents/camino-reel-comparison.mp4",
+  "ai-coach-reel": "/mnt/documents/camino-ai-coach-reel.mp4",
 };
 const outputLocation = outputMap[compositionId] || `/mnt/documents/${compositionId}.mp4`;
 

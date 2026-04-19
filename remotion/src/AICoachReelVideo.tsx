@@ -11,27 +11,27 @@ export const AICoachReelVideo = () => {
   return (
     <AbsoluteFill style={{ background: "#0D1117" }}>
       <TransitionSeries>
-        <TransitionSeries.Sequence durationInFrames={100}>
+        <TransitionSeries.Sequence durationInFrames={110}>
           <AICoachHookScene />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={linearTiming({ durationInFrames: 10 })} />
 
-        <TransitionSeries.Sequence durationInFrames={180}>
+        <TransitionSeries.Sequence durationInFrames={210}>
           <ChatRevealScene />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={linearTiming({ durationInFrames: 10 })} />
 
-        <TransitionSeries.Sequence durationInFrames={170}>
+        <TransitionSeries.Sequence durationInFrames={195}>
           <UseCasesScene />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={linearTiming({ durationInFrames: 10 })} />
 
-        <TransitionSeries.Sequence durationInFrames={170}>
+        <TransitionSeries.Sequence durationInFrames={195}>
           <ReportScene />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={fade()} timing={linearTiming({ durationInFrames: 10 })} />
 
-        <TransitionSeries.Sequence durationInFrames={130}>
+        <TransitionSeries.Sequence durationInFrames={150}>
           <AICoachCTAScene />
         </TransitionSeries.Sequence>
       </TransitionSeries>
