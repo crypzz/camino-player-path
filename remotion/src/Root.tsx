@@ -12,9 +12,18 @@ import { AcademyPromoVideo } from "./AcademyPromoVideo";
 import { ProfessionalPromoVideo } from "./ProfessionalPromoVideo";
 import { ReelComparisonVideo } from "./ReelComparisonVideo";
 import { AICoachReelVideo } from "./AICoachReelVideo";
+import { CaminoPromo15 } from "./CaminoPromo15";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="camino-promo-15"
+      component={CaminoPromo15}
+      durationInFrames={450}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="main"
       component={MainVideo}
