@@ -1,75 +1,111 @@
 
 
-## Camino — 15s Hero Promo Video
+## Camino — Bags Submission Demo Video (60s Hero Cut)
 
-A scroll-stopping 15-second vertical reel built to win the first 3 seconds. No feature dumps, no link cards — just identity, proof, and a closer that makes you want to know what Camino is.
+A submission-grade demo video for the Bags competition deadline (April 28). This is **not** another promo reel — it's a judge-facing product demo that proves Camino is real, working, and category-defining in 60 seconds.
 
-### The Core Idea
+### The Strategic Shift
 
-Most promos fail because they explain. This one **provokes**. We open on a punch-in-the-face hook, prove the product exists with rapid-fire UI flashes, then land a brand stamp that lingers.
+Previous reels (15s promos, AI coach) optimized for **scroll retention**. This one optimizes for **judge conviction**. Judges watching submissions need to understand:
 
-**Tagline arc:**
-1. **0–3s** — "Your kid is the next big thing." *(skeptical pause)* "Prove it."
-2. **3–9s** — Platform montage: CPI scores, rankings climbing, video tagging, parent reports — all real UI, all moving fast
-3. **9–13s** — "Every player. Tracked. Ranked. Seen."
-4. **13–15s** — CAMINO logo lockup with gold pulse. No URL.
+1. **What is it?** (5s)
+2. **What problem does it solve?** (10s)
+3. **Does it actually work?** (30s of real product)
+4. **Why does it win?** (10s of traction + vision)
+5. **What's next?** (5s roadmap stamp)
 
-### Why This Will Beat 5s Average View Time
+Different goal → different video. Longer, denser, more product-forward.
 
-- **Frame 0 = motion + bold type** (not a logo, not a fade-in)
-- **Hook is a question the viewer answers in their head** ("...can you?")
-- **Cuts every 0.6–1.2s** in the montage — algorithm-friendly pacing
-- **Gold accent flashes** create micro-rewards that hold attention
-- **Final logo arrives only after value is shown** — viewers stay to see "what is this?"
+### Video Structure (60s = 1800 frames @ 30fps, 1920x1080 horizontal)
 
-### Scene Breakdown (15s = 450 frames @ 30fps)
+Horizontal 1080p — judges watch on desktop, not phones. Bigger canvas = more product surface area visible per frame.
 
 | # | Scene | Duration | Beat |
 |---|-------|----------|------|
-| 1 | **HookScene** | 90f (3s) | "Your kid is the next big thing." → "Prove it." Massive type, smash-in, gold underline on "Prove" |
-| 2 | **ProofMontageScene** | 180f (6s) | Rapid-fire UI flashes: CPI dial spinning to 87, leaderboard row climbing rank, video clip with player tags, fitness test bars filling, parent report card sliding in. 5 cuts, ~36f each |
-| 3 | **TaglineScene** | 90f (3s) | Three-word stamps: "TRACKED." "RANKED." "SEEN." Each smashes in with a frame of white flash. Gold on final word |
-| 4 | **LogoCloseScene** | 90f (3s) | CAMINO wordmark, gold pulse ring, subtle tagline "The player development platform." Breathing motion. No URL. |
+| 1 | **ColdOpen** | 120f (4s) | Black screen → "100M kids play soccer." → "1 in 10,000 gets seen." Massive type, gold accent on "seen" |
+| 2 | **ProblemFrame** | 150f (5s) | Split screen: messy spreadsheets / WhatsApp chaos / lost video files vs. the Camino logo emerging. "Academies run on chaos." |
+| 3 | **ProductReveal** | 180f (6s) | Camino wordmark with tagline: "The player development platform." Subtitle: "One passport. Every player. Tracked from U8 to pro." |
+| 4 | **CPIDemo** | 240f (8s) | Live CPI dial animating to 87, with the 4 pillar breakdown (Technical/Tactical/Physical/Mental) flying in. Caption: "CPI — one score across 23 attributes." |
+| 5 | **VideoIntelDemo** | 240f (8s) | AI video tagging: pitch view with player tags appearing, scan line sweeping, event list populating on right. Caption: "AI video analysis. Every touch tagged." |
+| 6 | **LeaderboardDemo** | 210f (7s) | Live ranking climb showing Sofia Chen rising to #1 across teams, with the formula stamp: "60% CPI · 20% consistency · 20% improvement" |
+| 7 | **MultiRoleDemo** | 240f (8s) | 4-quadrant grid: Director dashboard / Coach view / Player profile / Parent report — all populated with real-feeling data, animating in sync |
+| 8 | **TractionStamp** | 150f (5s) | Big numbers: "4 user roles · 23 attributes · AI-powered · Built on Lovable Cloud" with subtle count-up |
+| 9 | **RoadmapTease** | 150f (5s) | Three-column tease: "Live · Beta Q2 · Native iOS Q3" with gold check-marks animating in |
+| 10 | **CloseLogoStamp** | 120f (4s) | CAMINO wordmark, gold pulse, "The player development platform." Hold on final frame for screenshots |
+
+Total: 1800 frames = 60s exactly.
+
+### Why This Wins the Submission
+
+- **Opens with a stat, not a logo** — judges scroll past logo intros
+- **Shows real product UI** in 4 distinct demo scenes (CPI, video, leaderboard, multi-role) — proves it's built, not vapor
+- **Names the unfair advantages** — proprietary CPI algorithm, AI video pipeline, multi-role architecture
+- **Closes with traction + roadmap** — shows momentum and a credible 12-month vision
+- **No URL, no waitlist CTA** — the X thread + Bags page handle conversion. The video does conviction.
 
 ### Visual Direction
 
-- **Aesthetic:** Cinematic Tech Product — dark navy `#0A0C12`, gold accent `#E8B400`, white `#FFFFFF`, muted grey `#8B92A3`
-- **Type:** Plus Jakarta Sans 800 (display), Inter 600 (UI mocks). Massive scale, tight tracking
-- **Motion language:** Smash-cuts with 2–3 frame white/gold flash transitions. Spring damping 10–12 for snap. No fades except logo close.
-- **Motifs:** Gold underline reveals, scan lines, number count-ups, scale-from-0.4 on stat cards
-- **Audio:** Muted (IG autoplay reality)
+- **Format**: 1920×1080 horizontal (judge desktop viewing)
+- **Aesthetic**: Cinematic Tech Product — same dark navy `#0A0C12` + gold `#E8B400` system as existing promos for brand consistency
+- **Type**: Plus Jakarta Sans 800 (display), Inter 500/600/700 (UI mocks)
+- **Motion**: Reuse the established smash-cut + spring system from `Promo15ProofScene` and `DashboardScene`. White flash transitions between major sections, smooth springs within scenes.
+- **Pacing**: Faster than typical product demos but slower than the 15s promo — judges need to read.
 
 ### File Structure
 
 ```text
 remotion/src/
-  CaminoPromo15.tsx              ← new composition wrapper
-  scenes/promo15/
-    Promo15HookScene.tsx         ← scene 1
-    Promo15ProofScene.tsx        ← scene 2 (montage with 5 sub-beats)
-    Promo15TaglineScene.tsx      ← scene 3
-    Promo15CloseScene.tsx        ← scene 4
+  CaminoBagsDemo.tsx                 ← new composition wrapper (1800f, 30fps, 1920x1080)
+  scenes/bags/
+    ColdOpenScene.tsx                ← scene 1: stat hook
+    ProblemFrameScene.tsx            ← scene 2: chaos vs. order
+    ProductRevealScene.tsx           ← scene 3: wordmark + tagline
+    CPIDemoScene.tsx                 ← scene 4: CPI dial + pillars
+    VideoIntelDemoScene.tsx          ← scene 5: AI pitch tagging
+    LeaderboardDemoScene.tsx         ← scene 6: ranking climb + formula
+    MultiRoleDemoScene.tsx           ← scene 7: 4-quadrant role grid
+    TractionStampScene.tsx           ← scene 8: big numbers
+    RoadmapTeaseScene.tsx            ← scene 9: live/beta/native
+    CloseLogoScene.tsx               ← scene 10: final stamp
 ```
 
 Plus:
-- Register `camino-promo-15` composition in `remotion/src/Root.tsx` (450 frames, 30fps, 1080x1920)
+- Register `camino-bags-demo` composition in `remotion/src/Root.tsx`
 - Add render entry to `remotion/scripts/render-remotion.mjs`
-- Output: `/mnt/documents/camino-promo-15.mp4`
+- Output: `/mnt/documents/camino-bags-demo.mp4`
+
+### Reuse Strategy (Speed + Consistency)
+
+To hit the 7-day deadline cleanly, scenes 4-7 reuse motion patterns from existing files:
+- **CPI dial** — adapt the `CPIBeat` component from `Promo15ProofScene.tsx`
+- **Leaderboard climb** — adapt `LeaderboardBeat` from same file
+- **Video tagging** — adapt `VideoTagBeat` from same file
+- **Report card** — adapt `ReportBeat` from same file, refactored into the multi-role grid
+
+This keeps brand fidelity tight and lets the new scenes (cold open, problem frame, traction stamp, roadmap, close) be the focus of new motion design work.
+
+### Companion Deliverables (Generated After Video)
+
+I'll also produce, alongside the MP4:
+
+1. **X thread copy** (5–7 tweets) — hook → problem → product → traction → roadmap → ask, formatted to paste directly
+2. **Bags app page caption** — short, judge-facing, links the X thread
+
+Both delivered as text in chat after the render completes.
+
+### What I'm NOT Doing
+
+- ❌ No vertical 9:16 reformat — judges watch desktop
+- ❌ No voiceover (silent autoplay realities apply on X too)
+- ❌ No fictional traction numbers (no fake "10,000 users") — only verifiable claims
+- ❌ No URL or "join waitlist" card in the video itself
+- ❌ No new product features built for the demo — everything shown already exists in the codebase
 
 ### Technical Notes
 
 - All motion via `useCurrentFrame()` + `spring()`/`interpolate()` — no CSS transitions
-- 2-frame white flash overlays at each montage cut for "edited" feel
-- ProofScene uses 5 internal `Sequence` blocks with staggered entrances
-- Reuse existing UI mock patterns from `DashboardScene` and `LeaderboardShowcaseScene` for the montage flashes (CPI dial, leaderboard rows, stat cards) — keeps brand consistency without rebuilding
-- No "lovable.app" or any URL anywhere
-- Logo close uses gold pulse ring + breathing scale, ends on a held frame so viewers can screenshot
-
-### What I'm NOT Doing
-
-- ❌ No website URL or "join waitlist" card
-- ❌ No feature explanations ("AI coach", "video analysis", etc.) — those are for the dedicated reels
-- ❌ No talking head or voiceover script
-- ❌ No slow fade-ins — every cut is a smash
-- ❌ No more than 4 scenes (tight = retainable)
+- 2-frame white flash overlays at major scene boundaries
+- Each demo scene is a self-contained `<Series.Sequence>` with internal staggered entrances
+- Final composition uses `<Series>` (not `<TransitionSeries>`) so durations sum cleanly to 1800f
+- Render: programmatic `scripts/render-remotion.mjs` with `concurrency: 1`, `muted: true`, `chromeMode: "chrome-for-testing"` per sandbox rules
 
