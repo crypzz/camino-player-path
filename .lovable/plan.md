@@ -1,111 +1,98 @@
 
 
-## Camino — Bags Submission Demo Video (60s Hero Cut)
+## Make the Homepage Feel Like a $100M Sports Company
 
-A submission-grade demo video for the Bags competition deadline (April 28). This is **not** another promo reel — it's a judge-facing product demo that proves Camino is real, working, and category-defining in 60 seconds.
+The page already has the right information — what's missing is the **finish**. Right now it reads as "many good sections stacked." Top-tier sports tech (Whoop, Catapult, StatsBomb, Strava Pro) reads as **one continuous cinematic narrative** with obsessive detail, real product surfaces, and zero filler.
 
-### The Strategic Shift
+This plan keeps every existing section and piece of info — and rebuilds the *feel* across 8 targeted upgrades.
 
-Previous reels (15s promos, AI coach) optimized for **scroll retention**. This one optimizes for **judge conviction**. Judges watching submissions need to understand:
+### The 8 Upgrades
 
-1. **What is it?** (5s)
-2. **What problem does it solve?** (10s)
-3. **Does it actually work?** (30s of real product)
-4. **Why does it win?** (10s of traction + vision)
-5. **What's next?** (5s roadmap stamp)
+#### 1. Cinematic Hero — show the product, not decoration
+Replace the floating "P-07 / P-22" tracking labels with a **realistic product window** floating beside the headline: a mini live CPI dashboard (player avatar, 87 score dial, 4 pillar bars, micro-sparkline, "Verified by Coach" stamp). Add a thin gold scan-line sweeping across it every 6s. The 3D pitch stays as ambient backdrop but gets a darker vignette so the product reads first.
 
-Different goal → different video. Longer, denser, more product-forward.
+#### 2. Premium typography system
+Switch display font from `Outfit` to **`Inter Display` / keep `Plus Jakarta Sans` but tighten everything**: kerning `-0.04em` on H1s, `-0.025em` on H2s, introduce a **serif accent font (`Instrument Serif` italic)** for one signature word per section ("*proven.*", "*live.*", "*passport.*") — this is the single move that makes premium sites feel premium (Linear, Vercel, Arc, Whoop all do this).
 
-### Video Structure (60s = 1800 frames @ 30fps, 1920x1080 horizontal)
+#### 3. Section transitions — kill the "card wall"
+Remove the repeated `border-t border-border/40` between sections. Replace with **continuous gradient washes** and a single persistent vertical gold rail on the left edge with section progress dots — gives the whole scroll a unified spine like a product tour.
 
-Horizontal 1080p — judges watch on desktop, not phones. Bigger canvas = more product surface area visible per frame.
+#### 4. Stat Spine — replace the 3-stat row with a hero metrics strip
+Build a full-width sticky **"Live Metrics Bar"** that appears after hero scroll: shows real rolling counters (Players Tracked · Evaluations Logged · Videos Analyzed · Avg CPI Gain) with subtle micro-charts and a green pulse. Disappears when waitlist is in view. Feels like a live ops dashboard.
 
-| # | Scene | Duration | Beat |
-|---|-------|----------|------|
-| 1 | **ColdOpen** | 120f (4s) | Black screen → "100M kids play soccer." → "1 in 10,000 gets seen." Massive type, gold accent on "seen" |
-| 2 | **ProblemFrame** | 150f (5s) | Split screen: messy spreadsheets / WhatsApp chaos / lost video files vs. the Camino logo emerging. "Academies run on chaos." |
-| 3 | **ProductReveal** | 180f (6s) | Camino wordmark with tagline: "The player development platform." Subtitle: "One passport. Every player. Tracked from U8 to pro." |
-| 4 | **CPIDemo** | 240f (8s) | Live CPI dial animating to 87, with the 4 pillar breakdown (Technical/Tactical/Physical/Mental) flying in. Caption: "CPI — one score across 23 attributes." |
-| 5 | **VideoIntelDemo** | 240f (8s) | AI video tagging: pitch view with player tags appearing, scan line sweeping, event list populating on right. Caption: "AI video analysis. Every touch tagged." |
-| 6 | **LeaderboardDemo** | 210f (7s) | Live ranking climb showing Sofia Chen rising to #1 across teams, with the formula stamp: "60% CPI · 20% consistency · 20% improvement" |
-| 7 | **MultiRoleDemo** | 240f (8s) | 4-quadrant grid: Director dashboard / Coach view / Player profile / Parent report — all populated with real-feeling data, animating in sync |
-| 8 | **TractionStamp** | 150f (5s) | Big numbers: "4 user roles · 23 attributes · AI-powered · Built on Lovable Cloud" with subtle count-up |
-| 9 | **RoadmapTease** | 150f (5s) | Three-column tease: "Live · Beta Q2 · Native iOS Q3" with gold check-marks animating in |
-| 10 | **CloseLogoStamp** | 120f (4s) | CAMINO wordmark, gold pulse, "The player development platform." Hold on final frame for screenshots |
+#### 5. Product Showcase Reel — new section between Floating Cards and CPI
+A **3-frame mock product carousel** that auto-advances every 4s: (a) Coach evaluation panel with radar chart filling, (b) Video analysis with pitch overlay + tagged events, (c) Director leaderboard with row climbing. Real component-level fidelity, not screenshots. Subtle browser chrome around it (rounded window, traffic-light dots, faint URL pill saying "camino · live"). This is the single biggest "looks real" upgrade.
 
-Total: 1800 frames = 60s exactly.
+#### 6. CPI section — turn it into a signature moment
+Replace the orbit-only treatment with a **giant centered CPI dial (animated 0→87 on viewport)** with the 4 pillars splaying out as labeled spokes, each with their weight and a 6-month sparkline. Surrounded by faint engraved circular type ("CAMINO PLAYER INDEX · 23 METRICS · LIVE"). This becomes the "screenshot moment" of the page.
 
-### Why This Wins the Submission
+#### 7. Logo wall + press-style trust strip
+Add a subtle **"Built for the next generation of academies"** strip with 6 placeholder club crests rendered as monochrome gold-on-dark badges (we'll use lucide shield icons styled as crests with U-12 / U-14 / U-16 / U-18 labels until real partners). Sits between Roles and Testimonials — the move every premium B2B site uses to signal seriousness.
 
-- **Opens with a stat, not a logo** — judges scroll past logo intros
-- **Shows real product UI** in 4 distinct demo scenes (CPI, video, leaderboard, multi-role) — proves it's built, not vapor
-- **Names the unfair advantages** — proprietary CPI algorithm, AI video pipeline, multi-role architecture
-- **Closes with traction + roadmap** — shows momentum and a credible 12-month vision
-- **No URL, no waitlist CTA** — the X thread + Bags page handle conversion. The video does conviction.
+#### 8. Footer — actually finish the page
+Current footer is one line. Build a real 4-column footer: Platform · Roles · Resources · Company, with the Camino wordmark large, a tagline, social/contact, copyright, and a thin gold underline. This single change makes the site stop feeling like a deck and start feeling like a company.
 
-### Visual Direction
+### Bonus polish (small but high-impact)
 
-- **Format**: 1920×1080 horizontal (judge desktop viewing)
-- **Aesthetic**: Cinematic Tech Product — same dark navy `#0A0C12` + gold `#E8B400` system as existing promos for brand consistency
-- **Type**: Plus Jakarta Sans 800 (display), Inter 500/600/700 (UI mocks)
-- **Motion**: Reuse the established smash-cut + spring system from `Promo15ProofScene` and `DashboardScene`. White flash transitions between major sections, smooth springs within scenes.
-- **Pacing**: Faster than typical product demos but slower than the 15s promo — judges need to read.
+- **Cursor**: add a custom cursor-follower gold dot (12px, mix-blend-difference) on desktop only — instantly elevates feel
+- **Section labels**: replace "Verified Performance" / "Platform" eyebrow text with **numbered chapters** (`01 — IDENTITY`, `02 — INDEX`, `03 — INTELLIGENCE`, `04 — INFRASTRUCTURE`) — editorial sports-magazine vibe
+- **Buttons**: primary CTAs get a **subtle inner-glow gradient + 1px gold border + soft drop-shadow** so they look minted, not flat
+- **Noise overlay**: 2% film-grain SVG over the whole page — kills the "flat web" look
+- **Reduced motion**: all new animations respect `prefers-reduced-motion`
+
+### What I am NOT changing
+
+- ❌ No copy rewrites — taglines, features, steps, testimonials all stay
+- ❌ No new routes or dependencies
+- ❌ Leaderboard data, waitlist form, role cards data — all unchanged
+- ❌ Mobile fallback hero stays (with same upgrades scaled down)
+- ❌ Color palette stays (navy + gold + the existing semantic tokens)
 
 ### File Structure
 
 ```text
-remotion/src/
-  CaminoBagsDemo.tsx                 ← new composition wrapper (1800f, 30fps, 1920x1080)
-  scenes/bags/
-    ColdOpenScene.tsx                ← scene 1: stat hook
-    ProblemFrameScene.tsx            ← scene 2: chaos vs. order
-    ProductRevealScene.tsx           ← scene 3: wordmark + tagline
-    CPIDemoScene.tsx                 ← scene 4: CPI dial + pillars
-    VideoIntelDemoScene.tsx          ← scene 5: AI pitch tagging
-    LeaderboardDemoScene.tsx         ← scene 6: ranking climb + formula
-    MultiRoleDemoScene.tsx           ← scene 7: 4-quadrant role grid
-    TractionStampScene.tsx           ← scene 8: big numbers
-    RoadmapTeaseScene.tsx            ← scene 9: live/beta/native
-    CloseLogoScene.tsx               ← scene 10: final stamp
+src/components/landing/
+  HeroProductWindow.tsx         ← new: floating live CPI mock for hero
+  LiveMetricsBar.tsx            ← new: sticky scroll-revealed metrics strip
+  ProductShowcaseReel.tsx       ← new: 3-frame auto-advancing product mock
+  CPIDial.tsx                   ← new: signature animated CPI dial w/ pillars
+  ClubCrestWall.tsx             ← new: gold-on-dark trust strip
+  SiteFooter.tsx                ← new: 4-column premium footer
+  ChapterLabel.tsx              ← new: editorial numbered section eyebrow
+  CursorFollower.tsx            ← new: desktop gold-dot cursor
+  SerifAccent.tsx               ← new: tiny wrapper for italic signature words
+
+src/pages/LandingPage.tsx       ← integrate above, remove section borders, restructure flow
+src/index.css                   ← add Instrument Serif import, noise overlay, refined type tokens
+tailwind.config.ts              ← add `serif: ['Instrument Serif']`, noise utility
 ```
 
-Plus:
-- Register `camino-bags-demo` composition in `remotion/src/Root.tsx`
-- Add render entry to `remotion/scripts/render-remotion.mjs`
-- Output: `/mnt/documents/camino-bags-demo.mp4`
+### Final Section Order (after upgrades)
 
-### Reuse Strategy (Speed + Consistency)
+```text
+NAV (unchanged)
+HERO + Product Window (new) + 3D pitch backdrop
+LIVE METRICS BAR (new, sticky-on-scroll)
+LiveTickerBar (unchanged)
+01 — IDENTITY: Floating Player Cards
+02 — SHOWCASE: Product Showcase Reel (new)
+03 — INDEX: Signature CPI Dial section (rebuilt)
+04 — RANKINGS: Live leaderboard
+05 — INTELLIGENCE: Feature tilt cards
+06 — FLOW: How it works
+07 — INFRASTRUCTURE: Roles
+08 — TRUST: Club Crest Wall (new)
+09 — VOICES: Testimonials
+WAITLIST
+FINAL CTA (Particle Burst)
+SITE FOOTER (new, 4-column)
+```
 
-To hit the 7-day deadline cleanly, scenes 4-7 reuse motion patterns from existing files:
-- **CPI dial** — adapt the `CPIBeat` component from `Promo15ProofScene.tsx`
-- **Leaderboard climb** — adapt `LeaderboardBeat` from same file
-- **Video tagging** — adapt `VideoTagBeat` from same file
-- **Report card** — adapt `ReportBeat` from same file, refactored into the multi-role grid
+### Risk / Performance
 
-This keeps brand fidelity tight and lets the new scenes (cold open, problem frame, traction stamp, roadmap, close) be the focus of new motion design work.
-
-### Companion Deliverables (Generated After Video)
-
-I'll also produce, alongside the MP4:
-
-1. **X thread copy** (5–7 tweets) — hook → problem → product → traction → roadmap → ask, formatted to paste directly
-2. **Bags app page caption** — short, judge-facing, links the X thread
-
-Both delivered as text in chat after the render completes.
-
-### What I'm NOT Doing
-
-- ❌ No vertical 9:16 reformat — judges watch desktop
-- ❌ No voiceover (silent autoplay realities apply on X too)
-- ❌ No fictional traction numbers (no fake "10,000 users") — only verifiable claims
-- ❌ No URL or "join waitlist" card in the video itself
-- ❌ No new product features built for the demo — everything shown already exists in the codebase
-
-### Technical Notes
-
-- All motion via `useCurrentFrame()` + `spring()`/`interpolate()` — no CSS transitions
-- 2-frame white flash overlays at major scene boundaries
-- Each demo scene is a self-contained `<Series.Sequence>` with internal staggered entrances
-- Final composition uses `<Series>` (not `<TransitionSeries>`) so durations sum cleanly to 1800f
-- Render: programmatic `scripts/render-remotion.mjs` with `concurrency: 1`, `muted: true`, `chromeMode: "chrome-for-testing"` per sandbox rules
+- All new components are pure React + Tailwind + framer-motion (already installed) — no new deps
+- Hero product window is a static mock, no extra Three.js cost
+- Showcase reel is CSS/SVG only, sub-1KB JS
+- Cursor follower is desktop-only behind `useIsMobile` guard
+- All sections respect `prefers-reduced-motion`
 
