@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, ArrowUp, BarChart3, Shield, Users, Video, Target,
-  TrendingUp, Zap, Globe, Star, Trophy, MessageSquare,
+  TrendingUp, Globe, Star, Trophy, MessageSquare,
   Activity, CheckCircle2, Building2, Dumbbell, Award, Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,9 +15,17 @@ import { KineticHeadline } from '@/components/landing/KineticHeadline';
 import { MagneticButton } from '@/components/landing/MagneticButton';
 import { TiltCard } from '@/components/landing/TiltCard';
 import { LiveTickerBar } from '@/components/landing/LiveTickerBar';
-import { MetricOrbit } from '@/components/landing/MetricOrbit';
 import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { HeroProductWindow } from '@/components/landing/HeroProductWindow';
+import { LiveMetricsBar } from '@/components/landing/LiveMetricsBar';
+import { ProductShowcaseReel } from '@/components/landing/ProductShowcaseReel';
+import { CPIDial } from '@/components/landing/CPIDial';
+import { ClubCrestWall } from '@/components/landing/ClubCrestWall';
+import { SiteFooter } from '@/components/landing/SiteFooter';
+import { ChapterLabel } from '@/components/landing/ChapterLabel';
+import { CursorFollower } from '@/components/landing/CursorFollower';
+import { SerifAccent } from '@/components/landing/SerifAccent';
 
 const Hero3DPitch = lazy(() => import('@/components/landing/Hero3DPitch').then(m => ({ default: m.Hero3DPitch })));
 const ParticleBurst = lazy(() => import('@/components/landing/ParticleBurst').then(m => ({ default: m.ParticleBurst })));
@@ -25,13 +33,10 @@ const ParticleBurst = lazy(() => import('@/components/landing/ParticleBurst').th
 function HeroMobileFallback() {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Static pitch gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.18)_0%,transparent_55%)]" />
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary)/0.08)_50%,transparent_100%)]" />
-      {/* Subtle pitch line */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] aspect-[16/10] border border-primary/20 rounded-[40%] opacity-40" />
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border border-primary/30 rounded-full opacity-50" />
-      {/* Animated glowing dots — lightweight */}
       {[
         { left: '20%', top: '38%', delay: '0s' },
         { left: '70%', top: '52%', delay: '0.6s' },
@@ -120,6 +125,9 @@ export default function LandingPage() {
   const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
   const heroScale = useTransform(heroProgress, [0, 1], [1, 0.95]);
 
+  // Page scroll progress for left rail
+  const { scrollYProgress: pageProgress } = useScroll();
+
   useEffect(() => {
     const onScroll = () => {
       setShowScrollTop(window.scrollY > 400);
@@ -138,10 +146,29 @@ export default function LandingPage() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Vertical rail progress height
+  const railHeight = useTransform(pageProgress, [0, 1], ['0%', '100%']);
+
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden" style={{ scrollBehavior: 'smooth' }}>
+    <div className="relative min-h-screen bg-background overflow-x-hidden noise-overlay" style={{ scrollBehavior: 'smooth' }}>
+      {/* Custom cursor (desktop only, mix-blend-difference gold dot) */}
+      <CursorFollower />
+
+      {/* Persistent vertical gold rail with section progress */}
+      <div className="hidden lg:block fixed left-6 top-0 bottom-0 z-30 pointer-events-none">
+        <div className="relative w-px h-full bg-border/40 mx-auto">
+          <motion.div
+            style={{ height: railHeight }}
+            className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary to-primary/30"
+          />
+        </div>
+      </div>
+
+      {/* Live Metrics Bar — sticky scroll-revealed */}
+      <LiveMetricsBar />
+
       {/* Navigation */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${navSolid ? 'border-border/60 bg-background/85 backdrop-blur-xl' : 'border-transparent bg-transparent'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navSolid ? 'border-b border-border/60 bg-background/85 backdrop-blur-xl' : 'border-b border-transparent bg-transparent'}`}>
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src={caminoLogo} alt="Camino" className="h-9 w-9 rounded-md object-contain" />
@@ -155,14 +182,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth"><Button variant="ghost" size="sm" className="text-primary text-sm h-9">Log in</Button></Link>
-            <Link to="/auth"><Button size="sm" className="h-9 px-5 text-sm font-semibold gap-1.5">Get Started <ArrowRight className="h-4 w-4" /></Button></Link>
+            <Link to="/auth"><Button size="sm" className="h-9 px-5 text-sm font-semibold gap-1.5 btn-minted text-primary-foreground border border-primary/40">Get Started <ArrowRight className="h-4 w-4" /></Button></Link>
           </div>
         </div>
       </nav>
 
-      {/* HERO — 3D Pitch */}
+      {/* HERO */}
       <motion.section ref={heroRef} style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        {/* 3D Canvas (desktop) / lightweight gradient (mobile) */}
         {isMobile ? (
           <HeroMobileFallback />
         ) : (
@@ -171,109 +197,88 @@ export default function LandingPage() {
           </Suspense>
         )}
 
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" />
+        {/* Darker vignette so product window reads first */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/20 to-background pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_0%,hsl(var(--background))_75%)] pointer-events-none" />
 
-        {/* AI Tracking overlays - decorative */}
-        <div className="absolute inset-0 pointer-events-none hidden lg:block">
-          {[
-            { x: '12%', y: '32%', label: 'P-07', xc: 1225, yc: 252, delay: 0.6 },
-            { x: '78%', y: '48%', label: 'P-22', xc: 894, yc: 410, delay: 0.9 },
-            { x: '24%', y: '68%', label: 'P-11', xc: 532, yc: 712, delay: 1.2 },
-          ].map((b, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: b.delay, duration: 0.6 }}
-              style={{ left: b.x, top: b.y }}
-              className="absolute"
-            >
-              <div className="relative w-20 h-24 border-2 border-primary/70 rounded">
-                <div className="absolute -top-6 left-0 px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-mono font-bold rounded-sm">{b.label}</div>
-                <motion.div animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
-              </div>
-              <div className="mt-1 font-mono text-[10px] text-primary/80">x:{b.xc} y:{b.yc}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Hero content */}
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 w-full">
-          <div className="max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm mb-7"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="text-xs font-semibold text-primary tracking-wide">AI-POWERED PLAYER DEVELOPMENT</span>
-            </motion.div>
-
-            <KineticHeadline
-              text="Your progress, proven."
-              highlightWords={['proven.']}
-              className="text-[clamp(2.75rem,8vw,6.5rem)] text-foreground"
-            />
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="mt-7 text-base lg:text-xl text-muted-foreground leading-relaxed max-w-2xl"
-            >
-              Camino tracks <span className="text-foreground font-semibold">23 performance metrics</span>, replaces every disconnected tool your club uses, and turns every player's journey into verified proof.
-            </motion.p>
-
-            {/* CPI counter */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
-              className="mt-8 flex items-center gap-4"
-            >
-              <div className="px-4 py-3 rounded-xl bg-card/70 backdrop-blur-md border border-primary/20">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Live CPI</div>
-                <div className="font-display font-extrabold text-primary text-3xl leading-none mt-1"><CountUp to={87} /></div>
-              </div>
-              <div className="h-12 w-px bg-border" />
-              <div>
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Avg Improvement</div>
-                <div className="font-display font-bold text-foreground text-xl mt-1">+<CountUp to={24} duration={1.4} />%</div>
-              </div>
-              <div className="h-12 w-px bg-border hidden sm:block" />
-              <div className="hidden sm:block">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Tracked Players</div>
-                <div className="font-display font-bold text-foreground text-xl mt-1"><CountUp to={1247} duration={2} /></div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.1 }}
-              className="mt-10 flex items-center gap-4 flex-wrap"
-            >
-              <Link to="/auth">
-                <MagneticButton>
-                  Start Free <ArrowRight className="h-4 w-4" />
-                </MagneticButton>
-              </Link>
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 px-8 text-sm font-semibold border-border/80 bg-card/40 backdrop-blur text-foreground hover:bg-card hover:border-primary/30"
-                onClick={() => scrollTo('cpi')}
+          <div className="grid lg:grid-cols-[1.4fr_1fr] gap-12 items-center">
+            {/* Left: copy */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm mb-7"
               >
-                See the CPI
-              </Button>
-            </motion.div>
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-semibold text-primary tracking-wide">AI-POWERED PLAYER DEVELOPMENT</span>
+              </motion.div>
+
+              <h1 className="text-[clamp(2.75rem,7vw,5.75rem)] text-foreground font-display font-extrabold leading-[0.95]">
+                Your progress, <SerifAccent>proven.</SerifAccent>
+              </h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="mt-7 text-base lg:text-xl text-muted-foreground leading-relaxed max-w-xl"
+              >
+                Camino tracks <span className="text-foreground font-semibold">23 performance metrics</span>, replaces every disconnected tool your club uses, and turns every player's journey into verified proof.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+                className="mt-8 flex items-center gap-4"
+              >
+                <div className="px-4 py-3 rounded-xl bg-card/70 backdrop-blur-md border border-primary/20">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Live CPI</div>
+                  <div className="font-display font-extrabold text-primary text-3xl leading-none mt-1 tabular-nums"><CountUp to={87} /></div>
+                </div>
+                <div className="h-12 w-px bg-border" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Avg Improvement</div>
+                  <div className="font-display font-bold text-foreground text-xl mt-1 tabular-nums">+<CountUp to={24} duration={1.4} />%</div>
+                </div>
+                <div className="h-12 w-px bg-border hidden sm:block" />
+                <div className="hidden sm:block">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Tracked Players</div>
+                  <div className="font-display font-bold text-foreground text-xl mt-1 tabular-nums"><CountUp to={1247} duration={2} /></div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+                className="mt-10 flex items-center gap-4 flex-wrap"
+              >
+                <Link to="/auth">
+                  <MagneticButton>
+                    Start Free <ArrowRight className="h-4 w-4" />
+                  </MagneticButton>
+                </Link>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-12 px-8 text-sm font-semibold border-border/80 bg-card/40 backdrop-blur text-foreground hover:bg-card hover:border-primary/30"
+                  onClick={() => scrollTo('cpi')}
+                >
+                  See the CPI
+                </Button>
+              </motion.div>
+            </div>
+
+            {/* Right: floating product window */}
+            <div className="hidden lg:flex items-center justify-center">
+              <HeroProductWindow />
+            </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -293,7 +298,7 @@ export default function LandingPage() {
       {/* Live Ticker */}
       <LiveTickerBar />
 
-      {/* Floating Player Cards */}
+      {/* 01 — IDENTITY: Floating Player Cards */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.08),transparent_60%)]" />
         <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
@@ -303,11 +308,11 @@ export default function LandingPage() {
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-14"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
-              Verified Performance
-            </motion.p>
+            <div className="flex justify-center">
+              <ChapterLabel number="01" label="Identity" />
+            </div>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
-              Every player.<br /><span className="text-primary">A digital passport.</span>
+              Every player.<br />A digital <SerifAccent>passport.</SerifAccent>
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="mt-5 text-base lg:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Live CPI scores. Coach-verified stats. Shareable profiles. Every athlete's progress, captured and proven.
@@ -318,8 +323,33 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Big Stat — Metric Orbit */}
-      <section id="cpi" className="relative py-28 lg:py-36 border-t border-border/40 overflow-hidden scroll-mt-16">
+      {/* 02 — SHOWCASE: Product Showcase Reel */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="text-center mb-12"
+          >
+            <div className="flex justify-center">
+              <ChapterLabel number="02" label="Showcase" />
+            </div>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
+              The product, <SerifAccent>live.</SerifAccent>
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="mt-5 text-base lg:text-lg text-muted-foreground max-w-xl mx-auto">
+              Real workflows. Real data. Watch coaches evaluate, AI tag video, and rankings update — in motion.
+            </motion.p>
+          </motion.div>
+
+          <ProductShowcaseReel />
+        </div>
+      </section>
+
+      {/* 03 — INDEX: CPI Dial */}
+      <section id="cpi" className="relative py-28 lg:py-36 overflow-hidden scroll-mt-16">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.06),transparent_70%)]" />
         <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
@@ -329,42 +359,23 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-xs font-bold text-primary uppercase tracking-[0.3em] mb-5">The Camino Player Index</p>
+            <div className="flex justify-center">
+              <ChapterLabel number="03" label="Index" />
+            </div>
             <h2 className="text-5xl lg:text-7xl xl:text-8xl font-display font-extrabold text-foreground tracking-tighter leading-[0.95]">
-              1 number.<br /><span className="text-primary">23 metrics.</span>
+              1 number.<br /><SerifAccent>23 metrics.</SerifAccent>
             </h2>
             <p className="mt-7 text-base lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Technical, tactical, physical, and mental — every dimension of an athlete distilled into a single, weighted score.
             </p>
           </motion.div>
 
-          <MetricOrbit />
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-16 max-w-4xl mx-auto">
-            {[
-              { weight: '40%', label: 'Technical', color: 'text-primary' },
-              { weight: '30%', label: 'Tactical', color: 'text-info' },
-              { weight: '20%', label: 'Physical', color: 'text-success' },
-              { weight: '10%', label: 'Mental', color: 'text-foreground' },
-            ].map((item, i) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="text-center p-5 rounded-xl bg-card/60 border border-border/50 backdrop-blur"
-              >
-                <div className={`font-display font-extrabold text-3xl ${item.color}`}>{item.weight}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-widest mt-1.5">{item.label}</div>
-              </motion.div>
-            ))}
-          </div>
+          <CPIDial />
         </div>
       </section>
 
-      {/* Live Rankings */}
-      <section id="rankings" className="relative py-24 lg:py-28 border-t border-border/40 scroll-mt-16">
+      {/* 04 — RANKINGS */}
+      <section id="rankings" className="relative py-24 lg:py-28 scroll-mt-16">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
@@ -372,13 +383,16 @@ export default function LandingPage() {
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-12"
           >
+            <div className="flex justify-center">
+              <ChapterLabel number="04" label="Rankings" />
+            </div>
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
               <Trophy className="h-3.5 w-3.5 text-primary" />
               <span className="text-xs font-semibold text-primary tracking-wide">LIVE RANKINGS</span>
               <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse ml-1" />
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-5xl font-display font-extrabold text-foreground tracking-tight">
-              The leaderboard <span className="text-primary">is live.</span>
+              The leaderboard <SerifAccent>is live.</SerifAccent>
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="mt-4 text-base lg:text-lg text-muted-foreground max-w-lg mx-auto">
               Rankings update after every evaluation. Weighted by CPI, consistency, and improvement trajectory.
@@ -411,18 +425,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features — Tilt Cards */}
-      <section id="features" className="relative py-24 lg:py-32 border-t border-border/40 scroll-mt-16">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+      {/* 05 — INTELLIGENCE: Features */}
+      <section id="features" className="relative py-24 lg:py-32 scroll-mt-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.015] to-transparent" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
-              Platform
-            </motion.p>
+            <div className="flex justify-center">
+              <ChapterLabel number="05" label="Intelligence" />
+            </div>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
               Everything your club needs.<br /><span className="text-muted-foreground">Nothing it doesn't.</span>
             </motion.h2>
@@ -453,8 +468,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="relative py-24 lg:py-32 border-t border-border/40 scroll-mt-16">
+      {/* 06 — FLOW: How It Works */}
+      <section id="how-it-works" className="relative py-24 lg:py-32 scroll-mt-16">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
@@ -462,16 +477,15 @@ export default function LandingPage() {
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
-              How It Works
-            </motion.p>
+            <div className="flex justify-center">
+              <ChapterLabel number="06" label="Flow" />
+            </div>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
-              Three steps. <span className="text-primary">Full visibility.</span>
+              Three steps. <SerifAccent>Full visibility.</SerifAccent>
             </motion.h2>
           </motion.div>
 
           <div className="relative grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Connecting line */}
             <div className="hidden md:block absolute top-20 left-[16%] right-[16%] h-px">
               <motion.div
                 initial={{ scaleX: 0 }}
@@ -515,8 +529,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Roles — Hologram cards */}
-      <section id="roles" className="relative py-24 lg:py-32 border-t border-border/40 scroll-mt-16 overflow-hidden">
+      {/* 07 — INFRASTRUCTURE: Roles */}
+      <section id="roles" className="relative py-24 lg:py-32 scroll-mt-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,hsl(var(--primary)/0.06),transparent_60%)]" />
         <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
           <motion.div
@@ -525,11 +539,11 @@ export default function LandingPage() {
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-xs font-bold text-primary uppercase tracking-[0.25em] mb-4">
-              Built for everyone
-            </motion.p>
+            <div className="flex justify-center">
+              <ChapterLabel number="07" label="Infrastructure" />
+            </div>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl lg:text-6xl font-display font-extrabold text-foreground tracking-tight leading-[1.05]">
-              Four roles. <span className="text-primary">One platform.</span>
+              Four roles. <SerifAccent>One platform.</SerifAccent>
             </motion.h2>
           </motion.div>
 
@@ -578,18 +592,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials — Cinematic Quote */}
-      <section className="relative py-24 lg:py-32 border-t border-border/40 overflow-hidden">
+      {/* 08 — TRUST: Club Crest Wall */}
+      <section className="relative py-20 lg:py-24 overflow-hidden">
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10">
+          <ClubCrestWall />
+        </div>
+      </section>
+
+      {/* 09 — VOICES: Testimonials */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.05),transparent_70%)]" />
         <div className="relative max-w-[1100px] mx-auto px-6 lg:px-10">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-xs font-bold text-primary uppercase tracking-[0.3em] mb-8 text-center"
-          >
-            From the field
-          </motion.p>
+          <div className="flex justify-center">
+            <ChapterLabel number="09" label="Voices" />
+          </div>
 
           <div className="min-h-[280px] flex items-center justify-center">
             <AnimatePresence mode="wait">
@@ -629,6 +645,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Sentinel: tells LiveMetricsBar to hide as we approach waitlist */}
+      <div id="live-metrics-hide-sentinel" />
+
       {/* Waitlist */}
       <section className="relative py-20 scroll-mt-16">
         <div className="max-w-xl mx-auto px-6">
@@ -651,8 +670,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final CTA — Particle Burst */}
-      <section className="relative py-32 lg:py-40 border-t border-border/40 overflow-hidden">
+      {/* Final CTA */}
+      <section className="relative py-32 lg:py-40 overflow-hidden">
         <Suspense fallback={null}>
           <ParticleBurst />
         </Suspense>
@@ -667,7 +686,7 @@ export default function LandingPage() {
           >
             <img src={caminoLogo} alt="" className="h-16 w-16 mx-auto mb-8 rounded-xl" />
             <h2 className="text-4xl lg:text-7xl font-display font-extrabold text-foreground tracking-tighter leading-[1.02]">
-              Stop guessing.<br /><span className="text-primary">Start proving.</span>
+              Stop guessing.<br /><SerifAccent>Start proving.</SerifAccent>
             </h2>
             <p className="mt-6 text-base lg:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Camino is the operating system for player development. Set up your club in minutes.
@@ -689,16 +708,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/40 py-8 relative z-10 bg-background">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={caminoLogo} alt="Camino" className="h-6 w-6 rounded object-contain" />
-            <span className="font-display font-semibold text-foreground text-xs">Camino</span>
-          </div>
-          <p className="text-xs text-muted-foreground/50">© 2026 Camino. The Pathway to Elite Football.</p>
-        </div>
-      </footer>
+      {/* Premium 4-column footer */}
+      <SiteFooter />
 
       {/* Scroll to top */}
       <AnimatePresence>
