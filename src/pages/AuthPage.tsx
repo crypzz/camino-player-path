@@ -96,6 +96,52 @@ export default function AuthPage() {
           <CardDescription>{isSignUp ? 'Start tracking player development' : 'Sign in to your dashboard'}</CardDescription>
         </CardHeader>
         <CardContent>
+          {isSignUp && emailStatus.kind !== 'idle' && (
+            <div className="mb-4">
+              {emailStatus.kind === 'checking' && (
+                <Alert>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <AlertTitle>Sending confirmation email…</AlertTitle>
+                  <AlertDescription>
+                    We're delivering your confirmation link to <strong>{emailStatus.email}</strong>.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {emailStatus.kind === 'sent' && (
+                <Alert>
+                  <MailCheck className="h-4 w-4" />
+                  <AlertTitle>Confirmation email sent</AlertTitle>
+                  <AlertDescription>
+                    Check <strong>{emailStatus.email}</strong> (and your spam folder) for the confirmation link.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {emailStatus.kind === 'pending' && (
+                <Alert>
+                  <MailWarning className="h-4 w-4" />
+                  <AlertTitle>Email is taking longer than usual</AlertTitle>
+                  <AlertDescription>
+                    Your confirmation to <strong>{emailStatus.email}</strong> hasn't arrived yet. Wait a minute, then try resending below if it doesn't show up.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {emailStatus.kind === 'failed' && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Confirmation email failed</AlertTitle>
+                  <AlertDescription className="space-y-2">
+                    <p>
+                      We couldn't deliver the confirmation email to <strong>{emailStatus.email}</strong>
+                      {emailStatus.reason ? ` — ${emailStatus.reason}` : '.'}
+                    </p>
+                    <p className="text-xs opacity-90">
+                      Double-check the address for typos, or try a different email and sign up again.
+                    </p>
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
@@ -111,8 +157,8 @@ export default function AuthPage() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full" disabled={loading || emailStatus.kind === 'checking'}>
+              {(loading || emailStatus.kind === 'checking') && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isSignUp ? 'Create Account' : 'Sign In'}
             </Button>
           </form>
