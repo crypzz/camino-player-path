@@ -1,12 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Loader2, Trophy } from 'lucide-react';
+import { Loader2, Trophy, AlertTriangle, MailCheck, MailWarning } from 'lucide-react';
+
+type EmailStatus =
+  | { kind: 'idle' }
+  | { kind: 'checking'; email: string }
+  | { kind: 'sent'; email: string }
+  | { kind: 'pending'; email: string }
+  | { kind: 'failed'; email: string; reason?: string };
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -14,19 +23,55 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<EmailStatus>({ kind: 'idle' });
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
+
+  // Poll email_send_log via SECURITY DEFINER RPC to surface failures to the user.
+  const pollEmailStatus = async (recipient: string) => {
+    setEmailStatus({ kind: 'checking', email: recipient });
+    const FAILED = new Set(['failed', 'dlq', 'bounced', 'complained', 'suppressed']);
+    const start = Date.now();
+    const TIMEOUT_MS = 25_000;
+
+    while (Date.now() - start < TIMEOUT_MS) {
+      const { data, error } = await supabase.rpc('get_signup_email_status', { _email: recipient });
+      if (!error && data && data.length > 0) {
+        const row = data[0] as { status: string; error_message: string | null };
+        if (row.status === 'sent') {
+          setEmailStatus({ kind: 'sent', email: recipient });
+          return;
+        }
+        if (FAILED.has(row.status)) {
+          setEmailStatus({
+            kind: 'failed',
+            email: recipient,
+            reason: row.error_message || row.status,
+          });
+          toast.error("We couldn't deliver your confirmation email. See details below.");
+          return;
+        }
+      }
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+    // Timed out waiting for terminal state — treat as pending so user isn't stuck silently.
+    setEmailStatus({ kind: 'pending', email: recipient });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     if (isSignUp) {
-      const { error } = await signUp(email, password, displayName);
+      const recipient = email.trim().toLowerCase();
+      const { error } = await signUp(recipient, password, displayName);
       if (error) {
         toast.error(error.message);
+        setEmailStatus({ kind: 'idle' });
       } else {
-        toast.success('Account created! Check your email to confirm.');
+        toast.success('Account created! Sending confirmation email…');
+        // Fire-and-forget polling; UI updates as state transitions.
+        pollEmailStatus(recipient);
       }
     } else {
       const { error } = await signIn(email, password);
