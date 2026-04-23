@@ -459,6 +459,29 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Authenticate caller
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return jsonResponse({ error: "Unauthorized" }, 401);
+    }
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      return jsonResponse({ error: "Backend credentials missing" }, 500);
+    }
+
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims?.sub) {
+      return jsonResponse({ error: "Unauthorized" }, 401);
+    }
+    const userId = claimsData.claims.sub;
+
     const body = await req.json().catch(() => ({}));
     const videoId = typeof body.video_id === "string" ? body.video_id : "";
 
@@ -469,12 +492,17 @@ Deno.serve(async (req) => {
     const supabase = createAdminClient();
     const { data: video, error: videoErr } = await supabase
       .from("match_videos")
-      .select("id, status, ai_processing_started_at")
+      .select("id, status, ai_processing_started_at, created_by")
       .eq("id", videoId)
       .single();
 
     if (videoErr || !video) {
       return jsonResponse({ error: "Video not found" }, 404);
+    }
+
+    // Ownership check — only the video creator may trigger AI processing
+    if (video.created_by !== userId) {
+      return jsonResponse({ error: "Forbidden" }, 403);
     }
 
     if (isActiveProcessingJob(video)) {
