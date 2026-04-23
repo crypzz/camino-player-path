@@ -1415,6 +1415,14 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_signup_email_status: {
+        Args: { _email: string }
+        Returns: {
+          created_at: string
+          error_message: string
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
