@@ -1354,19 +1354,28 @@ export type Database = {
       }
       waitlist: {
         Row: {
+          club_name: string | null
           created_at: string
           email: string
+          full_name: string | null
           id: string
+          role: string | null
         }
         Insert: {
+          club_name?: string | null
           created_at?: string
           email: string
+          full_name?: string | null
           id?: string
+          role?: string | null
         }
         Update: {
+          club_name?: string | null
           created_at?: string
           email?: string
+          full_name?: string | null
           id?: string
+          role?: string | null
         }
         Relationships: []
       }
@@ -1407,6 +1416,7 @@ export type Database = {
       }
     }
     Functions: {
+      count_waitlist_this_week: { Args: never; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
