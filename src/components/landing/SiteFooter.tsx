@@ -13,12 +13,12 @@ const sections = [
     ],
   },
   {
-    title: 'Roles',
+    title: 'Built for',
     links: [
-      { label: 'Coaches', href: '/auth' },
-      { label: 'Players', href: '/auth' },
-      { label: 'Parents', href: '/auth' },
-      { label: 'Directors', href: '/auth' },
+      { label: 'Coaches', href: '/' },
+      { label: 'Players', href: '/' },
+      { label: 'Parents', href: '/' },
+      { label: 'Directors', href: '/' },
     ],
   },
   {
@@ -36,7 +36,7 @@ const sections = [
       { label: 'About', href: '/' },
       { label: 'Contact', href: 'mailto:hello@camino.app' },
       { label: 'Press', href: '/' },
-      { label: 'Get Started', href: '/auth' },
+      { label: 'Join Waitlist', href: '/' },
     ],
   },
 ];

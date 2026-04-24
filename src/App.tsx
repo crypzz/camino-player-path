@@ -30,7 +30,6 @@ import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
 import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import CommunicationsPage from "@/pages/CommunicationsPage";
 import CVBuilderPage from "@/pages/CVBuilderPage";
-import PublicCVPage from "@/pages/PublicCVPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,7 +37,7 @@ const queryClient = new QueryClient();
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" /></div>;
-  if (!session) return <Navigate to="/auth" replace />;
+  if (!session) return <Navigate to="/admin" replace />;
   return <>{children}</>;
 }
 
@@ -106,9 +105,12 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/player/:id" element={<PublicProfilePage />} />
-              <Route path="/cv/:slug" element={<PublicCVPage />} />
+              {/* Hidden internal access — not linked publicly */}
+              <Route path="/admin" element={<AuthPage />} />
+              {/* Waitlist mode: lock down public app surfaces */}
+              <Route path="/auth" element={<Navigate to="/" replace />} />
+              <Route path="/cv/:slug" element={<Navigate to="/" replace />} />
+              <Route path="/player/:id" element={<Navigate to="/" replace />} />
               <Route path="/dashboard/*" element={
                 <ProtectedRoute>
                   <DashboardRoutes />
