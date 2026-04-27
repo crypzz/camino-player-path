@@ -1,6 +1,7 @@
-import { Suspense, useRef, useMemo } from 'react';
+import { Suspense, useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+
 
 function Pitch() {
   return (
@@ -114,12 +115,28 @@ function Scene() {
 }
 
 export function Hero3DPitch() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="absolute inset-0">
+    <div ref={wrapRef} className="absolute inset-0">
       <Canvas
-        dpr={[1, 1.5]}
+        dpr={[1, 1.25]}
         camera={{ position: [0, 1.8, 6], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        frameloop={visible ? 'always' : 'never'}
+        performance={{ min: 0.5 }}
         style={{ background: 'transparent' }}
       >
         <Suspense fallback={null}>

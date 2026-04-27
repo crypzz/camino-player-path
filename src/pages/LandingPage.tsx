@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Trophy, Sparkles, ArrowDown, MapPin, Lock, Activity } from 'lucide-react';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { SiteFooter } from '@/components/landing/SiteFooter';
@@ -317,10 +318,6 @@ function SocialProofSection() {
 // ---------- Main page ----------
 export default function LandingPage() {
   const isMobile = useIsMobile();
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased overflow-x-hidden">
@@ -328,8 +325,8 @@ export default function LandingPage() {
       <TopNav />
 
       {/* HERO */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
+      <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+        <div className="absolute inset-0 -z-10 pointer-events-none">
           {isMobile ? (
             <HeroMobileFallback />
           ) : (
@@ -340,10 +337,7 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
         </div>
 
-        <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-3xl mx-auto px-6 text-center py-20"
-        >
+        <div className="relative z-10 max-w-3xl mx-auto px-6 text-center py-20">
           <ScarcityChip />
 
           <motion.h1
@@ -379,13 +373,21 @@ export default function LandingPage() {
             onClick={() => scrollTo('rankings')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
             className="mt-10 inline-flex flex-col items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors"
+            style={{ willChange: 'transform' }}
           >
             See how it works
-            <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
+            <motion.span
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ willChange: 'transform' }}
+              className="inline-flex"
+            >
+              <ArrowDown className="h-3.5 w-3.5" />
+            </motion.span>
           </motion.button>
-        </motion.div>
+        </div>
       </section>
 
       <div id="rankings"><RankingsSection /></div>
