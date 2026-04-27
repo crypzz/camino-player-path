@@ -117,9 +117,11 @@ export function Hero3DPitch() {
   return (
     <div className="absolute inset-0">
       <Canvas
-        dpr={[1, 1.5]}
+        dpr={[1, 1.25]}
         camera={{ position: [0, 1.8, 6], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        frameloop="always"
+        performance={{ min: 0.5 }}
         style={{ background: 'transparent' }}
       >
         <Suspense fallback={null}>
