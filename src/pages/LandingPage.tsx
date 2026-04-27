@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Trophy, Sparkles, ArrowDown, MapPin, Lock, Activity } from 'lucide-react';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { SiteFooter } from '@/components/landing/SiteFooter';
