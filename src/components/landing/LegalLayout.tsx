@@ -43,7 +43,7 @@ export function LegalLayout({ title, updated, eyebrow, children }: LegalLayoutPr
             </p>
           )}
 
-          <div className="mt-12 space-y-8 text-[15px] leading-[1.75] text-muted-foreground [&_h2]:font-display [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:text-2xl [&_h2]:tracking-tight [&_h2]:mt-12 [&_h2]:mb-4 [&_h3]:font-display [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:text-lg [&_h3]:mt-6 [&_h3]:mb-2 [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:underline [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_strong]:text-foreground">
+          <div className="legal-prose mt-12 space-y-6 text-[15px] leading-[1.75] text-muted-foreground">
             {children}
           </div>
         </article>
