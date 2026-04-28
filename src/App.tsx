@@ -8,6 +8,10 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import LandingPage from "@/pages/LandingPage";
 import AuthPage from "@/pages/AuthPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import TermsPage from "@/pages/TermsPage";
+import CookiesPage from "@/pages/CookiesPage";
+import AboutPage from "@/pages/AboutPage";
 import CoachDashboard from "@/pages/CoachDashboard";
 import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
@@ -105,6 +109,10 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/cookies" element={<CookiesPage />} />
+              <Route path="/about" element={<AboutPage />} />
               {/* Hidden internal access — not linked publicly */}
               <Route path="/admin" element={<AuthPage />} />
               {/* Waitlist mode: lock down public app surfaces */}
