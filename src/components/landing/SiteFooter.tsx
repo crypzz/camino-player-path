@@ -1,45 +1,96 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { MouseEvent } from 'react';
 import caminoLogo from '@/assets/camino-logo.png';
 
-const sections = [
+type FooterLink = { label: string; href: string };
+
+const sections: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Platform',
     links: [
-      { label: 'Camino Player Index', href: '/' },
-      { label: 'Video Analysis', href: '/' },
-      { label: 'Evaluations', href: '/' },
-      { label: 'Fitness Testing', href: '/' },
-      { label: 'Communication Hub', href: '/' },
+      { label: 'Camino Player Index', href: '/#cpi' },
+      { label: 'Video Analysis', href: '/#video' },
+      { label: 'Evaluations', href: '/#cpi' },
+      { label: 'Fitness Testing', href: '/#cpi' },
+      { label: 'Communication Hub', href: '/#profiles' },
     ],
   },
   {
     title: 'Built for',
     links: [
-      { label: 'Coaches', href: '/' },
-      { label: 'Players', href: '/' },
-      { label: 'Parents', href: '/' },
-      { label: 'Directors', href: '/' },
+      { label: 'Coaches', href: '/#waitlist' },
+      { label: 'Players', href: '/#waitlist' },
+      { label: 'Parents', href: '/#waitlist' },
+      { label: 'Directors', href: '/#waitlist' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'How CPI Works', href: '/' },
-      { label: 'Methodology', href: '/' },
-      { label: 'Privacy', href: '/' },
-      { label: 'Terms', href: '/' },
+      { label: 'How CPI Works', href: '/#cpi' },
+      { label: 'Methodology', href: '/about' },
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Terms', href: '/terms' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'About', href: '/' },
-      { label: 'Contact', href: 'mailto:hello@camino.app' },
-      { label: 'Press', href: '/' },
-      { label: 'Join Waitlist', href: '/' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: 'mailto:hello@caminodevelopment.com' },
+      { label: 'Press', href: 'mailto:hello@caminodevelopment.com?subject=Press%20inquiry' },
+      { label: 'Join Waitlist', href: '/#waitlist' },
     ],
   },
 ];
+
+function useFooterLink() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (href: string) => (e: MouseEvent<HTMLAnchorElement>) => {
+    if (href.startsWith('mailto:') || href.startsWith('http')) return;
+    const [path, hash] = href.split('#');
+    if (!hash) return;
+    e.preventDefault();
+    if (location.pathname === (path || '/')) {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      navigate(path || '/');
+      // wait for landing page to mount, then scroll
+      setTimeout(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
+  };
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const onClick = useFooterLink()(href);
+  if (href.startsWith('mailto:') || href.startsWith('http')) {
+    return (
+      <a href={href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+        {children}
+      </a>
+    );
+  }
+  if (href.includes('#')) {
+    return (
+      <a
+        href={href}
+        onClick={onClick}
+        className="text-sm text-muted-foreground hover:text-primary transition-colors"
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link to={href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+      {children}
+    </Link>
+  );
+}
 
 export function SiteFooter() {
   return (
@@ -71,12 +122,7 @@ export function SiteFooter() {
               <ul className="space-y-2.5">
                 {s.links.map((l) => (
                   <li key={l.label}>
-                    <Link
-                      to={l.href}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {l.label}
-                    </Link>
+                    <FooterLink href={l.href}>{l.label}</FooterLink>
                   </li>
                 ))}
               </ul>
@@ -97,12 +143,12 @@ export function SiteFooter() {
         {/* Bottom bar */}
         <div className="pt-6 border-t border-border/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground/70">
-            © 2026 Camino. All rights reserved.
+            © 2026 Camino Development. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-muted-foreground/70">
-            <Link to="/" className="hover:text-primary transition-colors">Privacy</Link>
-            <Link to="/" className="hover:text-primary transition-colors">Terms</Link>
-            <Link to="/" className="hover:text-primary transition-colors">Cookies</Link>
+            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
+            <Link to="/cookies" className="hover:text-primary transition-colors">Cookies</Link>
             <span className="font-mono">v1.0</span>
           </div>
         </div>

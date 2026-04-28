@@ -391,9 +391,9 @@ export default function LandingPage() {
       </section>
 
       <div id="rankings"><RankingsSection /></div>
-      <ProfilesSection />
-      <CPISection />
-      <VideoTrackingSection />
+      <div id="profiles"><ProfilesSection /></div>
+      <div id="cpi"><CPISection /></div>
+      <div id="video"><VideoTrackingSection /></div>
       <SocialProofSection />
 
       {/* FINAL CTA */}
