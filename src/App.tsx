@@ -12,6 +12,7 @@ import PrivacyPage from "@/pages/PrivacyPage";
 import TermsPage from "@/pages/TermsPage";
 import CookiesPage from "@/pages/CookiesPage";
 import AboutPage from "@/pages/AboutPage";
+import UnsubscribePage from "@/pages/UnsubscribePage";
 import CoachDashboard from "@/pages/CoachDashboard";
 import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
@@ -113,6 +114,7 @@ const App = () => (
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/cookies" element={<CookiesPage />} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/unsubscribe" element={<UnsubscribePage />} />
               {/* Hidden internal access — not linked publicly */}
               <Route path="/admin" element={<AuthPage />} />
               {/* Waitlist mode: lock down public app surfaces */}

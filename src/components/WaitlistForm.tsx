@@ -74,18 +74,50 @@ export function WaitlistForm({ variant = 'hero' }: Props) {
     const { error } = await supabase.from('waitlist').insert(payload);
     setLoading(false);
 
-    if (error) {
-      if (error.code === '23505') {
-        toast({ title: "You're already on the list", description: "We'll be in touch when it's your turn." });
-        setSubmitted(true);
-        return;
-      }
+    const isDuplicate = error?.code === '23505';
+
+    if (error && !isDuplicate) {
       toast({ title: 'Something went wrong', description: 'Please try again in a moment.', variant: 'destructive' });
       return;
     }
 
+    // Fire-and-forget confirmation + internal notification emails.
+    // Skip on duplicate to avoid spamming the same address.
+    if (!isDuplicate) {
+      supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'waitlist-confirmation',
+          recipientEmail: payload.email,
+          idempotencyKey: `waitlist-confirm-${payload.email}`,
+          templateData: {
+            name: payload.full_name,
+            role: payload.role,
+            clubName: payload.club_name,
+          },
+        },
+      }).catch((e) => console.error('waitlist confirmation email failed', e));
+
+      supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'waitlist-internal-notification',
+          recipientEmail: 'hello@caminodevelopment.com',
+          idempotencyKey: `waitlist-internal-${payload.email}`,
+          templateData: {
+            name: payload.full_name,
+            email: payload.email,
+            role: payload.role,
+            clubName: payload.club_name,
+          },
+        },
+      }).catch((e) => console.error('waitlist internal email failed', e));
+    }
+
     setSubmitted(true);
-    toast({ title: "You're in", description: "We're onboarding select clubs in Calgary first." });
+    if (isDuplicate) {
+      toast({ title: "You're already on the list", description: "We'll be in touch when it's your turn." });
+    } else {
+      toast({ title: "You're in", description: "Check your inbox for confirmation." });
+    }
   };
 
   if (submitted) {

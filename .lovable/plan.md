@@ -1,69 +1,78 @@
-## Fix all dead links across the site
+## Send Real Confirmation Emails on Waitlist Signup
 
-Right now almost every link in the footer points to `/` (it's a placeholder). Privacy, Terms, Cookies, About, "Coaches/Players/Parents/Directors", "How CPI Works", etc. are all dead. The contact email also uses the wrong domain (`hello@camino.app` instead of the brand domain).
+### Problem
+Joining the waitlist currently only inserts a row into the `waitlist` table. No email is ever sent. The project has Lovable Emails configured (auth-email-hook deployed for sign-in flows), but the **transactional email system** — required for non-auth emails like waitlist confirmations — has never been scaffolded. The verified sender domain `notify.caminodevelopment.com` is ready to use.
 
-### What I'll do
+### Solution
+Set up the transactional email pipeline and trigger a "Welcome to the waitlist" email immediately after each successful signup. Also send an internal notification to `hello@caminodevelopment.com` so the team is alerted to every new signup.
 
-**1. Create four new public pages** (waitlist mode keeps the rest of the app hidden, but legal + about pages must be reachable):
+---
 
-- `/privacy` — Privacy Policy
-- `/terms` — Terms of Service
-- `/cookies` — Cookie Policy
-- `/about` — About Camino Development
+### Steps
 
-Each page gets its own slim layout: top nav (logo + Join Waitlist button, same as landing), readable long-form content using existing typography tokens, and the `SiteFooter` at the bottom. Last-updated date shown. Content will be real and specific to Camino (waitlist data collection, the four user roles, Calgary-first rollout, contact email) — not lorem-ipsum filler.
+**1. Provision transactional email infrastructure**
+- Run `setup_email_infra` (idempotent — safe even though auth infra already exists) to ensure all queues, RPCs, and the `process-email-queue` cron job are in place.
+- Run `scaffold_transactional_email` to generate:
+  - `supabase/functions/send-transactional-email/`
+  - `supabase/functions/handle-email-unsubscribe/`
+  - `supabase/functions/handle-email-suppression/`
+  - `supabase/functions/_shared/transactional-email-templates/registry.ts`
 
-**2. Register the new routes in `src/App.tsx`** (kept public alongside `/` and `/admin`):
+**2. Create two branded templates** in `_shared/transactional-email-templates/`:
+- `waitlist-confirmation.tsx` — sent to the user. Matches Camino brand (navy `#0a0e1a` + gold `#c89b2b`, Plus Jakarta Sans headings, Instrument Serif italic accents — same look as the existing `signup.tsx` template). Personalized greeting, role-aware copy ("As a player/coach/parent/director, here's what to expect…"), white body background per spec.
+- `waitlist-internal-notification.tsx` — minimal plaintext-style email to the team showing name, email, role, club.
 
-```text
-/privacy   → PrivacyPage
-/terms     → TermsPage
-/cookies   → CookiesPage
-/about     → AboutPage
+Register both in `registry.ts`.
+
+**3. Wire the trigger in `src/components/WaitlistForm.tsx`**
+After a successful `supabase.from('waitlist').insert(...)`:
+```ts
+const idempotencyKey = `waitlist-${payload.email}`;
+// User confirmation
+supabase.functions.invoke('send-transactional-email', {
+  body: {
+    templateName: 'waitlist-confirmation',
+    recipientEmail: payload.email,
+    idempotencyKey,
+    templateData: { name: payload.full_name, role: payload.role, clubName: payload.club_name },
+  },
+});
+// Internal notification (fire-and-forget)
+supabase.functions.invoke('send-transactional-email', {
+  body: {
+    templateName: 'waitlist-internal-notification',
+    recipientEmail: 'hello@caminodevelopment.com',
+    idempotencyKey: `waitlist-internal-${payload.email}`,
+    templateData: { name: payload.full_name, email: payload.email, role: payload.role, clubName: payload.club_name },
+  },
+});
 ```
+Both calls are fire-and-forget — UI still flips to "You're in" instantly. Errors are logged to console but don't block the success state. Idempotency key prevents duplicate sends if the user double-submits.
 
-**3. Rewire `SiteFooter.tsx`** so every link actually goes somewhere:
+**4. Create the unsubscribe page**
+The scaffold tool will pick a path (likely `/unsubscribe`). Create `src/pages/UnsubscribePage.tsx` matching Camino's dark theme — token validation on mount, branded "Confirm unsubscribe" button, success/error states. Register the route in `src/App.tsx`.
 
-| Column | Link | New target |
-|---|---|---|
-| Platform | Camino Player Index | `/#rankings` |
-| Platform | Video Analysis | `/#video` (new id on existing section) |
-| Platform | Evaluations | `/#cpi` (new id on CPI section) |
-| Platform | Fitness Testing | `/#cpi` |
-| Platform | Communication Hub | `/#profiles` (new id) |
-| Built for | Coaches / Players / Parents / Directors | all → `/#waitlist` |
-| Resources | How CPI Works | `/#cpi` |
-| Resources | Methodology | `/about` |
-| Resources | Privacy | `/privacy` |
-| Resources | Terms | `/terms` |
-| Company | About | `/about` |
-| Company | Contact | `mailto:hello@caminodevelopment.com` |
-| Company | Press | `mailto:hello@caminodevelopment.com?subject=Press%20inquiry` |
-| Company | Join Waitlist | `/#waitlist` |
-| Bottom bar | Privacy / Terms / Cookies | `/privacy` `/terms` `/cookies` |
+**5. Deploy**
+Deploy `send-transactional-email`, `handle-email-unsubscribe`, `handle-email-suppression`. Auto-deploy handles the rest.
 
-The footer currently uses `<Link to=…>` from react-router. I'll switch link items that point to in-page anchors to `<a href>` (so hash navigation actually scrolls) and keep `<Link>` only for true routes. I'll also add a small handler so that clicking a `/#section` link from another page navigates to `/` and then scrolls.
+---
 
-**4. Add anchor ids to the matching landing-page sections** (`#video`, `#cpi`, `#profiles`) so the new footer links scroll to the right places.
+### Files Changed
 
-**5. Fix the contact email everywhere** from `hello@camino.app` → `hello@caminodevelopment.com` (the brand's real domain).
+**Created:**
+- `supabase/functions/send-transactional-email/index.ts` (+ deno.json)
+- `supabase/functions/handle-email-unsubscribe/index.ts` (+ deno.json)
+- `supabase/functions/handle-email-suppression/index.ts` (+ deno.json)
+- `supabase/functions/_shared/transactional-email-templates/registry.ts`
+- `supabase/functions/_shared/transactional-email-templates/waitlist-confirmation.tsx`
+- `supabase/functions/_shared/transactional-email-templates/waitlist-internal-notification.tsx`
+- `src/pages/UnsubscribePage.tsx`
 
-### Files touched
+**Edited:**
+- `src/components/WaitlistForm.tsx` — invoke send-transactional-email after insert
+- `src/App.tsx` — register `/unsubscribe` route
 
-- `src/App.tsx` — add 4 new public routes
-- `src/components/landing/SiteFooter.tsx` — real hrefs + correct email
-- `src/pages/LandingPage.tsx` — add `id` attributes to existing CPI / Profiles / Video sections
-- `src/pages/PrivacyPage.tsx` — new
-- `src/pages/TermsPage.tsx` — new
-- `src/pages/CookiesPage.tsx` — new
-- `src/pages/AboutPage.tsx` — new
-- `src/components/landing/LegalLayout.tsx` — new shared shell (top nav + footer + prose container) used by all 4 new pages
+**Untouched:** all auth email templates, `auth-email-hook`, every dashboard page.
 
-### Visual treatment for the new pages
-
-Same dark-theme aesthetic as the landing page. Centered max-width prose column (`max-w-3xl`), `font-display` headings, gold accent rule under the H1, `text-muted-foreground` body. No new design tokens — just reuses existing ones.
-
-### Out of scope
-
-- I'm not adding cookie-consent banner logic. The Cookie Policy page documents what is used (Supabase auth session storage, no third-party tracking) which is honest given the current code.
-- No CMS — content lives in the page components so you can edit it in code.
+### Result
+Within seconds of joining the waitlist, the user receives a branded Camino confirmation email from `notify.caminodevelopment.com`, and the team gets an internal heads-up at `hello@caminodevelopment.com`. Retry-safe via the queue, suppression-safe via the built-in unsubscribe system.
