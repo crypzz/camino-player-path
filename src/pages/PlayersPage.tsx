@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { PlayerCard } from '@/components/PlayerCard';
-import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
+import { PlayerDetailDialog } from '@/components/PlayerDetailDialog';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
@@ -43,26 +43,25 @@ export default function PlayersPage() {
         />
       </div>
 
-      <div className={`grid gap-5 ${selectedPlayer ? 'lg:grid-cols-[1fr_380px]' : 'grid-cols-1'}`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {filtered.map((player, i) => (
-            <PlayerCard
-              key={player.id}
-              player={player}
-              index={i}
-              onClick={() => setSelectedId(player.id === selectedId ? null : player.id)}
-            />
-          ))}
-          {filtered.length === 0 && (
-            <p className="text-muted-foreground text-[13px] col-span-2 text-center py-12">No players found</p>
-          )}
-        </div>
-        {selectedPlayer && (
-          <div className="hidden lg:block">
-            <PlayerDetailPanel player={selectedPlayer} onClose={() => setSelectedId(null)} />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {filtered.map((player, i) => (
+          <PlayerCard
+            key={player.id}
+            player={player}
+            index={i}
+            onClick={() => setSelectedId(player.id)}
+          />
+        ))}
+        {filtered.length === 0 && (
+          <p className="text-muted-foreground text-[13px] col-span-full text-center py-12">No players found</p>
         )}
       </div>
+      <PlayerDetailDialog
+        player={selectedPlayer}
+        open={!!selectedPlayer}
+        onOpenChange={(o) => !o && setSelectedId(null)}
+      />
+    </div>
     </div>
   );
 }
