@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { usePlayers } from '@/hooks/usePlayers';
-import { PlayerCard } from '@/components/PlayerCard';
+import { SquadByPosition } from '@/components/SquadByPosition';
 import { PlayerDetailDialog } from '@/components/PlayerDetailDialog';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -43,19 +43,11 @@ export default function PlayersPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {filtered.map((player, i) => (
-          <PlayerCard
-            key={player.id}
-            player={player}
-            index={i}
-            onClick={() => setSelectedId(player.id)}
-          />
-        ))}
-        {filtered.length === 0 && (
-          <p className="text-muted-foreground text-[13px] col-span-full text-center py-12">No players found</p>
-        )}
-      </div>
+      {filtered.length === 0 ? (
+        <p className="text-muted-foreground text-[13px] text-center py-12">No players found</p>
+      ) : (
+        <SquadByPosition players={filtered} onSelect={setSelectedId} />
+      )}
       <PlayerDetailDialog
         player={selectedPlayer}
         open={!!selectedPlayer}
