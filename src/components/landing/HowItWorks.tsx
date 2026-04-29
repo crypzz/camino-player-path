@@ -98,18 +98,9 @@ export function HowItWorks() {
         {/* step indicator */}
         <div className="pb-12 px-6 lg:px-10">
           <div className="max-w-6xl mx-auto flex items-center justify-center gap-3">
-            {steps.map((_, i) => {
-              const start = i / steps.length;
-              const end = (i + 1) / steps.length;
-              const opacity = useTransform(scrollYProgress, [start, (start + end) / 2, end], [0.3, 1, 0.3]);
-              return (
-                <motion.span
-                  key={i}
-                  style={{ opacity }}
-                  className="h-1 w-12 rounded-full bg-primary"
-                />
-              );
-            })}
+            {steps.map((_, i) => (
+              <Indicator key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
+            ))}
           </div>
         </div>
       </div>
