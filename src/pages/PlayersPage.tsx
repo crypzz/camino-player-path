@@ -62,6 +62,5 @@ export default function PlayersPage() {
         onOpenChange={(o) => !o && setSelectedId(null)}
       />
     </div>
-    </div>
   );
 }
