@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import caminoLogo from '@/assets/camino-logo.png';
-import { 
-  LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck, 
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle
+import {
+  LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck,
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle, Pencil, Check, X
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -81,14 +82,30 @@ const roleIcons: Record<UserRole, typeof Shield> = {
 
 export function AppSidebar() {
   const { role, setRole } = useAppContext();
-  const { signOut, profile } = useAuth();
+  const { signOut, profile, updateClubName } = useAuth();
   const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
 
+  const [editingClub, setEditingClub] = useState(false);
+  const [clubDraft, setClubDraft] = useState('');
+  const [savingClub, setSavingClub] = useState(false);
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const startEditClub = () => {
+    setClubDraft(profile?.club_name ?? '');
+    setEditingClub(true);
+  };
+
+  const saveClub = async () => {
+    setSavingClub(true);
+    await updateClubName(clubDraft);
+    setSavingClub(false);
+    setEditingClub(false);
   };
 
   const links = role === 'coach' ? coachLinks : role === 'player' ? playerLinks : role === 'director' ? directorLinks : parentLinks;
