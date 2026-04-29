@@ -2,14 +2,21 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+interface Profile {
+  display_name: string | null;
+  role: string;
+  club_name: string | null;
+}
+
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: { display_name: string | null; role: string } | null;
+  profile: Profile | null;
   loading: boolean;
   signUp: (email: string, password: string, displayName: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  updateClubName: (clubName: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,7 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<{ display_name: string | null; role: string } | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function fetchProfile(userId: string) {
     const { data } = await supabase
       .from('profiles')
-      .select('display_name, role')
+      .select('display_name, role, club_name')
       .eq('user_id', userId)
       .single();
     setProfile(data);
@@ -74,8 +81,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  const updateClubName = async (clubName: string) => {
+    if (!user) return { error: new Error('Not signed in') };
+    const trimmed = clubName.trim();
+    const { error } = await supabase
+      .from('profiles')
+      .update({ club_name: trimmed || null })
+      .eq('user_id', user.id);
+    if (!error) {
+      setProfile((p) => (p ? { ...p, club_name: trimmed || null } : p));
+    }
+    return { error: error as Error | null };
+  };
+
   return (
-    <AuthContext.Provider value={{ session, user, profile, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user, profile, loading, signUp, signIn, signOut, updateClubName }}>
       {children}
     </AuthContext.Provider>
   );
