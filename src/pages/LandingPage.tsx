@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Trophy, Sparkles, ArrowDown, MapPin, Lock, Activity } from 'lucide-react';
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
+import { Trophy, Sparkles, ArrowDown, MapPin, Lock, Activity, ChevronRight } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { WaitlistForm } from '@/components/WaitlistForm';
@@ -8,6 +8,11 @@ import { SiteFooter } from '@/components/landing/SiteFooter';
 import { CursorFollower } from '@/components/landing/CursorFollower';
 import { CPIDial } from '@/components/landing/CPIDial';
 import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
+import { ScrollReveal } from '@/components/landing/ScrollReveal';
+import { ValueStrip } from '@/components/landing/ValueStrip';
+import { RoleCards } from '@/components/landing/RoleCards';
+import { HowItWorks } from '@/components/landing/HowItWorks';
+import { FAQ } from '@/components/landing/FAQ';
 import caminoLogo from '@/assets/camino-logo.png';
 
 const Hero3DPitch = lazy(() =>
@@ -88,6 +93,116 @@ function HeroMobileFallback() {
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.1),transparent_70%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(transparent_95%,hsl(var(--primary)/0.08)_95%),linear-gradient(90deg,transparent_95%,hsl(var(--primary)/0.08)_95%)] bg-[size:60px_60px] opacity-40" />
     </div>
+  );
+}
+
+function HeroSection() {
+  const ref = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
+  const isMobile = useIsMobile();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  });
+
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const contentBlur = useTransform(scrollYProgress, [0, 0.6], ['blur(0px)', 'blur(8px)']);
+  const bgOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+
+  return (
+    <section
+      ref={ref}
+      className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden"
+    >
+      <motion.div
+        style={reduced ? undefined : { opacity: bgOpacity, scale: bgScale }}
+        className="absolute inset-0 -z-10 pointer-events-none"
+      >
+        {isMobile ? (
+          <HeroMobileFallback />
+        ) : (
+          <Suspense fallback={<HeroMobileFallback />}>
+            <Hero3DPitch />
+          </Suspense>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
+      </motion.div>
+
+      <motion.div
+        style={
+          reduced
+            ? undefined
+            : { opacity: contentOpacity, y: contentY, filter: contentBlur, willChange: 'opacity, transform, filter' }
+        }
+        className="relative z-10 max-w-3xl mx-auto px-6 text-center py-20"
+      >
+        <ScarcityChip />
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.7 }}
+          className="mt-6 font-display font-extrabold text-5xl md:text-7xl lg:text-8xl tracking-[-0.03em] leading-[0.95] text-foreground"
+        >
+          The Future of
+          <br />
+          Player <span className="font-serif italic font-normal text-primary">Development</span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+          className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+        >
+          The digital passport for serious players. Track performance, climb verified rankings, and
+          get <span className="font-serif italic text-foreground">seen</span> by the right people.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
+        >
+          <button
+            onClick={() => scrollTo('waitlist')}
+            className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold tracking-wide shadow-[0_0_36px_-6px_hsl(var(--primary)/0.8)] hover:shadow-[0_0_48px_-4px_hsl(var(--primary))] transition-shadow"
+          >
+            <Sparkles className="h-4 w-4" />
+            Join the Waitlist
+          </button>
+          <button
+            onClick={() => scrollTo('value')}
+            className="inline-flex items-center gap-1.5 h-12 px-5 rounded-full border border-border/60 bg-background/40 backdrop-blur-md text-sm font-semibold tracking-wide text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+          >
+            See how it works
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </motion.div>
+
+        <motion.button
+          onClick={() => scrollTo('value')}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.5 }}
+          className="mt-14 inline-flex flex-col items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors"
+          style={{ willChange: 'transform' }}
+        >
+          Scroll to explore
+          <motion.span
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ willChange: 'transform' }}
+            className="inline-flex"
+          >
+            <ArrowDown className="h-3.5 w-3.5" />
+          </motion.span>
+        </motion.button>
+      </motion.div>
+    </section>
   );
 }
 
@@ -325,83 +440,40 @@ function SocialProofSection() {
 
 // ---------- Main page ----------
 export default function LandingPage() {
-  const isMobile = useIsMobile();
-
   return (
     <div className="min-h-screen bg-background text-foreground antialiased overflow-x-hidden">
       <CursorFollower />
       <TopNav />
 
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-        <div className="absolute inset-0 -z-10 pointer-events-none">
-          {isMobile ? (
-            <HeroMobileFallback />
-          ) : (
-            <Suspense fallback={<HeroMobileFallback />}>
-              <Hero3DPitch />
-            </Suspense>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
-        </div>
+      <HeroSection />
 
-        <div className="relative z-10 max-w-3xl mx-auto px-6 text-center py-20">
-          <ScarcityChip />
+      <div id="value">
+        <ScrollReveal><ValueStrip /></ScrollReveal>
+      </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.7 }}
-            className="mt-6 font-display font-extrabold text-5xl md:text-7xl lg:text-8xl tracking-[-0.03em] leading-[0.95] text-foreground"
-          >
-            The Future of
-            <br />
-            Player <span className="font-serif italic font-normal text-primary">Development</span>
-          </motion.h1>
+      <ScrollReveal><RoleCards /></ScrollReveal>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7 }}
-            className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
-          >
-            Track performance. Climb rankings. Get <span className="font-serif italic text-foreground">seen</span>.
-          </motion.p>
+      <div id="rankings">
+        <ScrollReveal><RankingsSection /></ScrollReveal>
+      </div>
+      <div id="profiles">
+        <ScrollReveal><ProfilesSection /></ScrollReveal>
+      </div>
+      <div id="cpi">
+        <ScrollReveal><CPISection /></ScrollReveal>
+      </div>
+      <div id="video">
+        <ScrollReveal><VideoTrackingSection /></ScrollReveal>
+      </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            id="waitlist-hero"
-          >
-            <WaitlistForm variant="hero" />
-          </motion.div>
+      <div id="how">
+        <HowItWorks />
+      </div>
 
-          <motion.button
-            onClick={() => scrollTo('rankings')}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
-            className="mt-10 inline-flex flex-col items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors"
-            style={{ willChange: 'transform' }}
-          >
-            See how it works
-            <motion.span
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ willChange: 'transform' }}
-              className="inline-flex"
-            >
-              <ArrowDown className="h-3.5 w-3.5" />
-            </motion.span>
-          </motion.button>
-        </div>
-      </section>
+      <div id="faq">
+        <ScrollReveal><FAQ /></ScrollReveal>
+      </div>
 
-      <div id="rankings"><RankingsSection /></div>
-      <div id="profiles"><ProfilesSection /></div>
-      <div id="cpi"><CPISection /></div>
-      <div id="video"><VideoTrackingSection /></div>
       <SocialProofSection />
 
       {/* FINAL CTA */}
@@ -413,7 +485,7 @@ export default function LandingPage() {
             Your spot is <span className="font-serif italic font-normal text-primary">waiting</span>.
           </h2>
           <p className="mt-5 text-muted-foreground text-base max-w-lg mx-auto">
-            We're onboarding select clubs in Calgary first. Add yourself to the list — we'll reach out when it's your turn.
+            Free during early access · Calgary clubs first · We reach out when it's your turn.
           </p>
           <div className="mt-10">
             <WaitlistForm variant="block" />
