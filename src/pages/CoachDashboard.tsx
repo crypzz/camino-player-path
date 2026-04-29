@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useSeedPlayers } from '@/hooks/useSeedPlayers';
 import { StatCard } from '@/components/StatCard';
-import { PlayerCard } from '@/components/PlayerCard';
+import { SquadByPosition } from '@/components/SquadByPosition';
 import { PlayerDetailDialog } from '@/components/PlayerDetailDialog';
 import { PlayerOfTheWeek } from '@/components/PlayerOfTheWeek';
 import { Users, Target, CalendarCheck, Award, Database } from 'lucide-react';
@@ -78,20 +78,11 @@ export default function CoachDashboard() {
         </div>
       ) : (
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-semibold text-foreground text-sm">Squad Overview</h2>
             <span className="text-[11px] text-muted-foreground font-medium">{players.length} players</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {players.map((player, i) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                index={i}
-                onClick={() => setSelectedId(player.id)}
-              />
-            ))}
-          </div>
+          <SquadByPosition players={players} onSelect={setSelectedId} />
           <PlayerDetailDialog
             player={selectedPlayer}
             open={!!selectedPlayer}
