@@ -13,6 +13,17 @@ import TermsPage from "@/pages/TermsPage";
 import CookiesPage from "@/pages/CookiesPage";
 import AboutPage from "@/pages/AboutPage";
 import UnsubscribePage from "@/pages/UnsubscribePage";
+import CPIInfoPage from "@/pages/features/CPIPage";
+import VideoAnalysisInfoPage from "@/pages/features/VideoAnalysisPage";
+import EvaluationsInfoPage from "@/pages/features/EvaluationsPage";
+import FitnessTestingInfoPage from "@/pages/features/FitnessTestingPage";
+import CommunicationHubInfoPage from "@/pages/features/CommunicationHubPage";
+import ForCoachesPage from "@/pages/roles/ForCoachesPage";
+import ForPlayersPage from "@/pages/roles/ForPlayersPage";
+import ForParentsPage from "@/pages/roles/ForParentsPage";
+import ForDirectorsPage from "@/pages/roles/ForDirectorsPage";
+import HowCPIWorksPage from "@/pages/resources/HowCPIWorksPage";
+import MethodologyPage from "@/pages/resources/MethodologyPage";
 import CoachDashboard from "@/pages/CoachDashboard";
 import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
@@ -115,6 +126,20 @@ const App = () => (
               <Route path="/cookies" element={<CookiesPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/unsubscribe" element={<UnsubscribePage />} />
+              {/* Platform feature pages */}
+              <Route path="/platform/cpi" element={<CPIInfoPage />} />
+              <Route path="/platform/video-analysis" element={<VideoAnalysisInfoPage />} />
+              <Route path="/platform/evaluations" element={<EvaluationsInfoPage />} />
+              <Route path="/platform/fitness-testing" element={<FitnessTestingInfoPage />} />
+              <Route path="/platform/communication-hub" element={<CommunicationHubInfoPage />} />
+              {/* Built for pages */}
+              <Route path="/for/coaches" element={<ForCoachesPage />} />
+              <Route path="/for/players" element={<ForPlayersPage />} />
+              <Route path="/for/parents" element={<ForParentsPage />} />
+              <Route path="/for/directors" element={<ForDirectorsPage />} />
+              {/* Resource pages */}
+              <Route path="/resources/how-cpi-works" element={<HowCPIWorksPage />} />
+              <Route path="/resources/methodology" element={<MethodologyPage />} />
               {/* Hidden internal access — not linked publicly */}
               <Route path="/admin" element={<AuthPage />} />
               {/* Waitlist mode: lock down public app surfaces */}
