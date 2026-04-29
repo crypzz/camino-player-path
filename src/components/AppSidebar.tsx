@@ -128,6 +128,64 @@ export function AppSidebar() {
           )}
         </div>
 
+        {/* Team / Club name — personal banner above the menu */}
+        {!collapsed && (
+          <div className="px-3 mb-3">
+            {editingClub ? (
+              <div className="flex items-center gap-1 rounded-lg border border-primary/30 bg-primary/5 px-2 py-1.5">
+                <input
+                  autoFocus
+                  value={clubDraft}
+                  onChange={(e) => setClubDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveClub();
+                    if (e.key === 'Escape') setEditingClub(false);
+                  }}
+                  placeholder="e.g. Camino FC"
+                  maxLength={40}
+                  className="flex-1 bg-transparent outline-none text-[13px] font-display font-semibold text-foreground placeholder:text-muted-foreground/50 min-w-0"
+                />
+                <button
+                  type="button"
+                  onClick={saveClub}
+                  disabled={savingClub}
+                  className="p-1 rounded hover:bg-success/15 text-success transition-colors disabled:opacity-50"
+                  aria-label="Save team name"
+                >
+                  <Check className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingClub(false)}
+                  className="p-1 rounded hover:bg-destructive/15 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Cancel"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={startEditClub}
+                className="group w-full flex items-center gap-2 rounded-lg border border-border/60 bg-gradient-to-br from-primary/10 to-transparent hover:from-primary/15 hover:border-primary/30 px-2.5 py-2 transition-all text-left"
+              >
+                <div className="w-6 h-6 rounded-md bg-primary/15 flex items-center justify-center shrink-0">
+                  <Shield className="h-3 w-3 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground/70 leading-none">
+                    {profile?.club_name ? 'Your Team' : 'Add your team'}
+                  </p>
+                  <p className="font-display font-bold text-[13px] text-foreground truncate leading-tight mt-0.5">
+                    {profile?.club_name || 'Tap to set'}
+                  </p>
+                </div>
+                <Pencil className="h-3 w-3 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" />
+              </button>
+            )}
+          </div>
+        )}
+
         <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-4 mb-1">
             {!collapsed && 'Menu'}
