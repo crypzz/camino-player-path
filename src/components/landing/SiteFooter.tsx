@@ -8,27 +8,27 @@ const sections: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Platform',
     links: [
-      { label: 'Camino Player Index', href: '/#cpi' },
-      { label: 'Video Analysis', href: '/#video' },
-      { label: 'Evaluations', href: '/#cpi' },
-      { label: 'Fitness Testing', href: '/#cpi' },
-      { label: 'Communication Hub', href: '/#profiles' },
+      { label: 'Camino Player Index', href: '/platform/cpi' },
+      { label: 'Video Analysis', href: '/platform/video-analysis' },
+      { label: 'Evaluations', href: '/platform/evaluations' },
+      { label: 'Fitness Testing', href: '/platform/fitness-testing' },
+      { label: 'Communication Hub', href: '/platform/communication-hub' },
     ],
   },
   {
     title: 'Built for',
     links: [
-      { label: 'Coaches', href: '/#waitlist' },
-      { label: 'Players', href: '/#waitlist' },
-      { label: 'Parents', href: '/#waitlist' },
-      { label: 'Directors', href: '/#waitlist' },
+      { label: 'Coaches', href: '/for/coaches' },
+      { label: 'Players', href: '/for/players' },
+      { label: 'Parents', href: '/for/parents' },
+      { label: 'Directors', href: '/for/directors' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'How CPI Works', href: '/#cpi' },
-      { label: 'Methodology', href: '/about' },
+      { label: 'How CPI Works', href: '/resources/how-cpi-works' },
+      { label: 'Methodology', href: '/resources/methodology' },
       { label: 'Privacy', href: '/privacy' },
       { label: 'Terms', href: '/terms' },
     ],
