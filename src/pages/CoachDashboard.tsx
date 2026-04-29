@@ -3,7 +3,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { useSeedPlayers } from '@/hooks/useSeedPlayers';
 import { StatCard } from '@/components/StatCard';
 import { PlayerCard } from '@/components/PlayerCard';
-import { PlayerDetailPanel } from '@/components/PlayerDetailPanel';
+import { PlayerDetailDialog } from '@/components/PlayerDetailDialog';
 import { PlayerOfTheWeek } from '@/components/PlayerOfTheWeek';
 import { Users, Target, CalendarCheck, Award, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -77,29 +77,26 @@ export default function CoachDashboard() {
           No players yet. Click "Load Sample Data" above to get started.
         </div>
       ) : (
-        <div className={`grid gap-5 ${selectedPlayer ? 'lg:grid-cols-[1fr_380px]' : 'grid-cols-1'}`}>
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="font-display font-semibold text-foreground text-sm">Squad Overview</h2>
-              <span className="text-[11px] text-muted-foreground font-medium">{players.length} players</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {players.map((player, i) => (
-                <PlayerCard
-                  key={player.id}
-                  player={player}
-                  index={i}
-                  onClick={() => setSelectedId(player.id === selectedId ? null : player.id)}
-                />
-              ))}
-            </div>
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-display font-semibold text-foreground text-sm">Squad Overview</h2>
+            <span className="text-[11px] text-muted-foreground font-medium">{players.length} players</span>
           </div>
-
-          {selectedPlayer && (
-            <div className="hidden lg:block">
-              <PlayerDetailPanel player={selectedPlayer} onClose={() => setSelectedId(null)} />
-            </div>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {players.map((player, i) => (
+              <PlayerCard
+                key={player.id}
+                player={player}
+                index={i}
+                onClick={() => setSelectedId(player.id)}
+              />
+            ))}
+          </div>
+          <PlayerDetailDialog
+            player={selectedPlayer}
+            open={!!selectedPlayer}
+            onOpenChange={(o) => !o && setSelectedId(null)}
+          />
         </div>
       )}
 

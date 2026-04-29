@@ -1,78 +1,53 @@
-## Send Real Confirmation Emails on Waitlist Signup
+## Goal
 
-### Problem
-Joining the waitlist currently only inserts a row into the `waitlist` table. No email is ever sent. The project has Lovable Emails configured (auth-email-hook deployed for sign-in flows), but the **transactional email system** — required for non-auth emails like waitlist confirmations — has never been scaffolded. The verified sender domain `notify.caminodevelopment.com` is ready to use.
+The Squad Overview cards currently show too many numbers (CPI badge, four TEC/TAC/PHY/MEN tiles, attendance % with a colored dot, nationality). It looks like a stat-line on a betting site. Clean it up so each card is calm and minimal, and surface the detailed stats only after the user clicks a player.
 
-### Solution
-Set up the transactional email pipeline and trigger a "Welcome to the waitlist" email immediately after each successful signup. Also send an internal notification to `hello@caminodevelopment.com` so the team is alerted to every new signup.
+## Changes
 
----
+### 1. Redesign `src/components/PlayerCard.tsx`
 
-### Steps
+Strip the card down to identity-only:
 
-**1. Provision transactional email infrastructure**
-- Run `setup_email_infra` (idempotent — safe even though auth infra already exists) to ensure all queues, RPCs, and the `process-email-queue` cron job are in place.
-- Run `scaffold_transactional_email` to generate:
-  - `supabase/functions/send-transactional-email/`
-  - `supabase/functions/handle-email-unsubscribe/`
-  - `supabase/functions/handle-email-suppression/`
-  - `supabase/functions/_shared/transactional-email-templates/registry.ts`
+- Avatar (initials in a rounded circle, slightly larger)
+- Name (primary)
+- One subtle meta line: `Position · Team · Age`
+- A single small CPI pill on the right (just the number, no big "CPI" label stack, no 4 stat tiles, no attendance bar, no nationality row)
+- Subtle attendance shown only as a thin colored left border (success/warning/destructive) — no number — so coaches still get an at-a-glance health cue without a number wall
+- Hover: gentle lift + primary border tint (keep existing motion)
 
-**2. Create two branded templates** in `_shared/transactional-email-templates/`:
-- `waitlist-confirmation.tsx` — sent to the user. Matches Camino brand (navy `#0a0e1a` + gold `#c89b2b`, Plus Jakarta Sans headings, Instrument Serif italic accents — same look as the existing `signup.tsx` template). Personalized greeting, role-aware copy ("As a player/coach/parent/director, here's what to expect…"), white body background per spec.
-- `waitlist-internal-notification.tsx` — minimal plaintext-style email to the team showing name, email, role, club.
+Result: one number per card (CPI), not six.
 
-Register both in `registry.ts`.
+### 2. Add a click-to-open stats dialog
 
-**3. Wire the trigger in `src/components/WaitlistForm.tsx`**
-After a successful `supabase.from('waitlist').insert(...)`:
-```ts
-const idempotencyKey = `waitlist-${payload.email}`;
-// User confirmation
-supabase.functions.invoke('send-transactional-email', {
-  body: {
-    templateName: 'waitlist-confirmation',
-    recipientEmail: payload.email,
-    idempotencyKey,
-    templateData: { name: payload.full_name, role: payload.role, clubName: payload.club_name },
-  },
-});
-// Internal notification (fire-and-forget)
-supabase.functions.invoke('send-transactional-email', {
-  body: {
-    templateName: 'waitlist-internal-notification',
-    recipientEmail: 'hello@caminodevelopment.com',
-    idempotencyKey: `waitlist-internal-${payload.email}`,
-    templateData: { name: payload.full_name, email: payload.email, role: payload.role, clubName: payload.club_name },
-  },
-});
+On mobile/tablet today the detail panel only appears on `lg:` breakpoints — clicking a card on smaller screens does nothing visible. Fix this by opening the existing `PlayerDetailPanel` content inside a Dialog when clicked, on all viewports.
+
+- Create `src/components/PlayerDetailDialog.tsx` — a thin wrapper that renders `PlayerDetailPanel` inside `<Dialog>` from `@/components/ui/dialog` (max-w-2xl, scrollable, dark themed to match glass-card).
+- On click, the card opens this dialog (works at every breakpoint, including the user's current 679px viewport).
+- Keep the existing right-side inline panel behavior on `lg+` as an alternative? No — unify on the dialog so the experience is consistent and the grid stays clean. Remove the `lg:grid-cols-[1fr_380px]` split layout from `CoachDashboard.tsx` and `PlayersPage.tsx`; squad grid becomes full-width `md:grid-cols-2 lg:grid-cols-3`.
+
+### 3. Files touched
+
+- `src/components/PlayerCard.tsx` — simplified markup (remove 4-stat grid, attendance row, nationality)
+- `src/components/PlayerDetailDialog.tsx` — new wrapper
+- `src/pages/CoachDashboard.tsx` — swap inline panel for dialog, widen grid to 3 cols on lg
+- `src/pages/PlayersPage.tsx` — same swap
+
+### 4. Out of scope
+
+- No changes to `PlayerDetailPanel` internals (skills/progress/goals/videos tabs stay as-is — that's where the numbers belong now).
+- No CPI / ranking algorithm changes.
+
+## Visual before/after (card)
+
+```text
+BEFORE                                AFTER
+┌──────────────────────────┐          ┌──────────────────────────┐
+│ JD  Jane Doe        87   │          │▌ JD  Jane Doe        87  │
+│     ST · U16 · 15y  CPI  │          │▌     ST · U16 · 15y      │
+│ ┌──┬──┬──┬──┐            │          └──────────────────────────┘
+│ │82│79│88│85│            │           (thin left border = attendance health)
+│ │TEC TAC PHY MEN│        │
+│ ───────────────          │
+│ 🇬🇧 GBR        ● 92%    │
+└──────────────────────────┘
 ```
-Both calls are fire-and-forget — UI still flips to "You're in" instantly. Errors are logged to console but don't block the success state. Idempotency key prevents duplicate sends if the user double-submits.
-
-**4. Create the unsubscribe page**
-The scaffold tool will pick a path (likely `/unsubscribe`). Create `src/pages/UnsubscribePage.tsx` matching Camino's dark theme — token validation on mount, branded "Confirm unsubscribe" button, success/error states. Register the route in `src/App.tsx`.
-
-**5. Deploy**
-Deploy `send-transactional-email`, `handle-email-unsubscribe`, `handle-email-suppression`. Auto-deploy handles the rest.
-
----
-
-### Files Changed
-
-**Created:**
-- `supabase/functions/send-transactional-email/index.ts` (+ deno.json)
-- `supabase/functions/handle-email-unsubscribe/index.ts` (+ deno.json)
-- `supabase/functions/handle-email-suppression/index.ts` (+ deno.json)
-- `supabase/functions/_shared/transactional-email-templates/registry.ts`
-- `supabase/functions/_shared/transactional-email-templates/waitlist-confirmation.tsx`
-- `supabase/functions/_shared/transactional-email-templates/waitlist-internal-notification.tsx`
-- `src/pages/UnsubscribePage.tsx`
-
-**Edited:**
-- `src/components/WaitlistForm.tsx` — invoke send-transactional-email after insert
-- `src/App.tsx` — register `/unsubscribe` route
-
-**Untouched:** all auth email templates, `auth-email-hook`, every dashboard page.
-
-### Result
-Within seconds of joining the waitlist, the user receives a branded Camino confirmation email from `notify.caminodevelopment.com`, and the team gets an internal heads-up at `hello@caminodevelopment.com`. Retry-safe via the queue, suppression-safe via the built-in unsubscribe system.
