@@ -25,20 +25,27 @@ function Panel({ index, total, scrollYProgress }: any) {
   const clamp = (v: number) => Math.max(0, Math.min(1, v));
   const start = index / total;
   const end = (index + 1) / total;
+  const span = end - start;
+  // Wider plateau: visible for the middle ~70% of each step's range
+  const fadeIn = clamp(start + span * 0.05);
+  const holdStart = clamp(start + span * 0.2);
+  const holdEnd = clamp(end - span * 0.2);
+  const fadeOut = clamp(end - span * 0.05);
   const mid = (start + end) / 2;
 
   const opacity = useTransform(
     scrollYProgress,
-    [clamp(start - 0.1), clamp(mid - 0.05), clamp(mid + 0.05), clamp(end + 0.1)],
+    [fadeIn, holdStart, holdEnd, fadeOut],
     [0, 1, 1, 0]
   );
-  const scale = useTransform(scrollYProgress, [clamp(start), mid, clamp(end)], [0.92, 1, 0.92]);
+  const scale = useTransform(scrollYProgress, [start, mid, end], [0.94, 1, 0.94]);
   const filter = useTransform(
     scrollYProgress,
-    [clamp(start - 0.05), mid, clamp(end + 0.05)],
-    ['blur(8px)', 'blur(0px)', 'blur(8px)']
+    [fadeIn, holdStart, holdEnd, fadeOut],
+    ['blur(8px)', 'blur(0px)', 'blur(0px)', 'blur(8px)']
   );
-  const y = useTransform(scrollYProgress, [clamp(start), mid, clamp(end)], [40, 0, -40]);
+  const y = useTransform(scrollYProgress, [start, mid, end], [40, 0, -40]);
+
 
   const step = steps[index];
 

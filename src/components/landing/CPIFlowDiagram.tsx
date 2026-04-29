@@ -268,18 +268,23 @@ function Panel({
 }) {
   const reduced = useReducedMotion();
   const { start, end, mid } = StepRange(index, total);
+  const span = end - start;
+  const fadeIn = clamp(start + span * 0.05);
+  const holdStart = clamp(start + span * 0.2);
+  const holdEnd = clamp(end - span * 0.2);
+  const fadeOut = clamp(end - span * 0.05);
 
   const opacity = useTransform(
     scrollYProgress,
-    [clamp(start - 0.05), clamp(mid - 0.08), clamp(mid + 0.08), clamp(end + 0.05)],
+    [fadeIn, holdStart, holdEnd, fadeOut],
     [0, 1, 1, 0]
   );
   const filter = useTransform(
     scrollYProgress,
-    [clamp(start - 0.02), mid, clamp(end + 0.02)],
-    ['blur(8px)', 'blur(0px)', 'blur(8px)']
+    [fadeIn, holdStart, holdEnd, fadeOut],
+    ['blur(8px)', 'blur(0px)', 'blur(0px)', 'blur(8px)']
   );
-  const y = useTransform(scrollYProgress, [clamp(start), mid, clamp(end)], [40, 0, -40]);
+  const y = useTransform(scrollYProgress, [start, mid, end], [40, 0, -40]);
 
   // Local progress 0→1 within this step's range, used by visual sub-components
   const localProgress = useTransform(scrollYProgress, [start, end], [0, 1]);
