@@ -61,13 +61,21 @@ function TopNav() {
           <img src={caminoLogo} alt="Camino" className="h-8 w-8 rounded-md object-contain" />
           <span className="font-display font-extrabold text-foreground text-lg tracking-tight">Camino</span>
         </div>
-        <button
-          onClick={() => scrollTo('waitlist')}
-          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold tracking-wide shadow-[0_0_24px_-6px_hsl(var(--primary)/0.7)] hover:shadow-[0_0_36px_-4px_hsl(var(--primary)/0.9)] transition-shadow"
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-          Join Waitlist
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href="/admin"
+            className="hidden sm:inline-flex items-center h-9 px-3 rounded-full text-xs font-semibold tracking-wide text-foreground/80 hover:text-foreground transition-colors"
+          >
+            Sign in
+          </a>
+          <button
+            onClick={() => scrollTo('waitlist')}
+            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold tracking-wide shadow-[0_0_24px_-6px_hsl(var(--primary)/0.7)] hover:shadow-[0_0_36px_-4px_hsl(var(--primary)/0.9)] transition-shadow"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Join Waitlist
+          </button>
+        </div>
       </div>
     </nav>
   );
