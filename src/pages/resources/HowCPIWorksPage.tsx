@@ -1,4 +1,5 @@
 import { LegalLayout } from '@/components/landing/LegalLayout';
+import { CPIFlowDiagram } from '@/components/landing/CPIFlowDiagram';
 
 export default function HowCPIWorksPage() {
   return (
@@ -9,6 +10,14 @@ export default function HowCPIWorksPage() {
         <strong>tested fitness</strong>. Every layer is transparent, and every change is shown
         in-product.
       </p>
+
+      <p className="text-sm italic text-muted-foreground/80">
+        Scroll through the diagram below to see the full flow — from 23 raw attributes to a single
+        live-recomputing score.
+      </p>
+
+      {/* Scrollytelling diagram */}
+      <CPIFlowDiagram />
 
       <h2>Step 1 — Capture the 23 attributes</h2>
       <p>
