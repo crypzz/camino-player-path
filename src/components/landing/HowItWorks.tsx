@@ -68,6 +68,13 @@ function Panel({ index, total, scrollYProgress }: any) {
   );
 }
 
+function Indicator({ index, total, scrollYProgress }: any) {
+  const start = index / total;
+  const end = (index + 1) / total;
+  const opacity = useTransform(scrollYProgress, [start, (start + end) / 2, end], [0.3, 1, 0.3]);
+  return <motion.span style={{ opacity }} className="h-1 w-12 rounded-full bg-primary" />;
+}
+
 export function HowItWorks() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
