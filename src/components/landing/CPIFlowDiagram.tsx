@@ -269,22 +269,19 @@ function Panel({
   const reduced = useReducedMotion();
   const { start, end, mid } = StepRange(index, total);
   const span = end - start;
-  const fadeIn = clamp(start + span * 0.05);
-  const holdStart = clamp(start + span * 0.2);
-  const holdEnd = clamp(end - span * 0.2);
-  const fadeOut = clamp(end - span * 0.05);
+  const isFirst = index === 0;
+  const isLast = index === total - 1;
+  const fadeIn = isFirst ? 0 : clamp(start - span * 0.15);
+  const holdStart = isFirst ? 0 : clamp(start + span * 0.15);
+  const holdEnd = isLast ? 1 : clamp(end - span * 0.15);
+  const fadeOut = isLast ? 1 : clamp(end + span * 0.15);
 
   const opacity = useTransform(
     scrollYProgress,
     [fadeIn, holdStart, holdEnd, fadeOut],
     [0, 1, 1, 0]
   );
-  const filter = useTransform(
-    scrollYProgress,
-    [fadeIn, holdStart, holdEnd, fadeOut],
-    ['blur(8px)', 'blur(0px)', 'blur(0px)', 'blur(8px)']
-  );
-  const y = useTransform(scrollYProgress, [start, mid, end], [40, 0, -40]);
+  const y = useTransform(scrollYProgress, [start, mid, end], [20, 0, -20]);
 
   // Local progress 0→1 within this step's range, used by visual sub-components
   const localProgress = useTransform(scrollYProgress, [start, end], [0, 1]);
@@ -298,7 +295,7 @@ function Panel({
       style={
         reduced
           ? undefined
-          : { opacity, filter, y, willChange: 'opacity, transform, filter' }
+          : { opacity, y, willChange: 'opacity, transform' }
       }
       className="absolute inset-0 flex items-center justify-center px-4"
     >
