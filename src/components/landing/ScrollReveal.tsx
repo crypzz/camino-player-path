@@ -1,38 +1,33 @@
 import { ReactNode, useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
 interface Props {
   children: ReactNode;
   className?: string;
-  /** How aggressive the blur is (px). Set 0 to disable blur. */
+  /** Deprecated — kept for API compat. Blur is disabled for performance. */
   blur?: number;
   /** How far children translate vertically across the scroll range (px). */
   translate?: number;
 }
 
 /**
- * Wraps a section with scroll-driven enter/exit:
- *  - fades + un-blurs as it enters the viewport
- *  - fades + re-blurs as it exits
- *  - subtle parallax translate
- * Respects prefers-reduced-motion.
+ * Lightweight reveal wrapper:
+ *  - fades + slight translate as it enters the viewport
+ *  - stays fully visible while in view (no exit fade -> no blank gaps)
+ *  - no animated CSS filters (avoids per-frame compositing cost)
+ *  - respects prefers-reduced-motion
  */
-export function ScrollReveal({ children, className, blur = 6, translate = 30 }: Props) {
+export function ScrollReveal({ children, className, translate = 24 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start end', 'end start'],
+    offset: ['start 90%', 'start 40%'],
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.18, 0.82, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.18, 0.82, 1], [translate, 0, 0, -translate]);
-  const filter: MotionValue<string> = useTransform(
-    scrollYProgress,
-    [0, 0.18, 0.82, 1],
-    [`blur(${blur}px)`, 'blur(0px)', 'blur(0px)', `blur(${blur}px)`]
-  );
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [translate, 0]);
 
   if (reduced) {
     return (
@@ -45,7 +40,7 @@ export function ScrollReveal({ children, className, blur = 6, translate = 30 }: 
   return (
     <motion.div
       ref={ref}
-      style={{ opacity, y, filter, willChange: 'opacity, transform, filter' }}
+      style={{ opacity, y, willChange: 'opacity, transform' }}
       className={className}
     >
       {children}
