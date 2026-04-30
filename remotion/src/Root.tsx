@@ -15,9 +15,18 @@ import { AICoachReelVideo } from "./AICoachReelVideo";
 import { CaminoPromo15 } from "./CaminoPromo15";
 import { CaminoBagsDemo } from "./CaminoBagsDemo";
 import { LaunchPromoVideo } from "./LaunchPromoVideo";
+import { BagsHackathonVideo } from "./BagsHackathonVideo";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="bags-hackathon-promo"
+      component={BagsHackathonVideo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="launch-promo"
       component={LaunchPromoVideo}
