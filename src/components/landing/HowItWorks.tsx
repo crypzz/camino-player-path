@@ -26,26 +26,24 @@ function Panel({ index, total, scrollYProgress }: any) {
   const start = index / total;
   const end = (index + 1) / total;
   const span = end - start;
-  // Wider plateau: visible for the middle ~70% of each step's range
-  const fadeIn = clamp(start + span * 0.05);
-  const holdStart = clamp(start + span * 0.2);
-  const holdEnd = clamp(end - span * 0.2);
-  const fadeOut = clamp(end - span * 0.05);
   const mid = (start + end) / 2;
+
+  // First panel starts fully visible; last panel stays fully visible to the end.
+  // Middle panels cross-fade with neighbors so there's never a blank moment.
+  const isFirst = index === 0;
+  const isLast = index === total - 1;
+  const fadeIn = isFirst ? 0 : clamp(start - span * 0.15);
+  const holdStart = isFirst ? 0 : clamp(start + span * 0.15);
+  const holdEnd = isLast ? 1 : clamp(end - span * 0.15);
+  const fadeOut = isLast ? 1 : clamp(end + span * 0.15);
 
   const opacity = useTransform(
     scrollYProgress,
     [fadeIn, holdStart, holdEnd, fadeOut],
     [0, 1, 1, 0]
   );
-  const scale = useTransform(scrollYProgress, [start, mid, end], [0.94, 1, 0.94]);
-  const filter = useTransform(
-    scrollYProgress,
-    [fadeIn, holdStart, holdEnd, fadeOut],
-    ['blur(8px)', 'blur(0px)', 'blur(0px)', 'blur(8px)']
-  );
-  const y = useTransform(scrollYProgress, [start, mid, end], [40, 0, -40]);
-
+  const scale = useTransform(scrollYProgress, [start, mid, end], [0.97, 1, 0.97]);
+  const y = useTransform(scrollYProgress, [start, mid, end], [20, 0, -20]);
 
   const step = steps[index];
 
@@ -54,7 +52,7 @@ function Panel({ index, total, scrollYProgress }: any) {
       style={
         reduced
           ? undefined
-          : { opacity, scale, filter, y, willChange: 'opacity, transform, filter' }
+          : { opacity, scale, y, willChange: 'opacity, transform' }
       }
       className="absolute inset-0 flex items-center justify-center"
     >
