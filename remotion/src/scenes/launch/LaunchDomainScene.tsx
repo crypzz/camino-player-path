@@ -54,17 +54,18 @@ export const LaunchDomainScene = () => {
 
       <div style={{
         opacity: urlOp, transform: `scale(${urlScale * breath})`,
-        textAlign: "center",
+        textAlign: "center", width: "100%", padding: "0 20px",
       }}>
         <div style={{
-          fontFamily, fontWeight: 800, fontSize: 90, color: "#FFFFFF",
+          fontFamily, fontWeight: 800, fontSize: 72, color: "#FFFFFF",
           letterSpacing: "-0.035em", lineHeight: 1,
+          whiteSpace: "nowrap",
         }}>
-          caminodevelopment
-          <span style={{ color: GOLD }}>.com</span>
+          caminodevelopment<span style={{ color: GOLD }}>.com</span>
         </div>
         <div style={{
           height: 6, marginTop: 22, position: "relative",
+          width: "82%", marginLeft: "auto", marginRight: "auto",
         }}>
           <div style={{
             height: "100%", width: `${underline}%`, backgroundColor: GOLD,
