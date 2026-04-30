@@ -12,14 +12,14 @@ export const BagsHackathonVideo = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#0A0C12" }}>
       <Series>
-        <Series.Sequence durationInFrames={75}><BagsHookScene /></Series.Sequence>
-        <Series.Sequence durationInFrames={90}><BagsLockupScene /></Series.Sequence>
-        <Series.Sequence durationInFrames={105}><BagsPitchScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={90}><BagsHookScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={105}><BagsLockupScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={120}><BagsPitchScene /></Series.Sequence>
         <Series.Sequence durationInFrames={120}><BagsProductMontageScene /></Series.Sequence>
-        <Series.Sequence durationInFrames={105}><BagsTractionScene /></Series.Sequence>
-        <Series.Sequence durationInFrames={90}><BagsCriteriaScene /></Series.Sequence>
-        <Series.Sequence durationInFrames={90}><BagsLiveScene /></Series.Sequence>
-        <Series.Sequence durationInFrames={75}><BagsCtaScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={120}><BagsTractionScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={105}><BagsCriteriaScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={120}><BagsLiveScene /></Series.Sequence>
+        <Series.Sequence durationInFrames={120}><BagsCtaScene /></Series.Sequence>
       </Series>
     </AbsoluteFill>
   );

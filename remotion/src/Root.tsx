@@ -22,7 +22,7 @@ export const RemotionRoot = () => (
     <Composition
       id="bags-hackathon-promo"
       component={BagsHackathonVideo}
-      durationInFrames={750}
+      durationInFrames={900}
       fps={30}
       width={1080}
       height={1920}
