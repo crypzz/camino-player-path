@@ -1,77 +1,100 @@
-## Problem
+## The Video: "Camino Is Live" — 30-second launch promo
 
-Right now the hero crams the full waitlist form (4 fields + submit) directly under the headline. Visitors see a sign-up wall before they understand what Camino actually does. We need to lead with **story and value**, then earn the signup further down — without losing the premium 3D feel, and adding more scroll-driven depth.
+A 30-second 9:16 vertical Remotion video designed for Instagram Reels, TikTok, and YouTube Shorts. It's the launch announcement piece — it tells viewers what Camino *is*, why it matters, and where to go (caminodevelopment.com). Entertaining first, informative second, brand-locked throughout.
 
-## Approach
+### Why this video (not a recut of existing ones)
 
-Shift from "hero + form" to a **scrollytelling narrative**: a clean hero with a single CTA → progressive reveals that explain the platform → the form appears once the user is sold.
+Looking at the existing 14 Remotion compositions:
+- **Main, PathToPro, LevelUp, Identity, GoPro, VideoAnalysis, AICoachReel** — each goes deep on one feature
+- **Promo15 / CountdownTeaser / PreLaunchHype** — short teasers with no platform overview
+- **AcademyPromo / ProfessionalPromo** — long-form, audience-specific, 1080p horizontal
+
+There is no piece that does **"here's the whole platform in 30 seconds + we're live now + go to the URL."** That's the gap this fills.
+
+### Creative direction
+
+**Aesthetic:** Kinetic Energy meets Tech Product. Fast cuts, snappy springs, real UI moments, gold accent flashes. Serious sports-tech tone (per brand memory) — no game-y bounce, no neon. Feels like an Apple product launch crossed with a Nike drop.
+
+**Palette (locked to brand):**
+- Background `#0A0C12` (deep navy-black)
+- Primary gold `#E8B400`
+- Cool accent `#2B7FE8` (used sparingly for "live/data" moments)
+- White `#FFFFFF` for type, muted whites for body
+
+**Typography:** Plus Jakarta Sans 800 for display, Inter 500/600 for body. Already used across the project.
+
+**Motion system:**
+- Default entrance: spring-in from 8px below + opacity 0→1, damping 18 / stiffness 180
+- Accent moments: scale punch 0.92 → 1.0 with slight overshoot
+- Default transition between scenes: hard cut on the beat (no crossfade) for kinetic feel
+- 2 special transitions: a vertical wipe into the dashboard reveal, a gold flash before the URL card
+
+### 30-second structure (900 frames @ 30fps)
 
 ```text
-[ HERO ]            Big headline + 1-line value + 2 CTA buttons (Join Waitlist / See How It Works)
-   ↓                3D pitch behind, hero content fades+blurs out as you scroll
-[ VALUE STRIP ]     3 pillars: Track · Rank · Get Seen (icons, fade-in on scroll)
-   ↓
-[ FOR WHO ]         4 cards: Players / Coaches / Parents / Directors — tilt + parallax
-   ↓
-[ RANKINGS ]        (existing, kept)
-[ PROFILES ]        (existing, kept)
-[ CPI DIAL ]        (existing, kept)
-[ VIDEO INTEL ]     (existing, kept)
-[ HOW IT WORKS ]    NEW — 3 steps: Upload → Analyze → Climb (sticky scroll, cards z-stack in)
-[ FAQ ]             NEW — 5–6 collapsibles answering top objections
-[ SOCIAL PROOF ]    (existing)
-[ WAITLIST ]        Final CTA — full form here, with scarcity reinforcement
+Scene                    Frames   Time     Beat
+──────────────────────── ──────   ──────   ────────────────────────
+1. Hook / Question        0-75    0.0-2.5  "What if every player had proof?"
+2. Problem flash         75-150   2.5-5.0  Stacked pain points (3 quick lines)
+3. Reveal / logo lockup 150-240   5.0-8.0  Camino wordmark punches in
+4. CPI dial counter     240-360   8.0-12.0 0 → 76 dial fill, "One score. 23 attributes."
+5. Dashboard glance     360-510   12-17    Real UI mock — radar chart, video tag, leaderboard row
+6. Roles montage        510-660   17-22    Coach / Player / Parent / Director — 4 quick cards
+7. "We're live" stamp   660-780   22-26    Gold stamp drop + "Now open to clubs"
+8. Domain card          780-900   26-30    caminodevelopment.com locked center, gold underline draw
 ```
 
-## What Changes
+Pacing logic: open punchy (sub-3s hook), build informational density in the middle (CPI + dashboard + roles do the educational work), then resolve to a single calm card with the URL so the viewer can read and remember it. The last 4 seconds are intentionally slower than the rest — that's where the domain has to land.
 
-### 1. Hero — remove inline form
-- Replace `<WaitlistForm variant="hero" />` with two buttons: a primary **"Join the Waitlist"** that smooth-scrolls to the bottom form, and a ghost **"See how it works"** that scrolls to the value strip.
-- Keep `KineticHeadline`-style word-by-word reveal, scarcity chip, and the 3D pitch background.
-- Add a **scroll-driven hero exit**: as the user scrolls the first viewport, hero content (headline + buttons) fades opacity 1→0, translates y 0→-60px, and applies `filter: blur(0→8px)` using `useScroll` + `useTransform`. The 3D pitch background fades to 0.2 opacity at the same time so the next section can breathe.
+### What each scene shows
 
-### 2. New: Value Strip (between Hero and Rankings)
-- 3 columns: **Track every touch** · **Climb verified rankings** · **Get seen by the right people**.
-- Each item: lucide icon in a primary-tinted square, short bold line, 1-sentence sub-copy.
-- Stagger fade+rise on enter view (framer-motion `whileInView`).
+**1. Hook (`LaunchHookScene`)** — Black frame, single line of huge Plus Jakarta type animates in word-by-word: "What if every player had **proof**?" Word "proof" lands in gold with a 1-frame flash.
 
-### 3. New: "Who it's for" section (4 role cards)
-- Cards for Player / Coach / Parent / Director.
-- Reuse `TiltCard` component (already exists in `src/components/landing/`) for 3D mouse-tilt.
-- Each card lists 3 bullet outcomes for that role. Subtle parallax: cards translate y based on scroll progress through the section.
+**2. Problem (`LaunchProblemStackScene`)** — Three lines stamp in fast, one per ~25 frames, each with a strikethrough animation: "Lost highlight reels." "Forgotten stats." "Coaches guessing." Tight, kinetic, no fluff.
 
-### 4. New: "How it works" sticky scroll section
-- A sticky left column ("01 · 02 · 03" step indicator that updates as you scroll) and a right column with 3 stacked step panels.
-- Each panel scales/opacity-animates in as it enters, and the previous one fades+blurs out — the requested **disappearing-while-scrolling** effect.
+**3. Reveal (`LaunchRevealScene`)** — Camino wordmark scales in from 1.4 → 1.0 with a gold underline drawing left-to-right via `strokeDashoffset`. Subtitle fades in: "The player development platform."
 
-### 5. New: FAQ
-- Use existing `Accordion` ui component. 5–6 questions: "When does it launch?", "What does it cost?", "Do I need a coach to sign up?", "Is my data private?", "Which clubs are onboarding now?", "What devices does it work on?".
+**4. CPI (`LaunchCPIScene`)** — Reuses the visual language of the existing `CPIDial` component but rebuilt for video. Animated dial fills 0 → 76 over 60 frames using `interpolate`. Caption appears on the right: "One score. 23 attributes. Verified."
 
-### 6. Final waitlist section (existing)
-- Keep `<WaitlistForm variant="block" />` here. Add a small "100% free during early access · Calgary clubs first" reinforcement line above it.
+**5. Dashboard glance (`LaunchDashboardScene`)** — Mock UI cards stagger in: a radar chart spinning into place (top), a tagged video frame with bounding box (middle), a leaderboard row with rank +3 animating (bottom). This is the "what does it actually look like" beat.
 
-### 7. Global scroll-disappearing effects
-- Each major section gets a wrapper that uses `useScroll({ target, offset: ['start end', 'end start'] })` plus `useTransform` to drive `opacity` and `filter: blur(px)` on its content as it enters and exits the viewport. Sections fade in from blur(8px)→0 on enter, and fade out blur(0)→6px on exit. Respects `prefers-reduced-motion` (skip blur transforms when set).
+**6. Roles (`LaunchRolesScene`)** — 2x2 grid of role tiles snap in with 4-frame stagger: Coaches / Players / Parents / Directors. Each tile has icon + one-word value: "Track / Grow / Watch / Lead."
 
-### 8. TopNav
-- Keep existing `Sign in` + `Join Waitlist` buttons unchanged.
+**7. Live stamp (`LaunchLiveStampScene`)** — Big gold "NOW LIVE" stamp drops with rotation (-8° → 0°) and a soft impact shake on the frame. Subtitle: "Open to clubs across North America."
 
-## Files
+**8. Domain card (`LaunchDomainScene`)** — Calm, centered. The URL `caminodevelopment.com` in large white type. Gold underline draws beneath it (reusing the underline motif from scene 3). Tiny line below in muted white: "Join the waitlist." Camino logo bottom-center. Holds for ~2 seconds so the viewer can read it.
 
-**Edit**
-- `src/pages/LandingPage.tsx` — restructure section order, swap hero form for CTA buttons, add hero scroll-exit transforms, mount new sections.
+### The domain (key requirement)
 
-**Create**
-- `src/components/landing/ValueStrip.tsx` — 3-column value props.
-- `src/components/landing/RoleCards.tsx` — 4 tilt cards for Player/Coach/Parent/Director.
-- `src/components/landing/HowItWorks.tsx` — sticky-scroll 3-step with disappearing transitions.
-- `src/components/landing/FAQ.tsx` — accordion FAQ.
-- `src/components/landing/ScrollReveal.tsx` — small reusable wrapper that applies the fade+blur in/out behavior to its children, used to wrap each major section.
+The closing scene shows **caminodevelopment.com** as the primary callout. That's the live custom domain already connected to the project (confirmed from project URLs). No "lovable.app" subdomain shown. The URL is the only thing on screen for the final ~2 seconds — no competing motion.
 
-**No changes**
-- `WaitlistForm.tsx`, `Hero3DPitch.tsx`, `CPIDial.tsx`, `FloatingPlayerCards.tsx`, rankings/video/profiles sections — reused as-is.
-- No DB or backend changes.
+### File plan
 
-## Out of scope
-- Copywriting polish beyond first-pass drafts (can iterate after).
-- New illustrations/photography — uses existing icons + the 3D pitch + existing visual components.
+```text
+remotion/src/
+  LaunchPromoVideo.tsx                   ← new composition root
+  scenes/launch/
+    LaunchHookScene.tsx
+    LaunchProblemStackScene.tsx
+    LaunchRevealScene.tsx
+    LaunchCPIScene.tsx
+    LaunchDashboardScene.tsx
+    LaunchRolesScene.tsx
+    LaunchLiveStampScene.tsx
+    LaunchDomainScene.tsx
+  Root.tsx                               ← register new composition id "launch-promo"
+  scripts/render-remotion.mjs            ← add output mapping for "launch-promo"
+```
+
+Composition spec: `id="launch-promo"`, `durationInFrames={900}`, `fps={30}`, `width={1080}`, `height={1920}`.
+
+### Render
+
+Output to `/mnt/documents/camino-launch-promo.mp4` using the existing programmatic render script pattern (already proven across 14 prior compositions). Headless, muted (per sandbox ffmpeg constraint), single concurrency.
+
+### What the user gets
+
+- One new 30-second 9:16 MP4 ready for Reels/Shorts/TikTok
+- Source TSX files committed under `remotion/src/scenes/launch/` so it can be re-rendered or tweaked later
+- New composition id `launch-promo` registered alongside the existing 14
+- Video QA'd via still-frame spot checks at scene boundaries before final render
