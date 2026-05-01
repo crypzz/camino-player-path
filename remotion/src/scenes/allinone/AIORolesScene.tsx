@@ -36,8 +36,8 @@ export const AIORolesScene = () => {
       </AbsoluteFill>
 
       <div style={{
-        position: "absolute", left: 50, right: 50, bottom: 120,
-        display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20,
+        position: "absolute", left: 50, right: 50, top: 620, bottom: 80,
+        display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr", gap: 20,
       }}>
         {roles.map((r, i) => {
           const s = spring({ frame: frame - 18 - i * 6, fps, config: { damping: 18, stiffness: 140 } });
