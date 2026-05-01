@@ -17,9 +17,18 @@ import { CaminoBagsDemo } from "./CaminoBagsDemo";
 import { LaunchPromoVideo } from "./LaunchPromoVideo";
 import { BagsHackathonVideo } from "./BagsHackathonVideo";
 import { FollowCamVideo } from "./FollowCamVideo";
+import { AllInOnePromo } from "./AllInOnePromo";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="all-in-one-promo"
+      component={AllInOnePromo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="followcam-promo"
       component={FollowCamVideo}
