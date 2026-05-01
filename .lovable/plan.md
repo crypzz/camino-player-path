@@ -1,53 +1,61 @@
-## Camino FollowCam — 30s Vertical Promo for X
+## Camino "All-In-One" Marketing Promo
 
-A future-facing 30-second 9:16 video introducing **Camino FollowCam**: our upcoming autonomous sideline cameras that auto-follow play, stream straight to Camino servers, and unlock real-time half-time stats, post-game AI breakdowns, and a full **3D pitch replay** showing every player's position on every play.
+A 30-second vertical (1080×1920, 30fps) Remotion promo that tells the **complete Camino story** — from the gap in player development to the full platform — layered over **cinematic AI-generated soccer photography** for a documentary-grade feel. No hackathon mention. Pure platform.
 
-### Hook angle
-"The sideline just got a brain." Position FollowCam as the missing hardware layer that turns Camino from a video analysis app into an end-to-end matchday system — coaches walk off the pitch with stats already waiting, and a 3D replay of every phase.
+### Visual Direction
 
-### Tone
-Cinematic tech-product reveal — think Apple keynote meets sports broadcast. Slower, weightier pacing than the hackathon promo (this is a product tease, not a hype reel). Marked **"COMING SOON"** so it reads as roadmap, not vapor.
+- **Aesthetic:** Cinematic editorial — deep navy `#0A0C12`, signal gold `#E8B400`, ivory `#F5F5F5`. AI photos sit beneath glassy UI overlays with film-grain feel.
+- **Typography:** Plus Jakarta Sans 800 (display) + Inter 500 (body) — brand standard.
+- **Motion system:** Slow camera-style parallax push on photos (Ken Burns), staggered spring entrances on overlays, hard cuts between beats with brief slide-wipes for momentum.
+- **Imagery:** 8 generated stills via Lovable AI (Nano Banana Pro) — youth players, academy training, coach-on-touchline, stadium silhouette, close-up boots, tactical board, etc. Color-graded toward navy/gold.
 
-### 8-scene structure (900 frames @ 30fps = 30s)
+### 30-Second Beat Sheet (900 frames)
 
-| # | Scene | Frames | Beat |
-|---|---|---|---|
-| 1 | **Hook** — black frame, single line types in: "What if the camera coached too?" Gold underline sweep | 90 | Curiosity hook |
-| 2 | **Hardware reveal** — silhouette of FollowCam tripod rotates in from darkness, gold rim light, label "CAMINO FOLLOWCAM · COMING SOON" | 120 | Product unveil |
-| 3 | **Auto-follow** — top-down pitch SVG, ball moves across pitch, camera-cone rotates and tracks it in real time, "AI auto-tracks every play" | 105 | What it does on the sideline |
-| 4 | **Live stream to Camino** — animated upload arc from camera icon → cloud → phone mock showing live match feed with score + live stats ticker | 105 | Realtime pipeline |
-| 5 | **Half-time stats drop** — phone mock fills with stat cards sliding in (Possession 62%, xG 1.4, Sprints 47, Distance 5.8km), stamp "HALF-TIME · LIVE" | 120 | The half-time payoff |
-| 6 | **3D pitch replay** — isometric 3D pitch with 22 player dots animating through a phase of play, trails behind each, camera orbits slowly, label "3D REPLAY · EVERY PLAYER · EVERY PLAY" | 135 | The hero feature |
-| 7 | **Coach POV** — split: tactics board on left ("Where was the LB on the 2nd goal?") → 3D replay answers it on right with one player highlighted in gold | 105 | Why coaches care |
-| 8 | **CTA** — "FollowCam · Coming 2026" + caminodevelopment.com + @CaminoDev, gold gradient sweep | 120 | Sign-off |
+```text
+0:00–0:04  HOOK         "Talent is everywhere. Tracking it isn't."     (90f)
+0:04–0:08  PROBLEM      Lost notes, group chats, faded memories.       (120f)
+0:08–0:12  REVEAL       Camino logo + "The digital passport for soccer" (90f)
+0:12–0:16  CPI          0→87 score animation on player photo            (120f)
+0:16–0:20  DASHBOARD    Squad CPI cards floating over academy photo    (120f)
+0:20–0:24  VIDEO AI     Pitch overlay + AI-tagged events on match shot (120f)
+0:24–0:27  ROLES        4 quadrants: Player·Coach·Director·Parent      (90f)
+0:27–0:30  CTA          Domain + tagline over stadium silhouette        (150f)
+```
 
-### Visual & motion direction
-- **Palette**: Deep Navy `#0A0C12` bg, Gold `#E8B400` primary, Cool Blue `#2B7FE8` accent, off-white `#F4F4F2` — matches existing Camino brand system
-- **Typography**: Plus Jakarta Sans 800 (display), Inter 600 (UI/body) — same as launch & hackathon promos
-- **Motion**: spring entrances (damping 18-22), slow 3-4s scene holds for product moments, snappy 8-frame cuts for stat reveals, slow camera orbit on 3D pitch
-- **Hero motif**: the gold camera-cone (FOV triangle) — appears in scenes 2, 3, 6 as a recurring visual signature
-- **3D pitch**: rendered with CSS 3D transforms (`perspective`, `rotateX(55deg)`, `rotateZ`) — pitch plane + player dots as positioned divs, trails as SVG paths. No Three.js needed; keeps render fast and on-brand with existing scene aesthetic.
+### Files
 
-### Technical implementation
-- New composition `followcam-promo` (1080×1920, 900 frames, 30fps) registered in `remotion/src/Root.tsx`
-- New `remotion/src/FollowCamVideo.tsx` orchestrating a `<Series>` of 8 scenes
-- New scene files under `remotion/src/scenes/followcam/`:
-  - `FCHookScene.tsx` — typewriter question
-  - `FCHardwareRevealScene.tsx` — rotating tripod silhouette (SVG)
-  - `FCAutoFollowScene.tsx` — top-down pitch + ball + tracking cone
-  - `FCLiveStreamScene.tsx` — camera → cloud → phone pipeline
-  - `FCHalfTimeStatsScene.tsx` — phone mock with sliding stat cards
-  - `FC3DReplayScene.tsx` — CSS-3D isometric pitch with animated player dots & trails
-  - `FCCoachPOVScene.tsx` — tactics board ↔ 3D replay split
-  - `FCCTAScene.tsx` — Coming 2026 sign-off
-- Add `followcam-promo → /mnt/documents/camino-followcam-promo.mp4` to `remotion/scripts/render-remotion.mjs` outputMap
-- Render via existing pipeline: `node scripts/render-remotion.mjs followcam-promo`
-- QA: pull stills at frames 45, 180, 320, 460, 600, 750, 870 to verify each beat, then deliver MP4
+**New composition:**
+- `remotion/src/AllInOnePromo.tsx` — main composition wiring scenes via `<Series>`.
 
-### Deliverable
-`/mnt/documents/camino-followcam-promo.mp4` — 30s 1080×1920 H.264 MP4 ready for X, plus a suggested X caption to go with it.
+**New scenes (`remotion/src/scenes/allinone/`):**
+- `AIOHookScene.tsx` — Ken Burns photo + kinetic headline.
+- `AIOProblemScene.tsx` — crossed-out icons (notebook, chat bubble, USB) over training photo.
+- `AIORevealScene.tsx` — gold logo lockup, photo desaturates behind.
+- `AIOCPIScene.tsx` — animated CPI dial counting 0→87 on portrait.
+- `AIODashboardScene.tsx` — 3 floating CPI cards over academy photo with parallax.
+- `AIOVideoAIScene.tsx` — match still + SVG bounding boxes + pitch mini-map dot pulse.
+- `AIORolesScene.tsx` — 2×2 grid of role photos with labels.
+- `AIOCTAScene.tsx` — stadium photo, tagline, `caminodevelopment.com`.
 
-### Out of scope
-- No real photo-rendered camera hardware (pure SVG/CSS silhouette — we don't have product photos yet)
-- No Three.js / WebGL 3D pitch (CSS 3D transforms keep render reliable in sandbox)
-- No audio/voiceover (rendered muted, in line with existing promos)
+**Image generation:**
+- `remotion/scripts/generate-aio-images.mjs` — calls Lovable AI Gateway (`google/gemini-3-pro-image-preview`) to produce 8 brand-graded photos into `remotion/public/aio/`:
+  - `hook-crowd.jpg`, `problem-notes.jpg`, `reveal-portrait.jpg`, `cpi-portrait.jpg`, `dashboard-academy.jpg`, `videoai-match.jpg`, `roles-*.jpg` (×4 mini), `cta-stadium.jpg`.
+
+**Edits:**
+- `remotion/src/Root.tsx` — register `all-in-one-promo` (900f / 30fps / 1080×1920).
+- `remotion/scripts/render-remotion.mjs` — add `"all-in-one-promo": "/mnt/documents/camino-all-in-one-promo.mp4"`.
+
+### Technical Notes
+
+- Photos loaded via `staticFile('aio/<name>.jpg')` and wrapped in `<Img>` with frame-driven `transform: scale()/translate()` for Ken Burns.
+- Each photo gets a navy gradient overlay (`linear-gradient(180deg, rgba(10,12,18,0.4), rgba(10,12,18,0.85))`) for text legibility.
+- UI overlays reuse glassmorphism tokens from existing scenes (`backgroundColor: rgba(20,24,33,0.85)`, `border: 1px solid rgba(232,180,0,0.3)`).
+- No `backdropFilter` (sandbox crash risk) — use solid-with-alpha + subtle `filter: blur()` only on accent dots.
+- Render via existing programmatic script: outputs to `/mnt/documents/camino-all-in-one-promo.mp4`.
+
+### Out of Scope
+- No voiceover/audio (rendered muted, per existing pipeline).
+- No FollowCam content (covered separately).
+- No hackathon references.
+
+Approve and I'll generate the imagery, build the 8 scenes, register the composition, and render the MP4.
