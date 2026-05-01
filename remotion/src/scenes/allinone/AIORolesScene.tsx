@@ -48,7 +48,7 @@ export const AIORolesScene = () => {
               opacity: o, transform: `scale(${sc})`,
               borderRadius: 18, overflow: "hidden",
               border: `1px solid rgba(232,180,0,0.3)`,
-              aspectRatio: "1 / 1", position: "relative",
+              aspectRatio: undefined, width: "100%", height: "100%", position: "relative",
               boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
             }}>
               <Img src={staticFile(r.src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
