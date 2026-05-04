@@ -1,62 +1,66 @@
-## 30s Teaser: "Every Spot Counts"
+# Calgary Top Scorers + Team Form
 
-A 30-second vertical (9:16) teaser positioning Camino as the all-in-one home for clubs fighting for league spots. Uses the live CMSA standings we just wired up as the hook, then shows how Camino unifies standings, player development, and proof — all in one place.
+Two complementary leaderboards on the existing `/cmsa-standings` page.
 
-### Narrative Arc (30s @ 30fps = 900 frames)
+## 1. Top Scorers (coach-entered)
 
-1. **Hook — "Every spot counts."** (0–4s / 120f)
-   Tight standings table, top 4 teams highlighted, separated by 1–2 points. Gold pulse on the cut line.
+Coaches log goals/assists per match. Camino aggregates a Calgary-wide leaderboard CMSA doesn't publish.
 
-2. **Tension — The grind is invisible.** (4–9s / 150f)
-   Quick montage: scattered notebooks, group chat blur, lost video clips. "Your players grind. Nobody sees it."
+**New table `cmsa_player_stats`**
+- `id`, `player_name` (text), `team_id` (→ `cmsa_teams`), `age_group_id`, `tier`
+- `goals` (int), `assists` (int), `games_played` (int)
+- `created_by` (uuid), `created_at`, `updated_at`
+- Unique on `(team_id, player_name)` so one row per player; counters increment via match log
+- RLS: anyone can SELECT; only authenticated users with `coach` or `director` role can INSERT/UPDATE; only `created_by` can DELETE
 
-3. **Reveal — One platform.** (9–13s / 120f)
-   Gold sweep into Camino logo lockup. "Camino. All in one place."
+**New table `cmsa_match_goals`** (audit trail / per-match log)
+- `id`, `team_id`, `player_name`, `match_date`, `goals`, `assists`, `notes`, `logged_by`, `created_at`
+- A trigger rolls these up into `cmsa_player_stats` totals on insert/update/delete
 
-4. **Proof stack — what's inside** (13–24s / 330f)
-   Fast-cut UI showcase, 3 beats:
-   - **Live Standings** (CMSA table animating in) — "Track every league, live."
-   - **Player CPI + Profiles** (radar chart + player card) — "Score every player, fairly."
-   - **Video + Verified Stats** (video frame with overlay) — "Prove every moment."
+**UI — "Log Match Stats" dialog (coach only)**
+- Pick team (defaults to coach's assigned CMSA team — they choose once, saved to profile)
+- Date, opponent (optional)
+- Repeater: player name + goals + assists
+- Submit → inserts rows into `cmsa_match_goals`
 
-5. **Close — Climb your way up.** (24–30s / 180f)
-   Standings table with a team rising from rank 6 → rank 2 with gold trail. End card: "camino. The path is yours." + waitlist URL.
+**UI — Top Scorers tab on `/cmsa-standings`**
+- New tab next to Standings: **Standings | Top Scorers | Team Form**
+- Filters: age group, tier, club (derived from team name prefix)
+- Columns: Rank · Player · Team · GP · G · A · G+A
+- Gold highlight top 3, same `CMSAStandingsTable` visual language
 
-### Visual System
-- **Palette:** Navy `#0A0C12`, Gold `#E8B400`, Ivory `#F5F5F5` (existing brand)
-- **Type:** Plus Jakarta Sans (display) + Inter (body) — already loaded in `_shared.tsx`
-- **Motion:** Fast-cut kinetic with 1 hero gold-sweep transition. Reuse the `PhotoBG` Ken-Burns + `GoldChip` patterns from the All-In-One promo for consistency.
-- **Aesthetic:** Sports-tech serious (per memory), high data density, glassmorphism on UI cards.
+## 2. Team Form (auto from existing scrape)
 
-### Technical Plan
+Already-scraped data, no new entry. Surfaces momentum.
 
-**New Remotion composition** registered as `every-spot-counts`:
+**Extend scraper** to also parse the schedule table (we saw scores like `5:0` in the team page HTML) into a new `cmsa_match_results` table:
+- `home_team_id`, `away_team_id`, `home_score`, `away_score`, `match_date`, `game_key` (unique)
 
-```
-remotion/src/EverySpotCountsPromo.tsx          (root composition wiring 5 scenes)
-remotion/src/scenes/everyspot/
-  ESCHookScene.tsx          (120f — standings table, top 4 highlight)
-  ESCTensionScene.tsx       (150f — montage of "the gap")
-  ESCRevealScene.tsx        (120f — gold sweep + logo)
-  ESCProofScene.tsx         (330f — 3 sub-beats: standings / CPI / video)
-  ESCCloseScene.tsx         (180f — team rising + end card)
-  _shared.tsx               (re-export tokens from allinone/_shared)
-```
+**UI — Team Form tab**
+- Last 5 results per team as W/L/T pills (e.g. `W W L W W`)
+- Sorted by points-from-last-5
+- "Hot streak" badge for 3+ wins in a row
+- "Biggest win this week" highlight card at top
 
-**Reused assets:**
-- `aio/problem-notes.jpg`, `aio/dashboard-academy.jpg`, `aio/videoai-match.jpg`, `aio/cpi-portrait.jpg`, `aio/cta-stadium.jpg` (already in `remotion/public/aio/`)
+## Files
 
-**Mock UI components built in-scene** (no real data fetch — Remotion is offline):
-- Faux standings table styled to match `CMSAStandingsTable.tsx` (Navy rows, gold accent on rank 1, animated rank-up trail)
-- Faux CPI radar (SVG polygon morphing from low → high)
-- Faux video frame with bounding box + "VERIFIED" badge
+**Migrations**
+- New tables `cmsa_player_stats`, `cmsa_match_goals`, `cmsa_match_results`
+- Trigger `rollup_player_stats_from_goals()`
+- RLS policies above
 
-**Wiring:**
-- Add `<Composition id="every-spot-counts" component={EverySpotCountsPromo} durationInFrames={900} fps={30} width={1080} height={1920} />` to `remotion/src/Root.tsx`
-- Add output mapping `"every-spot-counts": "/mnt/documents/camino-every-spot-counts.mp4"` to `remotion/scripts/render-remotion.mjs`
-- Render via `node scripts/render-remotion.mjs every-spot-counts`
+**Edge function**
+- Edit `supabase/functions/scrape-cmsa-standings/index.ts` — add schedule parser + upsert into `cmsa_match_results`
 
-**QA:** Render 3 spot-check stills (frame 60, 450, 870) to verify hook, mid-proof, and close before full render.
+**Frontend**
+- New `src/hooks/useCMSAPlayerStats.ts`, `useCMSAMatchResults.ts`
+- New `src/components/cmsa/TopScorersTable.tsx`
+- New `src/components/cmsa/TeamFormTable.tsx`
+- New `src/components/cmsa/LogMatchStatsDialog.tsx`
+- Edit `src/pages/CMSAStandingsPage.tsx` → add Tabs (Standings / Top Scorers / Team Form) + "Log Match Stats" button (coach/director only)
 
-### Deliverable
-`/mnt/documents/camino-every-spot-counts.mp4` (~30s, 1080x1920, h264, muted)
+## Notes
+
+- Player names are free-text (not linked to `players` table) — keeps friction low for coaches logging non-Camino players too.
+- Privacy: minors. Only first name + last initial displayed publicly (e.g. "Marco D."); full name stored for coach view only. Toggle in settings later if needed.
+- No CMSA scraping for player data — confirmed it's not public.
