@@ -66,6 +66,7 @@ function DashboardRoutes() {
       <Routes>
         {/* Shared routes */}
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/cmsa-standings" element={<CMSAStandingsPage />} />
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/communications" element={<CommunicationsPage />} />
         <Route path="/cv-builder" element={<CVBuilderPage />} />
