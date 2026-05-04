@@ -142,6 +142,60 @@ Deno.serve(async (req) => {
           .upsert(standingsPayload, { onConflict: "team_id,tier" });
         if (sErr) throw sErr;
 
+        // --- Match results: pull schedule HTML from each team page and parse rows ---
+        // Demosphere team URLs follow: /75025/teams/116457993/<teamExtId>-<tierExtId>/TEAM.html
+        // We already have external_id for each team.
+        try {
+          const matchResults: any[] = [];
+          for (const team of teams!) {
+            const teamUrl = `https://elements.demosphere.com/75025/teams/116457993/${team.external_id}-${filtered.find(f => f.external_id === team.external_id)?.tier ? "" : ""}`;
+            // Easier: hit a known schedule embed via team external id with tier-group key from filtered row
+            const f = filtered.find(x => x.external_id === team.external_id);
+            if (!f) continue;
+            // Construct using a regex against the embedded schedule on the team page
+            // Reuse the standings HTML — but schedule isn't there. Skip per-team fetch to avoid rate limits.
+            // Instead, parse final-score game rows out of the standings page if present.
+            void teamUrl;
+          }
+          // Parse from the standings HTML directly: GameRow entries with date= and score format like "5:0"
+          const gameRe = /<tr class="GameRow[^"]*"\s+team1key="(\d+)"\s+team2key="(\d+)"\s+date="(\d{2}\/\d{2}\/\d{4})"[^>]*gamekey="(\d+)"[^>]*>([\s\S]*?)<\/tr>/g;
+          let gm: RegExpExecArray | null;
+          const teamByExt = new Map(teams!.map(t => [t.external_id, t.id]));
+          while ((gm = gameRe.exec(html)) !== null) {
+            const [, t1, t2, dateStr, gameKey, body] = gm;
+            const scoreMatch = /<td class="mr">\s*([0-9]+):([0-9]+)\s*<\/td>/.exec(body);
+            const played = !!scoreMatch;
+            const [mm, dd, yyyy] = dateStr.split("/");
+            const matchDate = `${yyyy}-${mm}-${dd}`;
+            matchResults.push({
+              game_key: gameKey,
+              age_group_id: ag.id,
+              tier: f.tier,
+              home_team_external_id: t1,
+              away_team_external_id: t2,
+              home_team_id: teamByExt.get(t1) || null,
+              away_team_id: teamByExt.get(t2) || null,
+              home_score: played ? parseInt(scoreMatch![1], 10) : null,
+              away_score: played ? parseInt(scoreMatch![2], 10) : null,
+              match_date: matchDate,
+              played,
+              scraped_at: new Date().toISOString(),
+            });
+          }
+          if (matchResults.length > 0) {
+            // Dedupe by game_key (multiple ag iterations may hit same page)
+            const seen = new Set<string>();
+            const dedup = matchResults.filter(r => {
+              if (seen.has(r.game_key)) return false;
+              seen.add(r.game_key);
+              return true;
+            });
+            await supabase.from("cmsa_match_results").upsert(dedup, { onConflict: "game_key" });
+          }
+        } catch (matchErr) {
+          console.error("Match results parse failed", matchErr);
+        }
+
         summary.push({ age_group: ag.id, rows: standingsPayload.length, status: "success" });
         await supabase.from("cmsa_scrape_runs").insert({
           age_group_id: ag.id, status: "success", rows_upserted: standingsPayload.length,
