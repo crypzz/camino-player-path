@@ -36,6 +36,7 @@ import PlayerProgressPage from "@/pages/PlayerProgressPage";
 import PlayerGoalsPage from "@/pages/PlayerGoalsPage";
 import SchedulePage from "@/pages/SchedulePage";
 import LeaderboardPage from "@/pages/LeaderboardPage";
+import CMSAStandingsPage from "@/pages/CMSAStandingsPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
@@ -65,6 +66,7 @@ function DashboardRoutes() {
       <Routes>
         {/* Shared routes */}
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/cmsa-standings" element={<CMSAStandingsPage />} />
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/communications" element={<CommunicationsPage />} />
         <Route path="/cv-builder" element={<CVBuilderPage />} />

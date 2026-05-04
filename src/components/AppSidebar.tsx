@@ -30,6 +30,7 @@ import {
 
 const sharedLinks = [
   { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
+  { title: 'CMSA Standings', url: '/dashboard/cmsa-standings', icon: Shield },
   { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
   { title: 'Comms Hub', url: '/dashboard/communications', icon: MessageCircle },
 ];
