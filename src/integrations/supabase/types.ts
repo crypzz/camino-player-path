@@ -172,6 +172,141 @@ export type Database = {
         }
         Relationships: []
       }
+      cmsa_match_goals: {
+        Row: {
+          age_group_id: string
+          assists: number
+          created_at: string
+          goals: number
+          id: string
+          logged_by: string
+          match_date: string
+          notes: string | null
+          opponent: string | null
+          played: boolean
+          player_name: string
+          team_id: string
+          tier: string
+        }
+        Insert: {
+          age_group_id: string
+          assists?: number
+          created_at?: string
+          goals?: number
+          id?: string
+          logged_by: string
+          match_date?: string
+          notes?: string | null
+          opponent?: string | null
+          played?: boolean
+          player_name: string
+          team_id: string
+          tier: string
+        }
+        Update: {
+          age_group_id?: string
+          assists?: number
+          created_at?: string
+          goals?: number
+          id?: string
+          logged_by?: string
+          match_date?: string
+          notes?: string | null
+          opponent?: string | null
+          played?: boolean
+          player_name?: string
+          team_id?: string
+          tier?: string
+        }
+        Relationships: []
+      }
+      cmsa_match_results: {
+        Row: {
+          age_group_id: string | null
+          away_score: number | null
+          away_team_external_id: string | null
+          away_team_id: string | null
+          game_key: string
+          home_score: number | null
+          home_team_external_id: string | null
+          home_team_id: string | null
+          id: string
+          match_date: string | null
+          played: boolean
+          scraped_at: string
+          tier: string | null
+        }
+        Insert: {
+          age_group_id?: string | null
+          away_score?: number | null
+          away_team_external_id?: string | null
+          away_team_id?: string | null
+          game_key: string
+          home_score?: number | null
+          home_team_external_id?: string | null
+          home_team_id?: string | null
+          id?: string
+          match_date?: string | null
+          played?: boolean
+          scraped_at?: string
+          tier?: string | null
+        }
+        Update: {
+          age_group_id?: string | null
+          away_score?: number | null
+          away_team_external_id?: string | null
+          away_team_id?: string | null
+          game_key?: string
+          home_score?: number | null
+          home_team_external_id?: string | null
+          home_team_id?: string | null
+          id?: string
+          match_date?: string | null
+          played?: boolean
+          scraped_at?: string
+          tier?: string | null
+        }
+        Relationships: []
+      }
+      cmsa_player_stats: {
+        Row: {
+          age_group_id: string
+          assists: number
+          created_at: string
+          games_played: number
+          goals: number
+          id: string
+          player_name: string
+          team_id: string
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          age_group_id: string
+          assists?: number
+          created_at?: string
+          games_played?: number
+          goals?: number
+          id?: string
+          player_name: string
+          team_id: string
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          age_group_id?: string
+          assists?: number
+          created_at?: string
+          games_played?: number
+          goals?: number
+          id?: string
+          player_name?: string
+          team_id?: string
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cmsa_scrape_runs: {
         Row: {
           age_group_id: string | null
