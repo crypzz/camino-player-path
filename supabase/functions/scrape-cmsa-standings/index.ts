@@ -26,15 +26,15 @@ function num(v: string | null | undefined): number {
 
 function parseStandings(html: string): ParsedRow[] {
   const dom = new DOMParser().parseFromString(html, "text/html");
+  if (!dom) return [];
   const rows: ParsedRow[] = [];
   let currentTier = "Unknown";
 
-  // Walk every <tr> in document order so we can track tier headers
   const trs = dom.querySelectorAll("tr");
-  for (const tr of trs as unknown as Element[]) {
-    const cells = tr.querySelectorAll("td, th");
-    const texts = Array.from(cells as unknown as Element[]).map((c) =>
-      (c.textContent || "").replace(/\s+/g, " ").trim()
+  for (const tr of trs) {
+    const cells = (tr as Element).querySelectorAll("td, th");
+    const texts = Array.from(cells).map((c) =>
+      ((c as Element).textContent || "").replace(/\s+/g, " ").trim()
     );
 
     // Tier header row pattern: ["Boys U13 Tier 1","GP","W","T","L","Pts","GF","GA","GD"]
