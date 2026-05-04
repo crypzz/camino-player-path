@@ -1,7 +1,7 @@
 // Scrapes CMSA / Demosphere standings tables and upserts into our DB.
 // Public endpoint — anyone can trigger a refresh; data is already public.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { DOMParser, Element } from "https://esm.sh/linkedom@0.16.11";
+import { DOMParser, Element } from "https://deno.land/x/deno_dom@v0.1.45/deno-dom-wasm.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
