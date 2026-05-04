@@ -37,6 +37,7 @@ const outputMap = {
   "bags-hackathon-promo": "/mnt/documents/camino-bags-hackathon-promo.mp4",
   "followcam-promo": "/mnt/documents/camino-followcam-promo.mp4",
   "all-in-one-promo": "/mnt/documents/camino-all-in-one-promo.mp4",
+  "every-spot-counts": "/mnt/documents/camino-every-spot-counts.mp4",
 };
 const outputLocation = outputMap[compositionId] || `/mnt/documents/${compositionId}.mp4`;
 
