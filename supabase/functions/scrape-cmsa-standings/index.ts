@@ -1,8 +1,6 @@
 // Scrapes CMSA / Demosphere standings tables and upserts into our DB.
 // Public endpoint — anyone can trigger a refresh; data is already public.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { DOMParser, Element } from "https://deno.land/x/deno_dom@v0.1.45/deno-dom-wasm.ts";
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -19,65 +17,43 @@ interface ParsedRow {
 }
 
 function num(v: string | null | undefined): number {
-  if (!v) return 0;
-  const n = parseInt(v.replace(/[^\d-]/g, ""), 10);
+  if (v == null || v === "" || v === "-") return 0;
+  const n = parseInt(String(v).replace(/[^\d-]/g, ""), 10);
   return Number.isFinite(n) ? n : 0;
 }
 
+// Demosphere embeds team data inline as JSON-like objects:
+// "116593237":{"tm":"116593234","tmnm":"...","tgnm":"Boys U13 Tier 1","rank":"10","TOT_GP":"2",...}
 function parseStandings(html: string): ParsedRow[] {
-  const dom = new DOMParser().parseFromString(html, "text/html");
-  if (!dom) return [];
   const rows: ParsedRow[] = [];
-  let currentTier = "Unknown";
-
-  const trs = dom.querySelectorAll("tr");
-  for (const tr of trs) {
-    const cells = (tr as Element).querySelectorAll("td, th");
-    const texts = Array.from(cells).map((c) =>
-      ((c as Element).textContent || "").replace(/\s+/g, " ").trim()
-    );
-
-    // Tier header row pattern: ["Boys U13 Tier 1","GP","W","T","L","Pts","GF","GA","GD"]
-    if (texts.length >= 9 && texts[1] === "GP" && texts[2] === "W") {
-      currentTier = texts[0] || currentTier;
-      continue;
-    }
-
-    // Data row pattern: ["1.","TeamName",GP,W,T,L,Pts,GF,GA,GD]
-    if (texts.length >= 10 && /^\d+\.?$/.test(texts[0])) {
-      const link = (cells[1] as Element)?.querySelector?.("a");
-      const href = link?.getAttribute("href") || "";
-      const external_id = href.split("/").filter(Boolean).pop() || `${currentTier}::${texts[1]}`;
-
-      // Skip rows with no games played ("-" in stats)
-      if (texts[2] === "-") {
-        rows.push({
-          external_id,
-          team_name: texts[1],
-          tier: currentTier,
-          rank: parseInt(texts[0], 10) || null,
-          gp: 0, w: 0, t: 0, l: 0, pts: 0, gf: 0, ga: 0, gd: 0,
-        });
-        continue;
-      }
-
-      rows.push({
-        external_id,
-        team_name: texts[1],
-        tier: currentTier,
-        rank: parseInt(texts[0], 10) || null,
-        gp: num(texts[2]),
-        w: num(texts[3]),
-        t: num(texts[4]),
-        l: num(texts[5]),
-        pts: num(texts[6]),
-        gf: num(texts[7]),
-        ga: num(texts[8]),
-        gd: num(texts[9]),
-      });
-    }
+  // Match { ... } objects that have tmnm and TOT_PTS
+  const re = /"(\d+)"\s*:\s*\{([^{}]*?"tmnm"[^{}]*?"TOT_GD"[^{}]*?)\}/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    const external_id = m[1];
+    const body = m[2];
+    const get = (k: string) => {
+      const r = new RegExp(`"${k}"\\s*:\\s*"([^"]*)"`).exec(body);
+      return r ? r[1] : "";
+    };
+    const tmnm = get("tmnm");
+    const tgnm = get("tgnm");
+    if (!tmnm || !tgnm) continue;
+    rows.push({
+      external_id,
+      team_name: tmnm,
+      tier: tgnm,
+      rank: num(get("rank")) || null,
+      gp: num(get("TOT_GP")),
+      w: num(get("TOT_W")),
+      t: num(get("TOT_T")),
+      l: num(get("TOT_L")),
+      pts: num(get("TOT_PTS")),
+      gf: num(get("TOT_GF")),
+      ga: num(get("TOT_GA")),
+      gd: num(get("TOT_GD")),
+    });
   }
-
   return rows;
 }
 
