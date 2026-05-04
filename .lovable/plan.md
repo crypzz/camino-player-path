@@ -1,61 +1,123 @@
-## Camino "All-In-One" Marketing Promo
 
-A 30-second vertical (1080×1920, 30fps) Remotion promo that tells the **complete Camino story** — from the gap in player development to the full platform — layered over **cinematic AI-generated soccer photography** for a documentary-grade feel. No hackathon mention. Pure platform.
+# CMSA Team Standings Leaderboard
 
-### Visual Direction
+Pull live team standings from Calgary Minor Soccer Association (CMSA) and display them inside Camino as a new "CMSA Standings" leaderboard that auto-updates as new results post.
 
-- **Aesthetic:** Cinematic editorial — deep navy `#0A0C12`, signal gold `#E8B400`, ivory `#F5F5F5`. AI photos sit beneath glassy UI overlays with film-grain feel.
-- **Typography:** Plus Jakarta Sans 800 (display) + Inter 500 (body) — brand standard.
-- **Motion system:** Slow camera-style parallax push on photos (Ken Burns), staggered spring entrances on overlays, hard cuts between beats with brief slide-wipes for momentum.
-- **Imagery:** 8 generated stills via Lovable AI (Nano Banana Pro) — youth players, academy training, coach-on-touchline, stadium silhouette, close-up boots, tactical board, etc. Color-graded toward navy/gold.
+## What I confirmed about the data source
 
-### 30-Second Beat Sheet (900 frames)
+CMSA itself doesn't expose individual player stats publicly. What it does expose is **team standings** per age group / tier, embedded from Demosphere:
+
+- Hub: `https://calgaryminorsoccer.com/league/schedules-standings/standings`
+- Real data feed: `https://elements.demosphere.com/75025/standings/Outdoor2026/116457993.html`
+- Per-age-group schedule pages: `calgaryminorsoccer.ottosport.ai/schedule/u10` … `u19` (each links to a similar Demosphere standings page)
+
+Each standings page is an HTML table with rows like:
 
 ```text
-0:00–0:04  HOOK         "Talent is everywhere. Tracking it isn't."     (90f)
-0:04–0:08  PROBLEM      Lost notes, group chats, faded memories.       (120f)
-0:08–0:12  REVEAL       Camino logo + "The digital passport for soccer" (90f)
-0:12–0:16  CPI          0→87 score animation on player photo            (120f)
-0:16–0:20  DASHBOARD    Squad CPI cards floating over academy photo    (120f)
-0:20–0:24  VIDEO AI     Pitch overlay + AI-tagged events on match shot (120f)
-0:24–0:27  ROLES        4 quadrants: Player·Coach·Director·Parent      (90f)
-0:27–0:30  CTA          Domain + tagline over stadium silhouette        (150f)
+Boys U13 Tier 1 | GP | W | T | L | Pts | GF | GA | GD
+1. LSCA Barcelona 13   | 2 | 2 | 0 | 0 | 6 | 10 | 0 | 10
+2. New Frontier SC 14  | 2 | 2 | 0 | 0 | 6 |  7 | 1 |  6
+...
 ```
 
-### Files
+So the leaderboard will be **team standings by age group + tier**, not per-player rankings. (The existing Camino "Leaderboard" stays untouched — this is a separate "CMSA Standings" view.)
 
-**New composition:**
-- `remotion/src/AllInOnePromo.tsx` — main composition wiring scenes via `<Series>`.
+## What we're building
 
-**New scenes (`remotion/src/scenes/allinone/`):**
-- `AIOHookScene.tsx` — Ken Burns photo + kinetic headline.
-- `AIOProblemScene.tsx` — crossed-out icons (notebook, chat bubble, USB) over training photo.
-- `AIORevealScene.tsx` — gold logo lockup, photo desaturates behind.
-- `AIOCPIScene.tsx` — animated CPI dial counting 0→87 on portrait.
-- `AIODashboardScene.tsx` — 3 floating CPI cards over academy photo with parallax.
-- `AIOVideoAIScene.tsx` — match still + SVG bounding boxes + pitch mini-map dot pulse.
-- `AIORolesScene.tsx` — 2×2 grid of role photos with labels.
-- `AIOCTAScene.tsx` — stadium photo, tagline, `caminodevelopment.com`.
+1. A `cmsa_*` set of database tables to cache scraped standings.
+2. A scheduled edge function that scrapes Demosphere and upserts the latest standings (runs hourly).
+3. A new page `/cmsa-standings` with an age-group + tier filter, sortable by Pts / GD / GF.
+4. A sidebar link under the existing Leaderboard nav: "CMSA Standings".
 
-**Image generation:**
-- `remotion/scripts/generate-aio-images.mjs` — calls Lovable AI Gateway (`google/gemini-3-pro-image-preview`) to produce 8 brand-graded photos into `remotion/public/aio/`:
-  - `hook-crowd.jpg`, `problem-notes.jpg`, `reveal-portrait.jpg`, `cpi-portrait.jpg`, `dashboard-academy.jpg`, `videoai-match.jpg`, `roles-*.jpg` (×4 mini), `cta-stadium.jpg`.
+## Database (migration)
 
-**Edits:**
-- `remotion/src/Root.tsx` — register `all-in-one-promo` (900f / 30fps / 1080×1920).
-- `remotion/scripts/render-remotion.mjs` — add `"all-in-one-promo": "/mnt/documents/camino-all-in-one-promo.mp4"`.
+```sql
+create table public.cmsa_age_groups (
+  id text primary key,                 -- 'u13', 'u14', ...
+  label text not null,                 -- 'U13', 'U14'
+  source_url text not null,            -- Demosphere standings URL
+  display_order int not null
+);
 
-### Technical Notes
+create table public.cmsa_teams (
+  id uuid primary key default gen_random_uuid(),
+  external_id text unique,             -- demosphere team URL slug
+  name text not null,
+  age_group_id text references public.cmsa_age_groups(id),
+  tier text                            -- 'Tier 1', 'Tier 2', 'Boys U13 Tier 1' label
+);
 
-- Photos loaded via `staticFile('aio/<name>.jpg')` and wrapped in `<Img>` with frame-driven `transform: scale()/translate()` for Ken Burns.
-- Each photo gets a navy gradient overlay (`linear-gradient(180deg, rgba(10,12,18,0.4), rgba(10,12,18,0.85))`) for text legibility.
-- UI overlays reuse glassmorphism tokens from existing scenes (`backgroundColor: rgba(20,24,33,0.85)`, `border: 1px solid rgba(232,180,0,0.3)`).
-- No `backdropFilter` (sandbox crash risk) — use solid-with-alpha + subtle `filter: blur()` only on accent dots.
-- Render via existing programmatic script: outputs to `/mnt/documents/camino-all-in-one-promo.mp4`.
+create table public.cmsa_standings (
+  id uuid primary key default gen_random_uuid(),
+  team_id uuid references public.cmsa_teams(id) on delete cascade,
+  age_group_id text references public.cmsa_age_groups(id),
+  tier text not null,
+  rank int,
+  gp int, w int, t int, l int, pts int, gf int, ga int, gd int,
+  scraped_at timestamptz default now(),
+  unique (team_id, tier)
+);
 
-### Out of Scope
-- No voiceover/audio (rendered muted, per existing pipeline).
-- No FollowCam content (covered separately).
-- No hackathon references.
+create table public.cmsa_scrape_runs (
+  id uuid primary key default gen_random_uuid(),
+  age_group_id text,
+  status text,                          -- 'success' | 'error'
+  rows_upserted int,
+  error_message text,
+  ran_at timestamptz default now()
+);
+```
 
-Approve and I'll generate the imagery, build the 8 scenes, register the composition, and render the MP4.
+RLS: enable on all four tables. `SELECT` is open to everyone (data is already public on CMSA). `INSERT/UPDATE/DELETE` is restricted to the service role (the edge function).
+
+## Edge function: `scrape-cmsa-standings`
+
+- Fetches each Demosphere standings URL in `cmsa_age_groups`.
+- Parses the HTML tables (using `deno-dom` or a regex on the table rows — the structure is stable and simple).
+- Upserts teams by `external_id` (Demosphere team URL).
+- Replaces standings rows for that age group atomically.
+- Logs the run into `cmsa_scrape_runs`.
+
+Scheduled with `pg_cron` + `pg_net` to run every hour. Also exposes a manual `POST` endpoint so the UI can trigger a refresh on demand (rate-limited to once/minute via the run log).
+
+## Frontend
+
+New page `src/pages/CMSAStandingsPage.tsx`:
+
+- Header: "CMSA Standings — Outdoor 2026" + "Last updated X mins ago" + Refresh button.
+- Filters: Age group (U10–U19), Tier (auto-populated per age group), Search by team name.
+- Standings table styled like the existing `LeaderboardTable` (dark navy + gold, top-3 highlighted, motion fade-in).
+- Columns: Rank, Team, GP, W-T-L, Pts, GF, GA, GD. Click row to open a side panel with the team's recent rank history (sparkline from `cmsa_standings.scraped_at`).
+- Empty / loading / error states.
+
+Hook: `src/hooks/useCMSAStandings.ts` (React Query, 60s stale time).
+
+Routing + nav:
+- Add `/cmsa-standings` in `src/App.tsx`.
+- Add a "CMSA Standings" entry in `src/components/AppSidebar.tsx` next to the existing Leaderboard.
+
+## Seed data
+
+Seed `cmsa_age_groups` with the 8 known leagues from the CMSA schedule page (U10 through U19) and their Demosphere URLs. Run the scraper once immediately after deploy so the page has data on first load.
+
+## Out of scope (call-outs)
+
+- **No per-player stats.** CMSA's public site does not publish individual player goals/assists, so we cannot build a player-level leaderboard from this source. If you want player stats later, you'd need either (a) coaches to enter them in Camino, or (b) a partnership/API access from CMSA/Demosphere.
+- We're scraping a public HTML page. If Demosphere changes their markup the parser will need an update — `cmsa_scrape_runs` will surface failures so we can react.
+
+## Files
+
+**New**
+- `supabase/functions/scrape-cmsa-standings/index.ts`
+- `src/pages/CMSAStandingsPage.tsx`
+- `src/components/cmsa/CMSAStandingsTable.tsx`
+- `src/hooks/useCMSAStandings.ts`
+
+**Edited**
+- `src/App.tsx` — register `/cmsa-standings` route
+- `src/components/AppSidebar.tsx` — add nav entry
+
+**Migrations**
+- Create the four `cmsa_*` tables + RLS policies
+- Enable `pg_cron` + `pg_net`, schedule hourly invocation of the edge function
+- Seed `cmsa_age_groups`

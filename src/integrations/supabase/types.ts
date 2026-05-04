@@ -148,6 +148,161 @@ export type Database = {
           },
         ]
       }
+      cmsa_age_groups: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          label: string
+          source_url: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id: string
+          label: string
+          source_url: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          label?: string
+          source_url?: string
+        }
+        Relationships: []
+      }
+      cmsa_scrape_runs: {
+        Row: {
+          age_group_id: string | null
+          error_message: string | null
+          id: string
+          ran_at: string
+          rows_upserted: number | null
+          status: string
+        }
+        Insert: {
+          age_group_id?: string | null
+          error_message?: string | null
+          id?: string
+          ran_at?: string
+          rows_upserted?: number | null
+          status: string
+        }
+        Update: {
+          age_group_id?: string | null
+          error_message?: string | null
+          id?: string
+          ran_at?: string
+          rows_upserted?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      cmsa_standings: {
+        Row: {
+          age_group_id: string
+          ga: number | null
+          gd: number | null
+          gf: number | null
+          gp: number | null
+          id: string
+          l: number | null
+          pts: number | null
+          rank: number | null
+          scraped_at: string
+          t: number | null
+          team_id: string
+          tier: string
+          w: number | null
+        }
+        Insert: {
+          age_group_id: string
+          ga?: number | null
+          gd?: number | null
+          gf?: number | null
+          gp?: number | null
+          id?: string
+          l?: number | null
+          pts?: number | null
+          rank?: number | null
+          scraped_at?: string
+          t?: number | null
+          team_id: string
+          tier: string
+          w?: number | null
+        }
+        Update: {
+          age_group_id?: string
+          ga?: number | null
+          gd?: number | null
+          gf?: number | null
+          gp?: number | null
+          id?: string
+          l?: number | null
+          pts?: number | null
+          rank?: number | null
+          scraped_at?: string
+          t?: number | null
+          team_id?: string
+          tier?: string
+          w?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cmsa_standings_age_group_id_fkey"
+            columns: ["age_group_id"]
+            isOneToOne: false
+            referencedRelation: "cmsa_age_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cmsa_standings_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "cmsa_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cmsa_teams: {
+        Row: {
+          age_group_id: string | null
+          created_at: string
+          external_id: string
+          id: string
+          name: string
+          tier: string | null
+          updated_at: string
+        }
+        Insert: {
+          age_group_id?: string | null
+          created_at?: string
+          external_id: string
+          id?: string
+          name: string
+          tier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          age_group_id?: string | null
+          created_at?: string
+          external_id?: string
+          id?: string
+          name?: string
+          tier?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cmsa_teams_age_group_id_fkey"
+            columns: ["age_group_id"]
+            isOneToOne: false
+            referencedRelation: "cmsa_age_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_assignments: {
         Row: {
           assigned_at: string
