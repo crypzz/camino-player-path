@@ -18,9 +18,18 @@ import { LaunchPromoVideo } from "./LaunchPromoVideo";
 import { BagsHackathonVideo } from "./BagsHackathonVideo";
 import { FollowCamVideo } from "./FollowCamVideo";
 import { AllInOnePromo } from "./AllInOnePromo";
+import { EverySpotCountsPromo } from "./EverySpotCountsPromo";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="every-spot-counts"
+      component={EverySpotCountsPromo}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="all-in-one-promo"
       component={AllInOnePromo}
