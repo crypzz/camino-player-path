@@ -38,6 +38,7 @@ const outputMap = {
   "followcam-promo": "/mnt/documents/camino-followcam-promo.mp4",
   "all-in-one-promo": "/mnt/documents/camino-all-in-one-promo.mp4",
   "every-spot-counts": "/mnt/documents/camino-every-spot-counts.mp4",
+  "scout-mode-30": "/mnt/documents/camino-scout-mode-30.mp4",
 };
 const outputLocation = outputMap[compositionId] || `/mnt/documents/${compositionId}.mp4`;
 
