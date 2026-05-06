@@ -19,9 +19,18 @@ import { BagsHackathonVideo } from "./BagsHackathonVideo";
 import { FollowCamVideo } from "./FollowCamVideo";
 import { AllInOnePromo } from "./AllInOnePromo";
 import { EverySpotCountsPromo } from "./EverySpotCountsPromo";
+import { ScoutMode30 } from "./ScoutMode30";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="scout-mode-30"
+      component={ScoutMode30}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="every-spot-counts"
       component={EverySpotCountsPromo}

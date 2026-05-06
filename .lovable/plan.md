@@ -1,66 +1,73 @@
-# Calgary Top Scorers + Team Form
+## Why a new video
 
-Two complementary leaderboards on the existing `/cmsa-standings` page.
+Existing videos average ~6s view time. Two patterns explain it:
 
-## 1. Top Scorers (coach-entered)
+1. **Hooks open soft.** Most of our scenes (HypeHookScene, AIOHookScene, ESCHookScene, VAHookScene) open with a question, a "something is coming" tease, or a slow brand reveal. By second 3 the viewer doesn't know what the product is or why they care.
+2. **Tech samples drift.** Several reuse mock components that don't 1:1 match the live product (e.g. ReplaceHudl Profile mock, Spreadsheet CPI dash mock). On a small phone, animations also stack — text + ring + scanline + shake — which reads as "laggy" rather than premium.
 
-Coaches log goals/assists per match. Camino aggregates a Calgary-wide leaderboard CMSA doesn't publish.
+This new video, **`scout-mode-30`**, fixes both: a 2-second punch hook, then 4 pristine "product moment" beats lifted directly from real Camino UI patterns, then a hard CTA.
 
-**New table `cmsa_player_stats`**
-- `id`, `player_name` (text), `team_id` (→ `cmsa_teams`), `age_group_id`, `tier`
-- `goals` (int), `assists` (int), `games_played` (int)
-- `created_by` (uuid), `created_at`, `updated_at`
-- Unique on `(team_id, player_name)` so one row per player; counters increment via match log
-- RLS: anyone can SELECT; only authenticated users with `coach` or `director` role can INSERT/UPDATE; only `created_by` can DELETE
+## The video — 30s / 900 frames / 1080×1920
 
-**New table `cmsa_match_goals`** (audit trail / per-match log)
-- `id`, `team_id`, `player_name`, `match_date`, `goals`, `assists`, `notes`, `logged_by`, `created_at`
-- A trigger rolls these up into `cmsa_player_stats` totals on insert/update/delete
+**Tone:** confident, scout-room serious. Navy + gold, Plus Jakarta Sans display, Inter body. No game-y bounce, no glitch.
 
-**UI — "Log Match Stats" dialog (coach only)**
-- Pick team (defaults to coach's assigned CMSA team — they choose once, saved to profile)
-- Date, opponent (optional)
-- Repeater: player name + goals + assists
-- Submit → inserts rows into `cmsa_match_goals`
+```text
+0.0–2.0s  HOOK         "Every game. Watched. Ranked."
+2.0–8.0s  CPI MOMENT   Live CPI dial climbs 71 → 84, attribute bars fill
+8.0–14s   LEADERBOARD  Top scorers table animates in, rank pills pop
+14–20s    VIDEO AI     Pitch mini-map dots fire, event chips stack
+20–26s    PASSPORT     Player passport card assembles (level + CPI + reel)
+26–30s    CTA          "Camino. The player passport." + URL
+```
 
-**UI — Top Scorers tab on `/cmsa-standings`**
-- New tab next to Standings: **Standings | Top Scorers | Team Form**
-- Filters: age group, tier, club (derived from team name prefix)
-- Columns: Rank · Player · Team · GP · G · A · G+A
-- Gold highlight top 3, same `CMSAStandingsTable` visual language
+### Hook fix (the critical 2 seconds)
 
-## 2. Team Form (auto from existing scrape)
+- Frame 0: **gold word slams in already-readable** — no scale-from-8x, no glitch jitter. One word per beat: **"EVERY. GAME. WATCHED."** at 12fpw.
+- Sub-line at frame 30: "Then ranked." in ivory.
+- Background: single still photo (scout watching from sideline) with very slow Ken Burns. No scanlines, no rings, no shake. Stillness = premium.
+- This is the inverse of HypeHookScene's busy stack — fewer moving parts means it _feels_ faster.
 
-Already-scraped data, no new entry. Surfaces momentum.
+### Pristine product moments
 
-**Extend scraper** to also parse the schedule table (we saw scores like `5:0` in the team page HTML) into a new `cmsa_match_results` table:
-- `home_team_id`, `away_team_id`, `home_score`, `away_score`, `match_date`, `game_key` (unique)
+Each of the four middle beats is a single, focused UI element animating cleanly. Rules:
 
-**UI — Team Form tab**
-- Last 5 results per team as W/L/T pills (e.g. `W W L W W`)
-- Sorted by points-from-last-5
-- "Hot streak" badge for 3+ wins in a row
-- "Biggest win this week" highlight card at top
+- **One element on screen at a time** (dial OR table OR map OR card — never two competing).
+- **Real component visuals.** Pull styling tokens from the live app:
+  - CPI dial → mirror `src/components/CPIScoreDisplay.tsx` + `CPIProgressChart.tsx`
+  - Leaderboard → mirror `src/components/cmsa/TopScorersTable.tsx` (rank icons, First-Name + Last-Initial obfuscation, gold accent row)
+  - Video AI → mirror the SVG pitch overlay from `VideoOverlayCanvas.tsx` style (0–100 normalized dots, event chips)
+  - Passport → mirror `src/components/PlayerCard.tsx` + `PlayerLevelBadge.tsx`
+- **No mocks that diverge from product.** The Hudl-replacement profile mock and the Sheets-replacement CPI mock are not reused — they don't match what a user actually sees.
+- **Motion budget per beat:** one entrance spring (damping 18) + one number/bar interpolation. No simultaneous shake/glitch/ring stacks. This kills the "laggy" feel on phones.
 
-## Files
+### CTA
 
-**Migrations**
-- New tables `cmsa_player_stats`, `cmsa_match_goals`, `cmsa_match_results`
-- Trigger `rollup_player_stats_from_goals()`
-- RLS policies above
+- Logo + `caminodevelopment.com` + one line: **"Built for serious players."**
+- Hold 90 frames so it's screenshot-able.
 
-**Edge function**
-- Edit `supabase/functions/scrape-cmsa-standings/index.ts` — add schedule parser + upsert into `cmsa_match_results`
+## Files to add
 
-**Frontend**
-- New `src/hooks/useCMSAPlayerStats.ts`, `useCMSAMatchResults.ts`
-- New `src/components/cmsa/TopScorersTable.tsx`
-- New `src/components/cmsa/TeamFormTable.tsx`
-- New `src/components/cmsa/LogMatchStatsDialog.tsx`
-- Edit `src/pages/CMSAStandingsPage.tsx` → add Tabs (Standings / Top Scorers / Team Form) + "Log Match Stats" button (coach/director only)
+```
+remotion/src/ScoutMode30.tsx                       # main composition
+remotion/src/scenes/scout/SMHookScene.tsx          # 0–2s
+remotion/src/scenes/scout/SMCpiScene.tsx           # 2–8s
+remotion/src/scenes/scout/SMLeaderboardScene.tsx   # 8–14s
+remotion/src/scenes/scout/SMVideoAIScene.tsx       # 14–20s
+remotion/src/scenes/scout/SMPassportScene.tsx      # 20–26s
+remotion/src/scenes/scout/SMCTAScene.tsx           # 26–30s
+remotion/src/scenes/scout/_tokens.tsx              # shared colors/fonts/UI primitives mirroring live app
+```
 
-## Notes
+## Files to edit
 
-- Player names are free-text (not linked to `players` table) — keeps friction low for coaches logging non-Camino players too.
-- Privacy: minors. Only first name + last initial displayed publicly (e.g. "Marco D."); full name stored for coach view only. Toggle in settings later if needed.
-- No CMSA scraping for player data — confirmed it's not public.
+- `remotion/src/Root.tsx` — register `<Composition id="scout-mode-30" .../>` at 900 frames, 1080×1920, 30fps.
+
+## Render
+
+- Render to `/mnt/documents/scout-mode-30.mp4` via the existing `scripts/render-remotion.mjs` (just change the composition id and output path) so we get the muted, sandbox-safe pipeline.
+- QA: pull stills at frames 30, 90, 240, 450, 660, 810 to confirm each beat is clean before declaring done.
+
+## Out of scope
+
+- No changes to other compositions or the live app.
+- No new copy variants — one tight script only. We can A/B later once we see if 30s lift beats the 6s baseline.
