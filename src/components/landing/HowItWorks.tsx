@@ -30,11 +30,13 @@ function Panel({ index, total, scrollYProgress }: any) {
 
   // First panel starts fully visible; last panel stays fully visible to the end.
   // Middle panels cross-fade with neighbors so there's never a blank moment.
+  // NOTE: useTransform requires strictly increasing input keys.
+  // Use small epsilons so first/last panels never collapse to a zero-width range.
   const isFirst = index === 0;
   const isLast = index === total - 1;
   const fadeIn = isFirst ? 0 : clamp(start - span * 0.15);
-  const holdStart = isFirst ? 0 : clamp(start + span * 0.15);
-  const holdEnd = isLast ? 1 : clamp(end - span * 0.15);
+  const holdStart = isFirst ? 0.001 : clamp(start + span * 0.15);
+  const holdEnd = isLast ? 0.999 : clamp(end - span * 0.15);
   const fadeOut = isLast ? 1 : clamp(end + span * 0.15);
 
   const opacity = useTransform(
