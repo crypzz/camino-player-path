@@ -133,7 +133,8 @@ ${JSON.stringify(ctx, null, 2)}`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5.5",
+        reasoning: { effort: "medium" },
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: `Generate the weekly report for ${player.name}.` },
