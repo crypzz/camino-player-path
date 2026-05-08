@@ -471,7 +471,7 @@ export default function LandingPage() {
       </div>
 
       <div id="faq">
-        <ScrollReveal><FAQ /></ScrollReveal>
+        <FAQ />
       </div>
 
       <SocialProofSection />
