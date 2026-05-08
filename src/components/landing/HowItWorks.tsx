@@ -91,7 +91,7 @@ export function HowItWorks() {
   });
 
   return (
-    <section ref={ref} className="relative" style={{ height: `${steps.length * 100}vh` }}>
+    <section ref={ref} className="relative" style={{ height: `${steps.length * 70}vh` }}>
       <div className="sticky top-0 h-screen flex flex-col">
         <div className="pt-20 px-6 lg:px-10">
           <div className="max-w-6xl mx-auto text-center">
