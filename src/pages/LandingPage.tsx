@@ -447,30 +447,30 @@ export default function LandingPage() {
 
       <HeroSection />
 
-      <div id="value">
+      <div id="value" className="scroll-mt-24">
         <ScrollReveal><ValueStrip /></ScrollReveal>
       </div>
 
       <ScrollReveal><RoleCards /></ScrollReveal>
 
-      <div id="rankings">
+      <div id="rankings" className="scroll-mt-24">
         <ScrollReveal><RankingsSection /></ScrollReveal>
       </div>
-      <div id="profiles">
+      <div id="profiles" className="scroll-mt-24">
         <ScrollReveal><ProfilesSection /></ScrollReveal>
       </div>
-      <div id="cpi">
+      <div id="cpi" className="scroll-mt-24">
         <ScrollReveal><CPISection /></ScrollReveal>
       </div>
-      <div id="video">
+      <div id="video" className="scroll-mt-24">
         <ScrollReveal><VideoTrackingSection /></ScrollReveal>
       </div>
 
-      <div id="how">
+      <div id="how" className="scroll-mt-24">
         <HowItWorks />
       </div>
 
-      <div id="faq">
+      <div id="faq" className="scroll-mt-24">
         <FAQ />
       </div>
 
