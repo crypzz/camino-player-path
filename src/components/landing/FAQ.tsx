@@ -29,7 +29,7 @@ const items = [
 
 export function FAQ() {
   return (
-    <section className="relative py-32 px-6 lg:px-10">
+    <section className="relative pt-16 pb-32 px-6 lg:px-10">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">FAQ</p>
