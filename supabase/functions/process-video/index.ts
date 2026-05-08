@@ -476,12 +476,11 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims?.sub) {
+    const { data: userData, error: userError } = await userClient.auth.getUser();
+    if (userError || !userData?.user) {
       return jsonResponse({ error: "Unauthorized" }, 401);
     }
-    const userId = claimsData.claims.sub;
+    const userId = userData.user.id;
 
     const body = await req.json().catch(() => ({}));
     const videoId = typeof body.video_id === "string" ? body.video_id : "";
