@@ -175,7 +175,7 @@ function HeroSection() {
             Join the Waitlist
           </button>
           <button
-            onClick={() => scrollTo('value')}
+            onClick={() => scrollTo('how')}
             className="inline-flex items-center gap-1.5 h-12 px-5 rounded-full border border-border/60 bg-background/40 backdrop-blur-md text-sm font-semibold tracking-wide text-foreground hover:border-primary/40 hover:text-primary transition-colors"
           >
             See how it works
