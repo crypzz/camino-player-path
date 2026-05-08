@@ -22,28 +22,9 @@ const steps = [
 
 function Panel({ index, total, scrollYProgress }: any) {
   const reduced = useReducedMotion();
-  const clamp = (v: number) => Math.max(0, Math.min(1, v));
   const start = index / total;
   const end = (index + 1) / total;
-  const span = end - start;
   const mid = (start + end) / 2;
-
-  // First panel starts fully visible; last panel stays fully visible to the end.
-  // Middle panels cross-fade with neighbors so there's never a blank moment.
-  // NOTE: useTransform requires strictly increasing input keys.
-  // Use small epsilons so first/last panels never collapse to a zero-width range.
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
-  const fadeIn = isFirst ? 0 : clamp(start - span * 0.15);
-  const holdStart = isFirst ? 0.001 : clamp(start + span * 0.15);
-  const holdEnd = isLast ? 0.999 : clamp(end - span * 0.15);
-  const fadeOut = isLast ? 1 : clamp(end + span * 0.15);
-
-  const opacity = useTransform(
-    scrollYProgress,
-    [fadeIn, holdStart, holdEnd, fadeOut],
-    [0, 1, 1, 0]
-  );
   const scale = useTransform(scrollYProgress, [start, mid, end], [0.97, 1, 0.97]);
   const y = useTransform(scrollYProgress, [start, mid, end], [20, 0, -20]);
 
@@ -54,9 +35,9 @@ function Panel({ index, total, scrollYProgress }: any) {
       style={
         reduced
           ? undefined
-          : { opacity, scale, y, willChange: 'opacity, transform' }
+          : { scale, y, willChange: 'transform' }
       }
-      className="absolute inset-0 flex items-center justify-center"
+      className="flex min-w-full items-center justify-center px-1"
     >
       <div className="w-full max-w-xl rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-8 lg:p-10 shadow-[0_30px_120px_-30px_hsl(var(--primary)/0.4)]">
         <div className="flex items-center gap-3 mb-6">
@@ -85,13 +66,15 @@ function Indicator({ index, total, scrollYProgress }: any) {
 
 export function HowItWorks() {
   const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end end'],
   });
+  const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${(steps.length - 1) * 100}%`]);
 
   return (
-    <section ref={ref} className="relative" style={{ height: `${steps.length * 70}vh` }}>
+    <section ref={ref} className="relative" style={{ height: `${steps.length * 85}vh` }}>
       <div className="sticky top-0 h-screen flex flex-col">
         <div className="pt-20 px-6 lg:px-10">
           <div className="max-w-6xl mx-auto text-center">
@@ -104,10 +87,15 @@ export function HowItWorks() {
           </div>
         </div>
 
-        <div className="flex-1 relative px-6 lg:px-10">
-          {steps.map((_, i) => (
-            <Panel key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
-          ))}
+        <div className="flex-1 overflow-hidden px-6 lg:px-10">
+          <motion.div
+            style={reduced ? undefined : { x, willChange: 'transform' }}
+            className="flex h-full"
+          >
+            {steps.map((_, i) => (
+              <Panel key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
+            ))}
+          </motion.div>
         </div>
 
         {/* step indicator */}
