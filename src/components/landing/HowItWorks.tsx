@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Upload, Sparkles, TrendingUp } from 'lucide-react';
 
 const steps = [
@@ -20,26 +19,20 @@ const steps = [
   },
 ];
 
-function Panel({ index, total, scrollYProgress }: any) {
+function Panel({ index }: { index: number }) {
   const reduced = useReducedMotion();
-  const start = index / total;
-  const end = (index + 1) / total;
-  const mid = (start + end) / 2;
-  const scale = useTransform(scrollYProgress, [start, mid, end], [0.97, 1, 0.97]);
-  const y = useTransform(scrollYProgress, [start, mid, end], [20, 0, -20]);
 
   const step = steps[index];
 
   return (
     <motion.div
-      style={
-        reduced
-          ? undefined
-          : { scale, y, willChange: 'transform' }
-      }
-      className="flex min-w-full items-center justify-center px-1"
+      initial={reduced ? false : { opacity: 0, y: 24 }}
+      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
+      className="min-w-[82vw] snap-center md:min-w-0"
     >
-      <div className="w-full max-w-xl rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-8 lg:p-10 shadow-[0_30px_120px_-30px_hsl(var(--primary)/0.4)]">
+      <div className="h-full rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-7 lg:p-9 shadow-[0_30px_120px_-30px_hsl(var(--primary)/0.35)]">
         <div className="flex items-center gap-3 mb-6">
           <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
             <step.icon className="h-5 w-5" strokeWidth={2} />
@@ -65,18 +58,10 @@ function Indicator({ index, total, scrollYProgress }: any) {
 }
 
 export function HowItWorks() {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end end'],
-  });
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${((steps.length - 1) / steps.length) * 100}%`]);
-
   return (
-    <section ref={ref} className="relative" style={{ height: `${steps.length * 85}vh` }}>
-      <div className="sticky top-0 h-screen flex flex-col">
-        <div className="pt-20 px-6 lg:px-10">
+    <section className="relative py-24 md:py-28 px-6 lg:px-10">
+      <div className="max-w-6xl mx-auto">
+        <div>
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">
               How it works
@@ -87,24 +72,10 @@ export function HowItWorks() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden px-6 lg:px-10">
-          <motion.div
-            style={reduced ? undefined : { x, willChange: 'transform' }}
-            className="flex h-full"
-          >
-            {steps.map((_, i) => (
-              <Panel key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
-            ))}
-          </motion.div>
-        </div>
-
-        {/* step indicator */}
-        <div className="pb-12 px-6 lg:px-10">
-          <div className="max-w-6xl mx-auto flex items-center justify-center gap-3">
-            {steps.map((_, i) => (
-              <Indicator key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
-            ))}
-          </div>
+        <div className="mt-14 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+          {steps.map((_, i) => (
+            <Panel key={i} index={i} />
+          ))}
         </div>
       </div>
     </section>
