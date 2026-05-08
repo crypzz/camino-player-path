@@ -267,7 +267,8 @@ async function processVideoInBackground(videoId: string) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5.5",
+        reasoning: { effort: "high" },
         messages: [
           { role: "system", content: ANALYSIS_PROMPT },
           {
