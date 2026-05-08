@@ -71,7 +71,7 @@ export function HowItWorks() {
     target: ref,
     offset: ['start start', 'end end'],
   });
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${((steps.length - 1) / steps.length) * 100}%`]);
+  const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${(steps.length - 1) * 100}%`]);
 
   return (
     <section ref={ref} className="relative" style={{ height: `${steps.length * 85}vh` }}>
