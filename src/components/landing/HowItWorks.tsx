@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Upload, Sparkles, TrendingUp } from 'lucide-react';
 
 const steps = [
@@ -20,45 +19,20 @@ const steps = [
   },
 ];
 
-function Panel({ index, total, scrollYProgress }: any) {
+function Panel({ index }: { index: number }) {
   const reduced = useReducedMotion();
-  const clamp = (v: number) => Math.max(0, Math.min(1, v));
-  const start = index / total;
-  const end = (index + 1) / total;
-  const span = end - start;
-  const mid = (start + end) / 2;
-
-  // First panel starts fully visible; last panel stays fully visible to the end.
-  // Middle panels cross-fade with neighbors so there's never a blank moment.
-  // NOTE: useTransform requires strictly increasing input keys.
-  // Use small epsilons so first/last panels never collapse to a zero-width range.
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
-  const fadeIn = isFirst ? 0 : clamp(start - span * 0.15);
-  const holdStart = isFirst ? 0.001 : clamp(start + span * 0.15);
-  const holdEnd = isLast ? 0.999 : clamp(end - span * 0.15);
-  const fadeOut = isLast ? 1 : clamp(end + span * 0.15);
-
-  const opacity = useTransform(
-    scrollYProgress,
-    [fadeIn, holdStart, holdEnd, fadeOut],
-    [0, 1, 1, 0]
-  );
-  const scale = useTransform(scrollYProgress, [start, mid, end], [0.97, 1, 0.97]);
-  const y = useTransform(scrollYProgress, [start, mid, end], [20, 0, -20]);
 
   const step = steps[index];
 
   return (
     <motion.div
-      style={
-        reduced
-          ? undefined
-          : { opacity, scale, y, willChange: 'opacity, transform' }
-      }
-      className="absolute inset-0 flex items-center justify-center"
+      initial={reduced ? false : { opacity: 0, y: 24 }}
+      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
+      className="min-w-[82vw] snap-center md:min-w-0"
     >
-      <div className="w-full max-w-xl rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-8 lg:p-10 shadow-[0_30px_120px_-30px_hsl(var(--primary)/0.4)]">
+      <div className="h-full rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-7 lg:p-9 shadow-[0_30px_120px_-30px_hsl(var(--primary)/0.35)]">
         <div className="flex items-center gap-3 mb-6">
           <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
             <step.icon className="h-5 w-5" strokeWidth={2} />
@@ -76,24 +50,11 @@ function Panel({ index, total, scrollYProgress }: any) {
   );
 }
 
-function Indicator({ index, total, scrollYProgress }: any) {
-  const start = index / total;
-  const end = (index + 1) / total;
-  const opacity = useTransform(scrollYProgress, [start, (start + end) / 2, end], [0.3, 1, 0.3]);
-  return <motion.span style={{ opacity }} className="h-1 w-12 rounded-full bg-primary" />;
-}
-
 export function HowItWorks() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end end'],
-  });
-
   return (
-    <section ref={ref} className="relative" style={{ height: `${steps.length * 70}vh` }}>
-      <div className="sticky top-0 h-screen flex flex-col">
-        <div className="pt-20 px-6 lg:px-10">
+    <section className="relative py-24 md:py-28 px-6 lg:px-10">
+      <div className="max-w-6xl mx-auto">
+        <div>
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">
               How it works
@@ -104,19 +65,10 @@ export function HowItWorks() {
           </div>
         </div>
 
-        <div className="flex-1 relative px-6 lg:px-10">
+        <div className="mt-14 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
           {steps.map((_, i) => (
-            <Panel key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
+            <Panel key={i} index={i} />
           ))}
-        </div>
-
-        {/* step indicator */}
-        <div className="pb-12 px-6 lg:px-10">
-          <div className="max-w-6xl mx-auto flex items-center justify-center gap-3">
-            {steps.map((_, i) => (
-              <Indicator key={i} index={i} total={steps.length} scrollYProgress={scrollYProgress} />
-            ))}
-          </div>
         </div>
       </div>
     </section>
