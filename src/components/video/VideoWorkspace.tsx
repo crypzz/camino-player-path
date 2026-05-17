@@ -1,10 +1,16 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2, Brain, Info } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain, Settings2, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
-import { MatchVideo, useVideoProcessingPoll, useAIAnalyzeVideo } from '@/hooks/useMatchVideos';
+import { MatchVideo, useVideoProcessingPoll } from '@/hooks/useMatchVideos';
+import { useFrameByFrameTracker, DEFAULT_TRACKER_OPTIONS, TrackerOptions } from '@/hooks/useFrameByFrameTracker';
 import { useVideoEvents } from '@/hooks/useVideoEvents';
 import { useVideoAnnotations } from '@/hooks/useVideoAnnotations';
 import { useVideoStats } from '@/hooks/useVideoStats';
@@ -64,7 +70,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
 
   const stats = useVideoStats(events, players);
   const upsertStats = useUpsertMatchPlayerStats();
-  const aiAnalyze = useAIAnalyzeVideo();
+  const tracker = useFrameByFrameTracker(video.id);
+  const [trackerOpts, setTrackerOpts] = useState<TrackerOptions>(DEFAULT_TRACKER_OPTIONS);
 
   // Poll processing status
   useVideoProcessingPoll(video.id, liveStatus);
@@ -166,16 +173,23 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   };
 
   const handleAIAnalyze = async () => {
-    try {
-      setLiveStatus('queued');
-      setProcessingStartedAt(new Date().toISOString());
-      setLiveError(null);
-      toast.info('AI analysis queued — this may take a few minutes...');
-      await aiAnalyze.mutateAsync(video.id);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to start AI analysis');
-      setLiveStatus('error');
-      setLiveError(err.message || 'Failed to start AI analysis');
+    if (!videoSrc) {
+      toast.error('Video still loading, hang on a second…');
+      return;
+    }
+    if (!duration || duration <= 0) {
+      toast.error('Cannot read video duration yet — press play once then try again.');
+      return;
+    }
+    toast.info('Tracker started — keep this tab open.');
+    setLiveStatus('processing');
+    setLiveError(null);
+    await tracker.start(videoSrc, duration, trackerOpts);
+    if (tracker.progress.error) {
+      toast.error(tracker.progress.error);
+    } else {
+      toast.success('Tracker finished. See the Tracking tab.');
+      setActiveTab('tracking');
     }
   };
 
@@ -184,7 +198,10 @@ export default function VideoWorkspace({ video, onBack }: Props) {
     ai_processing_started_at: processingStartedAt,
   });
   const isStaleProcessing = displayStatus === 'stalled';
-  const isProcessing = isVideoProcessingStatus(liveStatus);
+  const isProcessing = isVideoProcessingStatus(liveStatus) || tracker.progress.running;
+  const trackerPct = tracker.progress.total > 0
+    ? Math.round((tracker.progress.processed / tracker.progress.total) * 100)
+    : 0;
 
   return (
     <div className="space-y-4">
@@ -200,34 +217,98 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             {video.team}{video.opponent ? ` vs ${video.opponent}` : ''} · {video.match_date ? new Date(video.match_date).toLocaleDateString() : ''}
           </p>
           {displayStatus === 'stalled' && (
-            <p className="text-xs text-warning mt-1">Analysis got stuck. Retry it with a shorter clip under 20MB.</p>
+            <p className="text-xs text-warning mt-1">Analysis got stuck. Restart the tracker.</p>
           )}
           {liveStatus === 'error' && liveError && (
             <p className="text-xs text-destructive mt-1">{liveError}</p>
           )}
         </div>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              size="sm"
-              variant="outline"
-              className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
-              onClick={handleAIAnalyze}
-              disabled={isProcessing || aiAnalyze.isPending}
-            >
-              <Brain className="h-3.5 w-3.5" />
-              {isProcessing ? 'Analyzing...' : isStaleProcessing ? 'Retry AI Analyze' : 'AI Analyze'}
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button size="sm" variant="ghost" className="gap-1.5 text-xs" disabled={tracker.progress.running}>
+              <Settings2 className="h-3.5 w-3.5" /> Tracker
             </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-[220px] text-center">
-            AI detects players and tracks their positions across the video automatically
-          </TooltipContent>
-        </Tooltip>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-72 space-y-4">
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <Label>Sample every</Label>
+                <span className="text-muted-foreground">{trackerOpts.intervalSec.toFixed(1)}s</span>
+              </div>
+              <Slider
+                min={1} max={5} step={0.5}
+                value={[trackerOpts.intervalSec]}
+                onValueChange={([v]) => setTrackerOpts(o => ({ ...o, intervalSec: v }))}
+              />
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <Label>Detection size</Label>
+                <span className="text-muted-foreground">{trackerOpts.frameWidth}px</span>
+              </div>
+              <Slider
+                min={480} max={960} step={80}
+                value={[trackerOpts.frameWidth]}
+                onValueChange={([v]) => setTrackerOpts(o => ({ ...o, frameWidth: v }))}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Detect ball</Label>
+              <Switch checked={trackerOpts.detectBall} onCheckedChange={(v) => setTrackerOpts(o => ({ ...o, detectBall: v }))} />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Replace previous AI detections</Label>
+              <Switch checked={trackerOpts.replaceExisting} onCheckedChange={(v) => setTrackerOpts(o => ({ ...o, replaceExisting: v }))} />
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {tracker.progress.running ? (
+          <Button size="sm" variant="outline" className="gap-1.5 text-xs border-destructive/40 text-destructive hover:bg-destructive/10" onClick={tracker.cancel}>
+            <X className="h-3.5 w-3.5" /> Stop
+          </Button>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10"
+                onClick={handleAIAnalyze}
+                disabled={isProcessing || !videoSrc}
+              >
+                <Brain className="h-3.5 w-3.5" />
+                {isProcessing ? 'Analyzing…' : isStaleProcessing ? 'Retry Tracker' : 'Run AI Tracker'}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[240px] text-center">
+              Steps through the video frame-by-frame and asks the AI to detect every visible player.
+            </TooltipContent>
+          </Tooltip>
+        )}
+
         <Button size="sm" className="gap-1.5 text-xs" onClick={handleGenerateStats} disabled={upsertStats.isPending}>
           <Wand2 className="h-3.5 w-3.5" />
           {upsertStats.isPending ? 'Generating...' : 'Generate Stats'}
         </Button>
       </div>
+
+      {tracker.progress.running && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>
+              Frame {tracker.progress.processed} / {tracker.progress.total}
+              {tracker.progress.currentTs !== null && ` · t=${tracker.progress.currentTs.toFixed(1)}s`}
+            </span>
+            <span>
+              {tracker.progress.lastDetections !== null && `last frame: ${tracker.progress.lastDetections} players`}
+              {tracker.progress.failures > 0 && ` · ${tracker.progress.failures} failed`}
+            </span>
+          </div>
+          <Progress value={trackerPct} />
+        </div>
+      )}
 
       <AIProcessingPanel status={liveStatus} trackingCount={tracking.length} uniquePlayers={uniqueTrackingPlayers} />
 
