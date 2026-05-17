@@ -212,28 +212,42 @@ export default function EvaluationsPage() {
               className="h-8 pl-7 text-xs bg-background/40"
             />
           </div>
-          <div className="overflow-y-auto -mr-1 pr-1 space-y-1">
-            {filteredPlayers.map((p) => {
-              const active = p.id === selectedId;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => handleSwitchPlayer(p.id)}
-                  className={cn(
-                    'w-full text-left rounded-lg px-2.5 py-2 transition-colors flex items-center gap-2',
-                    active ? 'bg-primary/15 ring-1 ring-primary/40' : 'hover:bg-muted/40',
-                  )}
-                >
-                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/40 to-primary/10 grid place-items-center text-[10px] font-bold text-primary-foreground/90 shrink-0">
-                    {p.name.split(' ').map((s) => s[0]).slice(0, 2).join('')}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs font-medium text-foreground truncate">{p.name}</div>
-                    <div className="text-[10px] text-muted-foreground truncate">{p.position} · {p.team}</div>
-                  </div>
-                </button>
-              );
-            })}
+          <div className="overflow-y-auto -mr-1 pr-1 space-y-3">
+            {groupedPlayers.map(({ group, players: list }) => (
+              <div key={group}>
+                <div className="px-1 pb-1 flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">{group}</span>
+                  <span className="text-[10px] text-muted-foreground/70">{list.length}</span>
+                  <div className="flex-1 h-px bg-border/40" />
+                </div>
+                <div className="space-y-1">
+                  {list.map((p) => {
+                    const active = p.id === selectedId;
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => handleSwitchPlayer(p.id)}
+                        className={cn(
+                          'w-full text-left rounded-lg px-2.5 py-2 transition-colors flex items-center gap-2',
+                          active ? 'bg-primary/15 ring-1 ring-primary/40' : 'hover:bg-muted/40',
+                        )}
+                      >
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/40 to-primary/10 grid place-items-center text-[10px] font-bold text-primary-foreground/90 shrink-0">
+                          {p.name.split(' ').map((s) => s[0]).slice(0, 2).join('')}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-medium text-foreground truncate">{p.name}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{p.position} · {p.team}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            {groupedPlayers.length === 0 && (
+              <div className="text-[11px] text-muted-foreground px-1 py-3 text-center">No players match.</div>
+            )}
           </div>
         </div>
 
