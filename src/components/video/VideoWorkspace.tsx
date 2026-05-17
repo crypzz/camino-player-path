@@ -70,7 +70,8 @@ export default function VideoWorkspace({ video, onBack }: Props) {
 
   const stats = useVideoStats(events, players);
   const upsertStats = useUpsertMatchPlayerStats();
-  const aiAnalyze = useAIAnalyzeVideo();
+  const tracker = useFrameByFrameTracker(video.id);
+  const [trackerOpts, setTrackerOpts] = useState<TrackerOptions>(DEFAULT_TRACKER_OPTIONS);
 
   // Poll processing status
   useVideoProcessingPoll(video.id, liveStatus);
