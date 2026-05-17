@@ -120,6 +120,28 @@ export default function EvaluationsPage() {
     return players.filter((p) => p.name.toLowerCase().includes(q) || p.position.toLowerCase().includes(q));
   }, [players, search]);
 
+  const positionGroup = (pos: string): 'Goalkeepers' | 'Defenders' | 'Midfielders' | 'Attackers' | 'Other' => {
+    const p = (pos || '').toLowerCase();
+    if (/(gk|goal|keeper|portero)/.test(p)) return 'Goalkeepers';
+    if (/(def|back|cb|lb|rb|wb|sweep|libero|defensa)/.test(p)) return 'Defenders';
+    if (/(mid|cm|cdm|cam|dm|am|volante|mediocampista|pivot)/.test(p)) return 'Midfielders';
+    if (/(fwd|forward|striker|winger|wing|st|cf|lw|rw|attack|delantero|extremo)/.test(p)) return 'Attackers';
+    return 'Other';
+  };
+
+  const GROUP_ORDER: Array<ReturnType<typeof positionGroup>> = ['Goalkeepers', 'Defenders', 'Midfielders', 'Attackers', 'Other'];
+
+  const groupedPlayers = useMemo(() => {
+    const map = new Map<string, typeof filteredPlayers>();
+    for (const g of GROUP_ORDER) map.set(g, []);
+    for (const p of filteredPlayers) {
+      const g = positionGroup(p.position);
+      map.get(g)!.push(p);
+    }
+    return GROUP_ORDER.filter((g) => (map.get(g)?.length ?? 0) > 0).map((g) => ({ group: g, players: map.get(g)! }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredPlayers]);
+
   const bumpAll = (cat: Cat, delta: number) =>
     setRatings((prev) =>
       prev
