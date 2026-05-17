@@ -22,9 +22,10 @@ type FieldErrors = Partial<Record<keyof z.infer<typeof schema>, string>>;
 
 interface Props {
   variant?: 'hero' | 'block';
+  source?: string;
 }
 
-export function WaitlistForm({ variant = 'hero' }: Props) {
+export function WaitlistForm({ variant = 'hero', source }: Props) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<string>('');
@@ -69,6 +70,7 @@ export function WaitlistForm({ variant = 'hero' }: Props) {
       email: parsed.data.email,
       role: parsed.data.role,
       club_name: parsed.data.club_name?.trim() ? parsed.data.club_name.trim() : null,
+      source: source ?? null,
     };
 
     const { error } = await supabase.from('waitlist').insert(payload);

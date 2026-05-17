@@ -1653,6 +1653,7 @@ export type Database = {
           full_name: string | null
           id: string
           role: string | null
+          source: string | null
         }
         Insert: {
           club_name?: string | null
@@ -1661,6 +1662,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           role?: string | null
+          source?: string | null
         }
         Update: {
           club_name?: string | null
@@ -1669,6 +1671,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           role?: string | null
+          source?: string | null
         }
         Relationships: []
       }

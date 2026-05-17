@@ -47,6 +47,7 @@ import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
 import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import CommunicationsPage from "@/pages/CommunicationsPage";
 import CVBuilderPage from "@/pages/CVBuilderPage";
+import { SolutionsLandingRoute, RegionLandingRoute } from "@/pages/seo/SeoRoutes";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -142,6 +143,9 @@ const App = () => (
               {/* Resource pages */}
               <Route path="/resources/how-cpi-works" element={<HowCPIWorksPage />} />
               <Route path="/resources/methodology" element={<MethodologyPage />} />
+              {/* SEO landing pages */}
+              <Route path="/solutions/:slug" element={<SolutionsLandingRoute />} />
+              <Route path="/:region/:city/:slug" element={<RegionLandingRoute />} />
               {/* Hidden internal access — not linked publicly */}
               <Route path="/admin" element={<AuthPage />} />
               {/* Waitlist mode: lock down public app surfaces */}
