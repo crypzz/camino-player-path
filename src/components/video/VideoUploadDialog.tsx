@@ -10,6 +10,45 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateMatchVideo } from '@/hooks/useMatchVideos';
 import { toast } from 'sonner';
+import * as tus from 'tus-js-client';
+
+const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
+
+async function resumableUpload(
+  file: File,
+  path: string,
+  onProgress: (pct: number) => void,
+): Promise<void> {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+  if (!token) throw new Error('Not authenticated');
+
+  const projectUrl = import.meta.env.VITE_SUPABASE_URL as string;
+
+  await new Promise<void>((resolve, reject) => {
+    const upload = new tus.Upload(file, {
+      endpoint: `${projectUrl}/storage/v1/upload/resumable`,
+      retryDelays: [0, 1000, 3000, 5000],
+      headers: {
+        authorization: `Bearer ${token}`,
+        'x-upsert': 'false',
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      metadata: {
+        bucketName: 'match-videos',
+        objectName: path,
+        contentType: file.type || 'video/mp4',
+        cacheControl: '3600',
+      },
+      chunkSize: 6 * 1024 * 1024,
+      onError: (err) => reject(err),
+      onProgress: (sent, total) => onProgress(Math.round((sent / total) * 100)),
+      onSuccess: () => resolve(),
+    });
+    upload.start();
+  });
+}
 
 interface Props {
   open: boolean;
