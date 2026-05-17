@@ -57,10 +57,22 @@ export default function VideoOverlayCanvas({
   // Memoize current boxes based on rounded time (reduce recalculations)
   const currentBoxes = useMemo(() => {
     const map = new Map<string, PlayerTracking>();
+    const frameTimes = [...new Set(tracking.map(t => t.timestamp_seconds))].sort((a, b) => a - b);
+    const nearestFrameTime = frameTimes.reduce<number | null>((best, t) => {
+      if (best === null) return t;
+      return Math.abs(t - currentTime) < Math.abs(best - currentTime) ? t : best;
+    }, null);
+    if (nearestFrameTime === null) return map;
+
+    const gaps = frameTimes.slice(1).map((t, i) => t - frameTimes[i]).filter(g => g > 0.05);
+    const minGap = gaps.length ? Math.min(...gaps) : 2;
+    const tolerance = Math.min(2.6, Math.max(0.6, minGap / 2 + 0.15));
+    if (Math.abs(nearestFrameTime - currentTime) > tolerance) return map;
+
     for (const t of tracking) {
-      if (Math.abs(t.timestamp_seconds - currentTime) >= 0.5) continue;
+      if (Math.abs(t.timestamp_seconds - nearestFrameTime) > 0.01) continue;
       const existing = map.get(t.tracking_id);
-      if (!existing || Math.abs(t.timestamp_seconds - currentTime) < Math.abs(existing.timestamp_seconds - currentTime)) {
+      if (!existing || t.confidence > existing.confidence) {
         map.set(t.tracking_id, t);
       }
     }
