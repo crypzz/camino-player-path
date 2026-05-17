@@ -1,10 +1,16 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2, Brain, Info } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain, Settings2, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
-import { MatchVideo, useVideoProcessingPoll, useAIAnalyzeVideo } from '@/hooks/useMatchVideos';
+import { MatchVideo, useVideoProcessingPoll } from '@/hooks/useMatchVideos';
+import { useFrameByFrameTracker, DEFAULT_TRACKER_OPTIONS, TrackerOptions } from '@/hooks/useFrameByFrameTracker';
 import { useVideoEvents } from '@/hooks/useVideoEvents';
 import { useVideoAnnotations } from '@/hooks/useVideoAnnotations';
 import { useVideoStats } from '@/hooks/useVideoStats';
