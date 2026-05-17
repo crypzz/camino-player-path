@@ -139,7 +139,7 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
           >
             <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Drag & drop a video file or <span className="text-primary font-medium">browse</span></p>
-            <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM supported</p>
+            <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM · up to 500 MB</p>
             <input id="video-file-input" type="file" accept="video/*" className="hidden" onChange={handleFileSelect} />
           </div>
         ) : (
