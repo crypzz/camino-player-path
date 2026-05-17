@@ -66,3 +66,37 @@ export function useCreateFitnessTest() {
     },
   });
 }
+
+export function useUpdateFitnessTest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, player_id, ...updates }: { id: string; player_id: string } & Partial<Omit<FitnessTest, 'id' | 'player_id' | 'tested_by' | 'created_at'>>) => {
+      const { data, error } = await supabase
+        .from('fitness_tests' as any)
+        .update(updates as any)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_d, v) => {
+      queryClient.invalidateQueries({ queryKey: ['fitness-tests', v.player_id] });
+      queryClient.invalidateQueries({ queryKey: ['players'] });
+    },
+  });
+}
+
+export function useDeleteFitnessTest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string; player_id: string }) => {
+      const { error } = await supabase.from('fitness_tests' as any).delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      queryClient.invalidateQueries({ queryKey: ['fitness-tests', v.player_id] });
+      queryClient.invalidateQueries({ queryKey: ['players'] });
+    },
+  });
+}
