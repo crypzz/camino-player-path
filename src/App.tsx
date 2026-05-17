@@ -47,6 +47,7 @@ import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
 import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import CommunicationsPage from "@/pages/CommunicationsPage";
 import CVBuilderPage from "@/pages/CVBuilderPage";
+import { SolutionsLandingRoute, RegionLandingRoute } from "@/pages/seo/SeoRoutes";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
