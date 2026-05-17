@@ -81,7 +81,10 @@ export async function transcodeToBrowserMp4(file: File, onProgress: (pct: number
 
     if (code !== 0) throw new Error('Video conversion failed');
     const output = await ffmpeg.readFile(outputName);
-    const bytes = typeof output === 'string' ? new TextEncoder().encode(output) : output;
+    const raw = typeof output === 'string' ? new TextEncoder().encode(output) : output;
+    const bytes = raw instanceof Uint8Array
+      ? new Uint8Array(raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength))
+      : raw;
     const baseName = file.name.replace(/\.[^.]+$/, '');
     return new File([bytes], `${baseName}_playable.mp4`, { type: 'video/mp4' });
   } finally {
