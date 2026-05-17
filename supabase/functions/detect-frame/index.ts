@@ -59,6 +59,7 @@ Deno.serve(async (req) => {
   const frameB64 = typeof body?.frame_jpeg_b64 === "string" ? body.frame_jpeg_b64 : "";
   const detectBall = body?.detect_ball !== false;
   const replaceFrame = body?.replace_frame === true;
+  const replaceAll = body?.replace_all === true;
 
   if (!videoId || !Number.isFinite(ts) || ts < 0 || !frameB64) {
     return jsonResponse({ error: "video_id, timestamp_seconds and frame_jpeg_b64 required" }, 400);
@@ -160,7 +161,13 @@ Deno.serve(async (req) => {
 
   const frameNumber = Math.round(ts * 30);
 
-  if (replaceFrame) {
+  if (replaceAll) {
+    await admin
+      .from("player_tracking")
+      .delete()
+      .eq("video_id", videoId)
+      .eq("source", "ai");
+  } else if (replaceFrame) {
     await admin
       .from("player_tracking")
       .delete()

@@ -26,6 +26,12 @@ export interface TrackerProgress {
   error: string | null;
 }
 
+export interface TrackerResult {
+  ok: boolean;
+  cancelled?: boolean;
+  error?: string;
+}
+
 const INITIAL: TrackerProgress = {
   running: false,
   processed: 0,
@@ -99,10 +105,10 @@ export function useFrameByFrameTracker(videoId: string) {
 
   const cancel = useCallback(() => { cancelRef.current = true; }, []);
 
-  const start = useCallback(async (signedVideoUrl: string, durationSec: number, opts: TrackerOptions) => {
+  const start = useCallback(async (signedVideoUrl: string, durationSec: number, opts: TrackerOptions): Promise<TrackerResult> => {
     if (!signedVideoUrl || !Number.isFinite(durationSec) || durationSec <= 0) {
       setProgress({ ...INITIAL, error: 'Video not ready' });
-      return;
+      return { ok: false, error: 'Video not ready' };
     }
 
     cancelRef.current = false;
@@ -142,8 +148,6 @@ export function useFrameByFrameTracker(videoId: string) {
 
       let failures = 0;
       let lastDet: number | null = null;
-      let firstFrame = true;
-
       for (let i = 0; i < timestamps.length; i++) {
         if (cancelRef.current) break;
         const ts = timestamps[i];
@@ -157,24 +161,13 @@ export function useFrameByFrameTracker(videoId: string) {
               timestamp_seconds: ts,
               frame_jpeg_b64: frame,
               detect_ball: opts.detectBall,
-              replace_frame: firstFrame && opts.replaceExisting ? false : true,
-              // We do a one-shot wipe right after we start, below.
+              replace_all: opts.replaceExisting && i === 0,
+              replace_frame: true,
             },
           });
           if (error) throw error;
           if (data?.error) throw new Error(String(data.error));
           lastDet = (data?.detections ?? 0) as number;
-
-          if (firstFrame && opts.replaceExisting) {
-            // Wipe old AI rows for this video (except the frame we just inserted)
-            await supabase
-              .from('player_tracking')
-              .delete()
-              .eq('video_id', videoId)
-              .eq('source', 'ai')
-              .neq('frame_number', data?.frame_number ?? -1);
-            firstFrame = false;
-          }
         } catch (e: any) {
           failures += 1;
           console.warn('Frame failed', ts, e?.message);
@@ -187,10 +180,7 @@ export function useFrameByFrameTracker(videoId: string) {
           failures,
         }));
 
-        // Refresh tracking list every ~5 frames
-        if ((i + 1) % 5 === 0) {
-          qc.invalidateQueries({ queryKey: ['player-tracking', videoId] });
-        }
+        qc.invalidateQueries({ queryKey: ['player-tracking', videoId] });
       }
 
       qc.invalidateQueries({ queryKey: ['player-tracking', videoId] });
@@ -205,6 +195,7 @@ export function useFrameByFrameTracker(videoId: string) {
       qc.invalidateQueries({ queryKey: ['match-videos'] });
 
       setProgress((p) => ({ ...p, running: false, currentTs: null }));
+      return { ok: true, cancelled: cancelRef.current };
     } catch (e: any) {
       const msg = e?.message || 'Tracker failed';
       await supabase
@@ -212,6 +203,7 @@ export function useFrameByFrameTracker(videoId: string) {
         .update({ status: 'error', ai_processing_error: msg })
         .eq('id', videoId);
       setProgress((p) => ({ ...p, running: false, error: msg }));
+      return { ok: false, error: msg };
     } finally {
       video.src = '';
       video.removeAttribute('src');
