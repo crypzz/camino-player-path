@@ -184,9 +184,12 @@ export default function VideoWorkspace({ video, onBack }: Props) {
     toast.info('Tracker started — keep this tab open.');
     setLiveStatus('processing');
     setLiveError(null);
-    await tracker.start(videoSrc, duration, trackerOpts);
-    if (tracker.progress.error) {
-      toast.error(tracker.progress.error);
+    const result = await tracker.start(videoSrc, duration, trackerOpts);
+    if (!result.ok) {
+      toast.error(result.error || 'Tracker failed');
+    } else if (result.cancelled) {
+      toast.info('Tracker stopped. Saved detections are still available.');
+      setActiveTab('tracking');
     } else {
       toast.success('Tracker finished. See the Tracking tab.');
       setActiveTab('tracking');
