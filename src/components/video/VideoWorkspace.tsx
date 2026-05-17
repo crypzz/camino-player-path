@@ -110,7 +110,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   useEffect(() => {
     if (!isVideoProcessingStale({ status: liveStatus, ai_processing_started_at: processingStartedAt })) return;
     setLiveStatus('stalled');
-    setLiveError(prev => prev || 'Analysis got stuck. Retry with a shorter clip under 20MB.');
+    setLiveError(prev => prev || 'Analysis stalled. Click Run AI Tracker to retry.');
   }, [liveStatus, processingStartedAt]);
 
   // Cache signed URL

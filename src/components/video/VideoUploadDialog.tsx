@@ -10,6 +10,45 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateMatchVideo } from '@/hooks/useMatchVideos';
 import { toast } from 'sonner';
+import * as tus from 'tus-js-client';
+
+const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
+
+async function resumableUpload(
+  file: File,
+  path: string,
+  onProgress: (pct: number) => void,
+): Promise<void> {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+  if (!token) throw new Error('Not authenticated');
+
+  const projectUrl = import.meta.env.VITE_SUPABASE_URL as string;
+
+  await new Promise<void>((resolve, reject) => {
+    const upload = new tus.Upload(file, {
+      endpoint: `${projectUrl}/storage/v1/upload/resumable`,
+      retryDelays: [0, 1000, 3000, 5000],
+      headers: {
+        authorization: `Bearer ${token}`,
+        'x-upsert': 'false',
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      metadata: {
+        bucketName: 'match-videos',
+        objectName: path,
+        contentType: file.type || 'video/mp4',
+        cacheControl: '3600',
+      },
+      chunkSize: 6 * 1024 * 1024,
+      onError: (err) => reject(err),
+      onProgress: (sent, total) => onProgress(Math.round((sent / total) * 100)),
+      onSuccess: () => resolve(),
+    });
+    upload.start();
+  });
+}
 
 interface Props {
   open: boolean;
@@ -50,17 +89,17 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
 
   const handleUpload = async () => {
     if (!file || !user || !title.trim()) return;
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast.error(`File is ${(file.size / 1024 / 1024).toFixed(0)} MB — max is 500 MB`);
+      return;
+    }
     setUploading(true);
+    setProgress(0);
     try {
       const ext = file.name.split('.').pop();
       const path = `${user.id}/${Date.now()}.${ext}`;
 
-      // Simulate progress since supabase-js v2 doesn't expose onUploadProgress for standard upload
-      const interval = setInterval(() => setProgress(p => Math.min(p + 8, 90)), 200);
-
-      const { error: uploadError } = await supabase.storage.from('match-videos').upload(path, file);
-      clearInterval(interval);
-      if (uploadError) throw uploadError;
+      await resumableUpload(file, path, setProgress);
       setProgress(100);
 
       await createVideo.mutateAsync({
@@ -100,7 +139,7 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
           >
             <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Drag & drop a video file or <span className="text-primary font-medium">browse</span></p>
-            <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM supported</p>
+            <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM · up to 500 MB</p>
             <input id="video-file-input" type="file" accept="video/*" className="hidden" onChange={handleFileSelect} />
           </div>
         ) : (
