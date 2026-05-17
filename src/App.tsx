@@ -143,6 +143,9 @@ const App = () => (
               {/* Resource pages */}
               <Route path="/resources/how-cpi-works" element={<HowCPIWorksPage />} />
               <Route path="/resources/methodology" element={<MethodologyPage />} />
+              {/* SEO landing pages */}
+              <Route path="/solutions/:slug" element={<SolutionsLandingRoute />} />
+              <Route path="/:region/:city/:slug" element={<RegionLandingRoute />} />
               {/* Hidden internal access — not linked publicly */}
               <Route path="/admin" element={<AuthPage />} />
               {/* Waitlist mode: lock down public app surfaces */}
