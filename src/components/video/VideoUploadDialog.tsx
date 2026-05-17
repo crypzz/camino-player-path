@@ -89,17 +89,17 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
 
   const handleUpload = async () => {
     if (!file || !user || !title.trim()) return;
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast.error(`File is ${(file.size / 1024 / 1024).toFixed(0)} MB — max is 500 MB`);
+      return;
+    }
     setUploading(true);
+    setProgress(0);
     try {
       const ext = file.name.split('.').pop();
       const path = `${user.id}/${Date.now()}.${ext}`;
 
-      // Simulate progress since supabase-js v2 doesn't expose onUploadProgress for standard upload
-      const interval = setInterval(() => setProgress(p => Math.min(p + 8, 90)), 200);
-
-      const { error: uploadError } = await supabase.storage.from('match-videos').upload(path, file);
-      clearInterval(interval);
-      if (uploadError) throw uploadError;
+      await resumableUpload(file, path, setProgress);
       setProgress(100);
 
       await createVideo.mutateAsync({
