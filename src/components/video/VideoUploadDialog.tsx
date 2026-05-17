@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCreateMatchVideo } from '@/hooks/useMatchVideos';
 import { toast } from 'sonner';
 import * as tus from 'tus-js-client';
+import { readVideoDuration, shouldTranscodeForBrowser, transcodeToBrowserMp4 } from '@/lib/browserVideoTranscode';
 
 const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
 
@@ -67,11 +68,12 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
   const [notes, setNotes] = useState('');
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [uploadStage, setUploadStage] = useState('Uploading');
   const [dragOver, setDragOver] = useState(false);
 
   const reset = () => {
     setFile(null); setTitle(''); setType('match'); setMatchDate(''); setTeam(''); setOpponent(''); setNotes('');
-    setProgress(0); setUploading(false);
+    setProgress(0); setUploading(false); setUploadStage('Uploading');
   };
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -96,16 +98,29 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
     setUploading(true);
     setProgress(0);
     try {
-      const ext = file.name.split('.').pop();
+      let uploadFile = file;
+      let duration = await readVideoDuration(file);
+
+      if (await shouldTranscodeForBrowser(file)) {
+        setUploadStage('Converting for browser playback');
+        toast.info('Converting this video so it plays correctly in the browser…');
+        uploadFile = await transcodeToBrowserMp4(file, (pct) => setProgress(Math.round(pct * 0.45)));
+        duration = await readVideoDuration(uploadFile) || duration;
+      }
+
+      const didConvert = uploadFile !== file;
+      setUploadStage('Uploading');
+      const ext = uploadFile.name.split('.').pop() || 'mp4';
       const path = `${user.id}/${Date.now()}.${ext}`;
 
-      await resumableUpload(file, path, setProgress);
+      await resumableUpload(uploadFile, path, (pct) => setProgress(didConvert ? 45 + Math.round(pct * 0.55) : pct));
       setProgress(100);
 
       await createVideo.mutateAsync({
         title: title.trim(),
         type,
         video_url: path,
+        duration_seconds: duration,
         match_date: matchDate || undefined,
         team: team || undefined,
         opponent: opponent || undefined,
@@ -153,7 +168,12 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
               {!uploading && <Button variant="ghost" size="icon" onClick={() => setFile(null)}><X className="h-4 w-4" /></Button>}
             </div>
 
-            {uploading && <Progress value={progress} className="h-2" />}
+            {uploading && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground"><span>{uploadStage}</span><span>{progress}%</span></div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            )}
 
             <div className="grid gap-3">
               <div><Label>Title</Label><Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Match title" disabled={uploading} /></div>
@@ -179,7 +199,7 @@ export default function VideoUploadDialog({ open, onOpenChange }: Props) {
             </div>
 
             <Button onClick={handleUpload} disabled={uploading || !title.trim()} className="w-full">
-              {uploading ? `Uploading... ${progress}%` : 'Upload Video'}
+              {uploading ? `${uploadStage}... ${progress}%` : 'Upload Video'}
             </Button>
           </div>
         )}

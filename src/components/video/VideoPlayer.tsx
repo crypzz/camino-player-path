@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -27,6 +27,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
   const [duration, setDuration] = useState(0);
   const [muted, setMuted] = useState(false);
   const [speed, setSpeed] = useState('1');
+  const [videoWarning, setVideoWarning] = useState(false);
 
   useImperativeHandle(ref, () => ({
     seekTo: (s) => { if (videoRef.current) videoRef.current.currentTime = s; },
@@ -76,11 +77,17 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
       onTimeUpdateRef.current?.(v.currentTime);
     };
     const onDur = () => { setDuration(v.duration); onDurationChange?.(v.duration); };
+    const onLoadedData = () => setVideoWarning(false);
+    const onWaiting = () => {
+      if (v.readyState < 2 && v.currentTime > 0) setVideoWarning(true);
+    };
 
     v.addEventListener('play', onPlay);
     v.addEventListener('pause', onPause);
     v.addEventListener('seeked', onSeeked);
     v.addEventListener('loadedmetadata', onDur);
+    v.addEventListener('loadeddata', onLoadedData);
+    v.addEventListener('waiting', onWaiting);
     rafRef.current = requestAnimationFrame(tick);
 
     return () => {
@@ -89,6 +96,8 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
       v.removeEventListener('pause', onPause);
       v.removeEventListener('seeked', onSeeked);
       v.removeEventListener('loadedmetadata', onDur);
+      v.removeEventListener('loadeddata', onLoadedData);
+      v.removeEventListener('waiting', onWaiting);
     };
   }, [onDurationChange]);
 
@@ -121,6 +130,12 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(({ src, onTimeUpdate, o
   return (
     <>
       <video ref={videoRef} src={src} className="w-full aspect-video object-contain bg-black" muted={muted} playsInline preload="auto" />
+      {videoWarning && (
+        <div className="absolute inset-x-3 top-3 z-30 flex items-start gap-2 rounded-md border border-warning/40 bg-background/90 p-3 text-xs text-warning shadow-lg backdrop-blur">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span>This video codec may not render in this browser. Re-upload it and Camino will convert it automatically.</span>
+        </div>
+      )}
       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-20">
         {/* Scrub bar */}
         <div className="px-1 mb-2">
