@@ -1,88 +1,89 @@
-## Problem
+# Evaluations & Fitness Revamp Plan
 
-The current `process-video` edge function ships the entire MP4 (≤20 MB) to one chat completion and asks GPT-5.5 to imagine bounding boxes across all timestamps. Multimodal LLMs hallucinate spatial coordinates on video blobs, so output is unusable — wrong boxes, wrong counts, wrong timestamps. Your architecture diagram already calls this out (YOLOv8 + DeepSORT is the right answer, but we can't run Python in Lovable).
+## Goals
+- Make rating players **fast and tactile** for coaches (no more clunky sliders)
+- Show all four categories at once so coaches don't have to switch dropdowns
+- Auto-save changes so coaches never lose work
+- Make fitness test entry smoother with quick presets, inline editing, and clearer feedback
 
-Best compromise: **extract real frames in the browser, send each frame as an image to Gemini Vision, and trust per-frame detection**. Single-image detection is what these models are actually good at.
+---
 
-## What changes
+## 1. Evaluations Page revamp (`src/pages/EvaluationsPage.tsx`)
 
-```text
-Coach ─► VideoWorkspace ─┐
-                         │ 1. seek to t=0,2,4… via <video>
-                         │ 2. draw frame to <canvas>, encode JPEG
-                         │ 3. POST {videoId, ts, jpegB64} ──► detect-frame edge fn
-                         │                                       │
-                         │                                       ▼
-                         │                              Gemini Vision (single image)
-                         │                                       │
-                         │                                       ▼
-                         │                              player_tracking insert
-                         │ 4. progress bar 0–100%, live overlay
-                         ▼
-                  match_videos.status = ready
-```
+### New interaction model: 1–10 segmented rating buttons
+Replace `<Slider>` with a row of 10 small clickable pills per attribute. Tap = instant rating. No drag, no fiddling on mobile.
 
-No Python service, no whole-video LLM call, no demo data.
+- Each pill colored by score band: 1–3 red, 4–6 amber, 7–8 emerald, 9–10 primary gold
+- Current value highlighted with filled background + scale animation (framer-motion)
+- Keyboard support: arrow keys to nudge focused row
+- "Quick set" buttons above each category: **Reset to current**, **Set all to 5**, **+1 all**, **−1 all**
 
-## Frontend (`src/components/video/VideoWorkspace.tsx` + new hook)
+### Layout
+- **Left:** Player picker (searchable combobox instead of plain Select — uses `Command` from shadcn), with avatar + position chip
+- **Center:** Tabbed grid showing all 4 categories at once (Technical / Tactical / Physical / Mental) as tabs, not nested dropdowns. Each tab shows the attribute rows with pill ratings.
+- **Right (sticky on desktop, collapsible on mobile):** Live radar + CPI dial + dirty-state indicator
+- **Bottom bar (sticky):** "Unsaved changes for {name}" + Save / Discard buttons. Saves all 4 categories in one mutation instead of one at a time.
 
-1. New hook `useFrameByFrameTracker(videoId, videoRef)`:
-   - Reads `duration_seconds` and `video_url` from the row.
-   - Walks timestamps `0, 2, 4, …` (configurable interval).
-   - For each ts: `video.currentTime = ts`, await `seeked`, draw to a 640px-wide `<canvas>`, `toBlob('image/jpeg', 0.7)`, base64-encode.
-   - `supabase.functions.invoke('detect-frame', { body: { video_id, timestamp_seconds, frame_jpeg_b64 } })`.
-   - Reports `{processed, total, lastFrameDetections}` so we can render a progress bar and live overlay.
-2. Trigger UI: replace the existing "Run AI tracker" button with a new control that runs the hook. Show progress, current ts, and a cancel button. Persist `status='processing'` on start and `status='ready'` on finish (via a tiny RPC or direct update because creator owns the row).
-3. Drop the old `process-video` invocation site; keep the function around for now but unused.
+### Auto-save behavior
+- Debounced auto-save 1.2s after last change (toast: "Saved")
+- Manual Save button still available
+- Switching player while dirty → confirm dialog
 
-## Backend (new edge function `supabase/functions/detect-frame/index.ts`)
+### Quick rate from history
+- Show last evaluation date + "Copy from last session" button to prefill
 
-- `verify_jwt = true` (creator only).
-- Validate body with zod: `{ video_id: uuid, timestamp_seconds: number, frame_jpeg_b64: string (≤ ~1.5 MB) }`.
-- Confirm caller `auth.uid()` equals `match_videos.created_by`.
-- Call Lovable AI Gateway with `google/gemini-3-flash-preview` (fast, vision-capable, cheap) using a **single-image** prompt + tool call:
+### Visual polish
+- Glass cards with subtle gradient borders matching design system
+- Category icons (Target / Brain / Zap / Heart)
+- Progress bar showing % of attributes rated above 6
 
-  ```text
-  Detect every soccer player visible in this frame.
-  Return bbox as percentages of the image (0–100), team_color, jersey_number when readable, confidence.
-  Also return ball: {x,y} as percentages, or null.
-  ```
+---
 
-  Tool schema mirrors the existing one but for ONE frame (not an array).
-- On success, INSERT one row per player into `player_tracking` (`source='ai'`, `frame_number = round(ts*30)`, normalized 0–100 bbox). Insert a ball row too when present (tracking_id `ai_ball`).
-- Return `{ detections: N, ball: bool }` so the frontend can render immediately.
-- 429 / 402 / network errors are surfaced; frontend keeps going but marks that frame as failed and continues.
+## 2. Fitness Test page improvements (`src/pages/FitnessTestPage.tsx`)
 
-Performance: ~1 request/sec, Gemini Flash latency ~1–2 s. A 90 s clip at 2 s spacing = 45 frames ≈ 60–90 s end-to-end with a live progress bar — far better UX than the current "spin for 2 min then show garbage".
+### Inline form (no toggle)
+- Always-visible compact entry strip at top once a player is selected — coaches can log tests without clicking "New Test" first
+- Number inputs with **stepper buttons** (+/-) and proper `inputMode="decimal"` for mobile keyboards
+- Each field shows its **last recorded value** as ghost placeholder so coaches see progress context
 
-## Settings exposed to the coach
+### Test type chips
+- Replace 7 inputs always shown with **chip selector** — coach picks which tests they ran today, only those inputs render
+- Presets: "Speed Day" (10m + 30m + agility), "Endurance Day" (beep + cooper), "Power Day" (vertical jump), "Full Combine" (all)
 
-A small popover on the workspace:
-- **Frame interval** (default 2 s, range 1–5).
-- **Detection size** (default 640px, range 480–960) — bigger = more accurate, slower.
-- **Include ball detection** toggle.
+### Benchmark scoring preview
+- As coach types raw value, show derived 1–10 score live next to the input (uses existing youth-athlete benchmarks from `lib/playerLevel.ts` / fitness mapping). Gives instant feedback that the test "counted."
 
-Stored in component state only; no schema change.
+### Edit & delete past tests
+- Each history card gets a pencil + trash icon (coach who recorded it can edit/delete via existing RLS)
+- Edit opens inline, not a separate page
 
-## Cleanup
+### History improvements
+- Group by month
+- Show delta arrows vs previous test for each metric (▲ 0.2s faster)
+- Sparkline mini-chart per metric across all tests at top of history
 
-- Mark `process-video` function as deprecated in its header comment; remove its UI invocation. Don't delete it yet so any in-flight rows resolve.
-- Keep `player_tracking.source='ai'` semantics; the new pipeline writes the same shape so all downstream consumers (`usePlayerTracking`, pitch overlay, mini-map) keep working unchanged.
+---
 
-## Files
+## 3. Shared additions
 
-- New: `supabase/functions/detect-frame/index.ts`
-- New: `src/hooks/useFrameByFrameTracker.ts`
-- Edit: `src/components/video/VideoWorkspace.tsx` (replace tracker trigger UI, wire hook, progress bar)
-- Edit: `src/lib/videoProcessing.ts` (helper for client-side row status updates if needed)
-- No DB migration required (reuses `player_tracking` + `match_videos`).
+### New hook: `useUpdateFitnessTest` and `useDeleteFitnessTest` in `src/hooks/useFitnessTests.ts`
+- Mirrors existing create hook
+- Invalidates `['fitness-tests', playerId]` and `['players']`
 
-## Out of scope (intentionally)
+### Rating pill component: `src/components/evaluations/RatingPills.tsx`
+- Reusable 1–10 segmented control
+- Props: `value`, `onChange`, `label`, `compact?`
 
-- Persistent track IDs across frames (DeepSORT). The model gets a `tracking_id` hint per frame but cross-frame identity will be best-effort; the existing manual tagging UI is how the coach reconciles identity.
-- Demo/seed data — per your decision, real detections only.
+### Category averages helper unchanged — reuse `getCategoryAverage`
 
-## Risks
+---
 
-- Gemini will still occasionally miss players or double-count. Acceptable for testing; coach can delete bad rows from the tagging UI.
-- 45+ sequential AI calls cost more credits per video than the single batch call did. We can later switch to parallel batches of 3–5 if cost is fine.
+## Technical notes
+- No DB schema changes needed — existing `players` JSONB columns and `fitness_tests` table cover everything
+- Auto-save uses existing `useUpdatePlayer` mutation, just batched (send technical + tactical + physical + mental in one call)
+- Benchmark → score mapping: extract small util `src/lib/fitnessBenchmarks.ts` with age-band lookup tables (sprints, agility, jump, cooper, beep)
+- Searchable player picker: shadcn `Command` + `Popover` (both already in repo via shadcn defaults)
+
+## Out of scope
+- No changes to CPI formula, RLS, or `evaluations` history table writes (those continue exactly as today)
+- No changes to Director/Parent views
