@@ -21,9 +21,18 @@ import { AllInOnePromo } from "./AllInOnePromo";
 import { EverySpotCountsPromo } from "./EverySpotCountsPromo";
 import { ScoutMode30 } from "./ScoutMode30";
 import { CaminoTeaser10 } from "./CaminoTeaser10";
+import { CaminoLandingTeaser } from "./CaminoLandingTeaser";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="camino-landing-teaser"
+      component={CaminoLandingTeaser}
+      durationInFrames={510}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="camino-teaser-10"
       component={CaminoTeaser10}
