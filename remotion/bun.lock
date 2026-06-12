@@ -7,7 +7,7 @@
       "dependencies": {
         "@remotion/bundler": "^4.0.454",
         "@remotion/cli": "^4.0.454",
-        "@remotion/compositor-linux-x64-musl": "^4.0.454",
+        "@remotion/compositor-linux-x64-musl": "^4.0.475",
         "@remotion/fonts": "^4.0.454",
         "@remotion/google-fonts": "^4.0.454",
         "@remotion/player": "^4.0.441",
@@ -135,7 +135,7 @@
 
     "@remotion/compositor-linux-x64-gnu": ["@remotion/compositor-linux-x64-gnu@4.0.454", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@remotion/compositor-linux-x64-gnu/-/compositor-linux-x64-gnu-4.0.454.tgz", { "os": "linux", "cpu": "x64" }, "sha512-RArpK81ZlhiBe3EoiQqvCqF3XqUAiJP4sEPGSRtJrOksbD5lsW19cXKE5MPUVT0niT8SsSF7b/Arqnpv1TcxsQ=="],
 
-    "@remotion/compositor-linux-x64-musl": ["@remotion/compositor-linux-x64-musl@4.0.454", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@remotion/compositor-linux-x64-musl/-/compositor-linux-x64-musl-4.0.454.tgz", { "os": "linux", "cpu": "x64" }, "sha512-2GQmNqfyw/YIFG42JsyVR7BB6jxVoAzWyK1uJ/xJ9vDQG9G+PkGad6ehTJK+5689YyuXARGPMD4p8kITix/97g=="],
+    "@remotion/compositor-linux-x64-musl": ["@remotion/compositor-linux-x64-musl@4.0.475", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@remotion/compositor-linux-x64-musl/-/compositor-linux-x64-musl-4.0.475.tgz", { "os": "linux", "cpu": "x64" }, "sha512-AH7rSnhfDutT6YFcPElgpRY7wIykvOH26B5qT0tIJ03HejFhxoT7Iw3odSbqywWJ8tx5DV6vNJjYF5ePUfN1sg=="],
 
     "@remotion/compositor-win32-x64-msvc": ["@remotion/compositor-win32-x64-msvc@4.0.454", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@remotion/compositor-win32-x64-msvc/-/compositor-win32-x64-msvc-4.0.454.tgz", { "os": "win32", "cpu": "x64" }, "sha512-qVFum4MkZaQDZlxomWCBBEnk5jmnzFCAY6kChNWMmamzJaGSBmRp7Hn/ZfL9N9Ad9KEySfnET+t1nvk1tmrOAQ=="],
 
@@ -504,6 +504,8 @@
     "@remotion/cli/@remotion/player": ["@remotion/player@4.0.454", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@remotion/player/-/player-4.0.454.tgz", { "dependencies": { "remotion": "4.0.454" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-Q4fEWapH21uEErdOfZxagOQcxbf/JGxPwqBOrW/NG9Y5qHgMMe5tBUCnr8rEqOA4txW/S4QHnN9HGWfV2nIvTg=="],
 
     "@remotion/player/remotion": ["remotion@4.0.441", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/remotion/-/remotion-4.0.441.tgz", { "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-m0010sJn8KpW4mEB7aq0CKSNnw048w5cG/uvT9AqGNMfERjXyE+uLBaX769tP/lJ0pNfUWGii/iQMkd5pHZC3A=="],
+
+    "@remotion/renderer/@remotion/compositor-linux-x64-musl": ["@remotion/compositor-linux-x64-musl@4.0.454", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@remotion/compositor-linux-x64-musl/-/compositor-linux-x64-musl-4.0.454.tgz", { "os": "linux", "cpu": "x64" }, "sha512-2GQmNqfyw/YIFG42JsyVR7BB6jxVoAzWyK1uJ/xJ9vDQG9G+PkGad6ehTJK+5689YyuXARGPMD4p8kITix/97g=="],
 
     "@remotion/renderer/source-map": ["source-map@0.8.0-beta.0", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/source-map/-/source-map-0.8.0-beta.0.tgz", { "dependencies": { "whatwg-url": "^7.0.0" } }, "sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA=="],
 

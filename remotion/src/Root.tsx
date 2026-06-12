@@ -22,9 +22,18 @@ import { EverySpotCountsPromo } from "./EverySpotCountsPromo";
 import { ScoutMode30 } from "./ScoutMode30";
 import { CaminoTeaser10 } from "./CaminoTeaser10";
 import { CaminoLandingTeaser } from "./CaminoLandingTeaser";
+import { RealityTeaser } from "./RealityTeaser";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="reality-teaser"
+      component={RealityTeaser}
+      durationInFrames={464}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="camino-landing-teaser"
       component={CaminoLandingTeaser}
