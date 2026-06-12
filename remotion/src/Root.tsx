@@ -23,9 +23,18 @@ import { ScoutMode30 } from "./ScoutMode30";
 import { CaminoTeaser10 } from "./CaminoTeaser10";
 import { CaminoLandingTeaser } from "./CaminoLandingTeaser";
 import { RealityTeaser } from "./RealityTeaser";
+import { WhatCaminoIs } from "./WhatCaminoIs";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="what-camino-is"
+      component={WhatCaminoIs}
+      durationInFrames={442}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="reality-teaser"
       component={RealityTeaser}
