@@ -24,9 +24,18 @@ import { CaminoTeaser10 } from "./CaminoTeaser10";
 import { CaminoLandingTeaser } from "./CaminoLandingTeaser";
 import { RealityTeaser } from "./RealityTeaser";
 import { WhatCaminoIs } from "./WhatCaminoIs";
+import { FounderStatement } from "./FounderStatement";
 
 export const RemotionRoot = () => (
   <>
+    <Composition
+      id="founder-statement"
+      component={FounderStatement}
+      durationInFrames={744}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="what-camino-is"
       component={WhatCaminoIs}
