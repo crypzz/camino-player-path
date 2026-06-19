@@ -130,27 +130,38 @@ function HeroSection() {
         }
         className="relative z-10 max-w-3xl mx-auto px-6 text-center py-20"
       >
-        <ScarcityChip />
+        <SpotsCounter />
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.7 }}
-          className="mt-6 font-display font-extrabold text-5xl md:text-7xl lg:text-8xl tracking-[-0.03em] leading-[0.95] text-foreground"
+          className="mt-6 font-display font-extrabold text-5xl md:text-7xl lg:text-8xl tracking-[-0.03em] leading-[0.92] text-foreground"
         >
           The Future of
           <br />
-          Player <span className="font-serif italic font-normal text-primary">Development</span>
+          Player{' '}
+          <span className="bg-gradient-to-r from-primary via-primary to-[hsl(45_100%_70%)] bg-clip-text font-serif italic font-normal text-transparent">
+            Development
+          </span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
-          className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+          transition={{ delay: 0.28, duration: 0.7 }}
+          className="mt-6 font-display text-xl md:text-2xl font-bold text-foreground"
         >
-          The digital passport for serious players. Track performance, climb verified rankings, and
-          get <span className="font-serif italic text-foreground">seen</span> by the right people.
+          Your Digital Passport to the Next Level
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.38, duration: 0.7 }}
+          className="mt-3 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+        >
+          Track performance. Unlock insights. Get discovered.
         </motion.p>
 
         <motion.div
@@ -161,19 +172,26 @@ function HeroSection() {
         >
           <button
             onClick={() => scrollTo('waitlist')}
-            className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold tracking-wide shadow-[0_0_36px_-6px_hsl(var(--primary)/0.8)] hover:shadow-[0_0_48px_-4px_hsl(var(--primary))] transition-shadow"
+            className="group inline-flex items-center gap-2 h-12 px-7 rounded-full bg-primary text-primary-foreground text-sm font-semibold tracking-wide shadow-[0_0_36px_-6px_hsl(var(--primary)/0.8)] hover:shadow-[0_0_52px_-4px_hsl(var(--primary))] transition-shadow"
           >
-            <Sparkles className="h-4 w-4" />
             Join the Waitlist
+            <motion.span
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </motion.span>
           </button>
           <button
             onClick={() => scrollTo('how')}
-            className="inline-flex items-center gap-1.5 h-12 px-5 rounded-full border border-border/60 bg-background/40 backdrop-blur-md text-sm font-semibold tracking-wide text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+            className="inline-flex items-center gap-2 h-12 px-6 rounded-full border border-border/60 bg-background/40 backdrop-blur-md text-sm font-semibold tracking-wide text-foreground hover:border-primary/40 hover:text-primary transition-colors"
           >
-            See how it works
-            <ChevronRight className="h-4 w-4" />
+            <PlayCircle className="h-4 w-4" />
+            Watch Demo
           </button>
         </motion.div>
+
 
         <motion.button
           onClick={() => scrollTo('value')}
