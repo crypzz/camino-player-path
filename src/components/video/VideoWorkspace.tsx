@@ -415,12 +415,31 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             <TabsContent value="analytics" className="m-0">
               <MatchAnalyticsDashboard stats={matchStats} players={players} />
             </TabsContent>
+            <TabsContent value="coach-notes" className="m-0">
+              <CoachingNotesPanel
+                matchId={video.id}
+                notes={coachingNotes}
+                players={players}
+                onSeek={seekTo}
+                onAdd={() => { setEditingNote(null); setNoteDialogOpen(true); }}
+                onEdit={(n) => { setEditingNote(n); setNoteDialogOpen(true); }}
+              />
+            </TabsContent>
             <TabsContent value="notes" className="m-0">
               <AnnotationsPanel videoId={video.id} currentTime={currentTime} annotations={annotations} onSeek={seekTo} />
             </TabsContent>
           </Tabs>
         </div>
       </div>
+
+      <AddNoteDialog
+        open={noteDialogOpen}
+        onOpenChange={setNoteDialogOpen}
+        matchId={video.id}
+        currentTime={currentTime}
+        players={players}
+        editNote={editingNote}
+      />
     </div>
   );
 }
