@@ -1,6 +1,14 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MouseEvent } from 'react';
+import { Twitter, Instagram, Linkedin } from 'lucide-react';
 import caminoLogo from '@/assets/camino-logo.png';
+
+const socials = [
+  { label: 'Twitter', href: 'https://twitter.com/caminodevelopment', Icon: Twitter },
+  { label: 'Instagram', href: 'https://instagram.com/caminodevelopment', Icon: Instagram },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/caminodevelopment', Icon: Linkedin },
+];
+
 
 type FooterLink = { label: string; href: string };
 
