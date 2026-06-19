@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { Trophy, Sparkles, ArrowDown, MapPin, Lock, Activity, ChevronRight } from 'lucide-react';
+import { Trophy, Sparkles, ArrowDown, MapPin, Activity, PlayCircle } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { WaitlistForm } from '@/components/WaitlistForm';
@@ -11,13 +11,17 @@ import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
 import { ScrollReveal } from '@/components/landing/ScrollReveal';
 import { ValueStrip } from '@/components/landing/ValueStrip';
 import { RoleCards } from '@/components/landing/RoleCards';
-import { HowItWorks } from '@/components/landing/HowItWorks';
 import { FAQ } from '@/components/landing/FAQ';
+import { FeatureShowcase } from '@/components/landing/FeatureShowcase';
+import { Testimonials } from '@/components/landing/Testimonials';
+import { ProcessSteps } from '@/components/landing/ProcessSteps';
+import { SpotsCounter } from '@/components/landing/SpotsCounter';
 import caminoLogo from '@/assets/camino-logo.png';
 
 const Hero3DPitch = lazy(() =>
   import('@/components/landing/Hero3DPitch').then((m) => ({ default: m.Hero3DPitch }))
 );
+
 
 // ---------- Static mock data ----------
 const mockRankings = [
