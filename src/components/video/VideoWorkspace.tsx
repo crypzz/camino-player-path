@@ -27,6 +27,7 @@ import VideoStatsPanel from './VideoStatsPanel';
 import AnnotationsPanel from './AnnotationsPanel';
 import PlayerTaggingPanel from './PlayerTaggingPanel';
 import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
+import LiveMatchField from './LiveMatchField';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
 import AIProcessingPanel from './AIProcessingPanel';
 import { toast } from 'sonner';
@@ -60,6 +61,11 @@ export default function VideoWorkspace({ video, onBack }: Props) {
 
   const players = useMemo(
     () => playersRaw.map(p => ({ id: p.id, name: p.name })),
+    [playersRaw]
+  );
+
+  const fieldPlayers = useMemo(
+    () => playersRaw.map((p, i) => ({ id: p.id, name: p.name, position: p.position, jersey: i + 1 })),
     [playersRaw]
   );
 
