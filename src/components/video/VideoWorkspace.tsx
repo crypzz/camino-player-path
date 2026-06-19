@@ -376,6 +376,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               <TabsTrigger value="analytics" className="flex-1 text-[10px] py-2">
                 <BarChart3 className="h-3 w-3 mr-1" />Analytics
               </TabsTrigger>
+              <TabsTrigger value="coach-notes" className="flex-1 text-[10px] py-2">Coach Notes ({coachingNotes.length})</TabsTrigger>
               <TabsTrigger value="notes" className="flex-1 text-[10px] py-2">Notes ({annotations.length})</TabsTrigger>
             </TabsList>
             <TabsContent value="events" className="m-0">
