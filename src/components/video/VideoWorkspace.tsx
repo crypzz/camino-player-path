@@ -55,11 +55,14 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const [liveStatus, setLiveStatus] = useState(video.status);
   const [processingStartedAt, setProcessingStartedAt] = useState(video.ai_processing_started_at);
   const [liveError, setLiveError] = useState(video.ai_processing_error);
+  const [noteDialogOpen, setNoteDialogOpen] = useState(false);
+  const [editingNote, setEditingNote] = useState<CoachingNote | null>(null);
 
   const { data: events = [] } = useVideoEvents(video.id);
   const { data: annotations = [] } = useVideoAnnotations(video.id);
   const { data: tracking = [] } = usePlayerTracking(video.id);
   const { data: matchStats = [] } = useMatchPlayerStats(video.id);
+  const { data: coachingNotes = [] } = useCoachingNotes(video.id);
   const { data: playersRaw = [] } = usePlayers();
 
   const players = useMemo(
