@@ -78,6 +78,7 @@ function DashboardRoutes() {
           <>
             <Route path="/" element={<CoachDashboard />} />
             <Route path="/coach-hub" element={<CoachHubPage />} />
+            <Route path="/coach-dashboard" element={<CoachHubPage />} />
             <Route path="/players" element={<PlayersPage />} />
             <Route path="/evaluations" element={<EvaluationsPage />} />
             <Route path="/videos" element={<VideoAnalysisPage />} />
