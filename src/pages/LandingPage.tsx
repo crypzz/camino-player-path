@@ -461,6 +461,11 @@ export default function LandingPage() {
         <ScrollReveal><ValueStrip /></ScrollReveal>
       </div>
 
+      {/* FEATURES */}
+      <div id="features" className="scroll-mt-24">
+        <FeatureShowcase />
+      </div>
+
       <ScrollReveal><RoleCards /></ScrollReveal>
 
       <div id="rankings" className="scroll-mt-24">
@@ -476,8 +481,14 @@ export default function LandingPage() {
         <ScrollReveal><VideoTrackingSection /></ScrollReveal>
       </div>
 
+      {/* HOW IT WORKS */}
       <div id="how" className="scroll-mt-24">
-        <HowItWorks />
+        <ProcessSteps />
+      </div>
+
+      {/* TESTIMONIALS */}
+      <div id="testimonials" className="scroll-mt-24">
+        <Testimonials />
       </div>
 
       <div id="faq" className="scroll-mt-24">
@@ -486,22 +497,29 @@ export default function LandingPage() {
 
       <SocialProofSection />
 
-      {/* FINAL CTA */}
+      {/* PRICING / WAITLIST */}
       <section id="waitlist" className="relative py-32 px-6 lg:px-10 overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.12),transparent_60%)]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(transparent_96%,hsl(var(--primary)/0.06)_96%),linear-gradient(90deg,transparent_96%,hsl(var(--primary)/0.06)_96%)] bg-[size:48px_48px] opacity-40" />
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">Join the inside</p>
+          <div className="mb-5 flex justify-center">
+            <SpotsCounter />
+          </div>
+          <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">Early Access Program</p>
           <h2 className="font-display font-extrabold text-4xl md:text-6xl tracking-[-0.02em] leading-[1] text-foreground">
-            Your spot is <span className="font-serif italic font-normal text-primary">waiting</span>.
+            Join now, get{' '}
+            <span className="font-serif italic font-normal text-primary">lifetime founder pricing</span>.
           </h2>
           <p className="mt-5 text-muted-foreground text-base max-w-lg mx-auto">
-            Free during early access · Calgary clubs first · We reach out when it's your turn.
+            The first 50 users get special benefits and direct access to our team. Free during early
+            access · Calgary clubs first · We reach out when it's your turn.
           </p>
           <div className="mt-10">
             <WaitlistForm variant="block" />
           </div>
         </div>
       </section>
+
 
       <SiteFooter />
     </div>
