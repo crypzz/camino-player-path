@@ -29,6 +29,7 @@ import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
 import PlayersPage from "@/pages/PlayersPage";
 import EvaluationsPage from "@/pages/EvaluationsPage";
+import CoachHubPage from "@/pages/CoachHubPage";
 import AttendancePage from "@/pages/AttendancePage";
 import VideoAnalysisPage from "@/pages/VideoAnalysisPage";
 import ReportsPage from "@/pages/ReportsPage";
