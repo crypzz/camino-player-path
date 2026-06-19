@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
+        fetchRoles(session.user.id);
       } else {
         setLoading(false);
       }
@@ -67,6 +68,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single();
     setProfile(data);
     setLoading(false);
+  }
+
+  async function fetchRoles(userId: string) {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId);
+    setRoles((data ?? []).map((r) => r.role as string));
   }
 
   const signUp = async (email: string, password: string, displayName: string) => {
