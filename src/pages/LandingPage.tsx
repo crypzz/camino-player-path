@@ -37,19 +37,7 @@ const scrollTo = (id: string) => {
 };
 
 // ---------- Subcomponents ----------
-function ScarcityChip() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4 }}
-      className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-[0.2em] text-primary backdrop-blur-sm"
-    >
-      <Lock className="h-3 w-3" strokeWidth={2.5} />
-      Limited onboarding spots
-    </motion.div>
-  );
-}
+
 
 function TopNav() {
   const [solid, setSolid] = useState(false);
