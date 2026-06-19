@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Video, ClipboardList, Dumbbell, Users, Plus, Calendar, Target,
-  CheckCircle2, Circle, Clock, PencilLine,
+  Video, ClipboardList, Dumbbell, Users, Plus, Calendar, Target, PencilLine,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
