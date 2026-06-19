@@ -351,6 +351,13 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               onCanvasClick={handleCanvasClick}
               isTagging={isTagging}
             />
+            <Button
+              size="sm"
+              onClick={() => { setEditingNote(null); setNoteDialogOpen(true); }}
+              className="absolute bottom-3 right-3 z-20 gap-1.5 shadow-lg"
+            >
+              <MessageSquarePlus className="h-4 w-4" /> Add Note
+            </Button>
           </div>
           <VideoTimeline duration={duration} currentTime={currentTime} events={events} onSeek={seekTo} />
           <EventTagger videoId={video.id} currentTime={currentTime} players={players} />
