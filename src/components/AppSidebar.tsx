@@ -84,7 +84,7 @@ const roleIcons: Record<UserRole, typeof Shield> = {
 
 export function AppSidebar() {
   const { role, setRole } = useAppContext();
-  const { signOut, profile, updateClubName } = useAuth();
+  const { signOut, profile, roles, updateClubName } = useAuth();
   const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
