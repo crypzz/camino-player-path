@@ -30,6 +30,9 @@ import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
 import LiveMatchField from './LiveMatchField';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
 import AIProcessingPanel from './AIProcessingPanel';
+import CoachingNotesPanel from './CoachingNotesPanel';
+import AddNoteDialog from './AddNoteDialog';
+import { useCoachingNotes, CoachingNote } from '@/hooks/useCoachingNotes';
 import { toast } from 'sonner';
 import { getVideoDisplayStatus, isVideoProcessingStale, isVideoProcessingStatus } from '@/lib/videoProcessing';
 
