@@ -1,6 +1,14 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MouseEvent } from 'react';
+import { Twitter, Instagram, Linkedin } from 'lucide-react';
 import caminoLogo from '@/assets/camino-logo.png';
+
+const socials = [
+  { label: 'Twitter', href: 'https://twitter.com/caminodevelopment', Icon: Twitter },
+  { label: 'Instagram', href: 'https://instagram.com/caminodevelopment', Icon: Instagram },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/caminodevelopment', Icon: Linkedin },
+];
+
 
 type FooterLink = { label: string; href: string };
 
@@ -113,7 +121,22 @@ export function SiteFooter() {
               <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-success">All systems live</span>
             </div>
+            <div className="mt-6 flex items-center gap-3">
+              {socials.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary hover:-translate-y-0.5"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
           </div>
+
 
           {/* Link columns */}
           {sections.map((s) => (

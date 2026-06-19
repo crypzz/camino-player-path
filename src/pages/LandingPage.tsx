@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { Trophy, Sparkles, ArrowDown, MapPin, Lock, Activity, ChevronRight } from 'lucide-react';
+import { Trophy, Sparkles, ArrowDown, MapPin, Activity, PlayCircle } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { WaitlistForm } from '@/components/WaitlistForm';
@@ -11,13 +11,17 @@ import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
 import { ScrollReveal } from '@/components/landing/ScrollReveal';
 import { ValueStrip } from '@/components/landing/ValueStrip';
 import { RoleCards } from '@/components/landing/RoleCards';
-import { HowItWorks } from '@/components/landing/HowItWorks';
 import { FAQ } from '@/components/landing/FAQ';
+import { FeatureShowcase } from '@/components/landing/FeatureShowcase';
+import { Testimonials } from '@/components/landing/Testimonials';
+import { ProcessSteps } from '@/components/landing/ProcessSteps';
+import { SpotsCounter } from '@/components/landing/SpotsCounter';
 import caminoLogo from '@/assets/camino-logo.png';
 
 const Hero3DPitch = lazy(() =>
   import('@/components/landing/Hero3DPitch').then((m) => ({ default: m.Hero3DPitch }))
 );
+
 
 // ---------- Static mock data ----------
 const mockRankings = [
@@ -33,19 +37,7 @@ const scrollTo = (id: string) => {
 };
 
 // ---------- Subcomponents ----------
-function ScarcityChip() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4 }}
-      className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-[0.2em] text-primary backdrop-blur-sm"
-    >
-      <Lock className="h-3 w-3" strokeWidth={2.5} />
-      Limited onboarding spots
-    </motion.div>
-  );
-}
+
 
 function TopNav() {
   const [solid, setSolid] = useState(false);
@@ -138,27 +130,38 @@ function HeroSection() {
         }
         className="relative z-10 max-w-3xl mx-auto px-6 text-center py-20"
       >
-        <ScarcityChip />
+        <SpotsCounter />
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.7 }}
-          className="mt-6 font-display font-extrabold text-5xl md:text-7xl lg:text-8xl tracking-[-0.03em] leading-[0.95] text-foreground"
+          className="mt-6 font-display font-extrabold text-5xl md:text-7xl lg:text-8xl tracking-[-0.03em] leading-[0.92] text-foreground"
         >
           The Future of
           <br />
-          Player <span className="font-serif italic font-normal text-primary">Development</span>
+          Player{' '}
+          <span className="bg-gradient-to-r from-primary via-primary to-[hsl(45_100%_70%)] bg-clip-text font-serif italic font-normal text-transparent">
+            Development
+          </span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
-          className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+          transition={{ delay: 0.28, duration: 0.7 }}
+          className="mt-6 font-display text-xl md:text-2xl font-bold text-foreground"
         >
-          The digital passport for serious players. Track performance, climb verified rankings, and
-          get <span className="font-serif italic text-foreground">seen</span> by the right people.
+          Your Digital Passport to the Next Level
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.38, duration: 0.7 }}
+          className="mt-3 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+        >
+          Track performance. Unlock insights. Get discovered.
         </motion.p>
 
         <motion.div
@@ -169,19 +172,26 @@ function HeroSection() {
         >
           <button
             onClick={() => scrollTo('waitlist')}
-            className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold tracking-wide shadow-[0_0_36px_-6px_hsl(var(--primary)/0.8)] hover:shadow-[0_0_48px_-4px_hsl(var(--primary))] transition-shadow"
+            className="group inline-flex items-center gap-2 h-12 px-7 rounded-full bg-primary text-primary-foreground text-sm font-semibold tracking-wide shadow-[0_0_36px_-6px_hsl(var(--primary)/0.8)] hover:shadow-[0_0_52px_-4px_hsl(var(--primary))] transition-shadow"
           >
-            <Sparkles className="h-4 w-4" />
             Join the Waitlist
+            <motion.span
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </motion.span>
           </button>
           <button
             onClick={() => scrollTo('how')}
-            className="inline-flex items-center gap-1.5 h-12 px-5 rounded-full border border-border/60 bg-background/40 backdrop-blur-md text-sm font-semibold tracking-wide text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+            className="inline-flex items-center gap-2 h-12 px-6 rounded-full border border-border/60 bg-background/40 backdrop-blur-md text-sm font-semibold tracking-wide text-foreground hover:border-primary/40 hover:text-primary transition-colors"
           >
-            See how it works
-            <ChevronRight className="h-4 w-4" />
+            <PlayCircle className="h-4 w-4" />
+            Watch Demo
           </button>
         </motion.div>
+
 
         <motion.button
           onClick={() => scrollTo('value')}
@@ -451,6 +461,11 @@ export default function LandingPage() {
         <ScrollReveal><ValueStrip /></ScrollReveal>
       </div>
 
+      {/* FEATURES */}
+      <div id="features" className="scroll-mt-24">
+        <FeatureShowcase />
+      </div>
+
       <ScrollReveal><RoleCards /></ScrollReveal>
 
       <div id="rankings" className="scroll-mt-24">
@@ -466,8 +481,14 @@ export default function LandingPage() {
         <ScrollReveal><VideoTrackingSection /></ScrollReveal>
       </div>
 
+      {/* HOW IT WORKS */}
       <div id="how" className="scroll-mt-24">
-        <HowItWorks />
+        <ProcessSteps />
+      </div>
+
+      {/* TESTIMONIALS */}
+      <div id="testimonials" className="scroll-mt-24">
+        <Testimonials />
       </div>
 
       <div id="faq" className="scroll-mt-24">
@@ -476,22 +497,29 @@ export default function LandingPage() {
 
       <SocialProofSection />
 
-      {/* FINAL CTA */}
+      {/* PRICING / WAITLIST */}
       <section id="waitlist" className="relative py-32 px-6 lg:px-10 overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.12),transparent_60%)]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(transparent_96%,hsl(var(--primary)/0.06)_96%),linear-gradient(90deg,transparent_96%,hsl(var(--primary)/0.06)_96%)] bg-[size:48px_48px] opacity-40" />
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">Join the inside</p>
+          <div className="mb-5 flex justify-center">
+            <SpotsCounter />
+          </div>
+          <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-primary mb-3">Early Access Program</p>
           <h2 className="font-display font-extrabold text-4xl md:text-6xl tracking-[-0.02em] leading-[1] text-foreground">
-            Your spot is <span className="font-serif italic font-normal text-primary">waiting</span>.
+            Join now, get{' '}
+            <span className="font-serif italic font-normal text-primary">lifetime founder pricing</span>.
           </h2>
           <p className="mt-5 text-muted-foreground text-base max-w-lg mx-auto">
-            Free during early access · Calgary clubs first · We reach out when it's your turn.
+            The first 50 users get special benefits and direct access to our team. Free during early
+            access · Calgary clubs first · We reach out when it's your turn.
           </p>
           <div className="mt-10">
             <WaitlistForm variant="block" />
           </div>
         </div>
       </section>
+
 
       <SiteFooter />
     </div>
