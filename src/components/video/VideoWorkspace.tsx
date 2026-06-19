@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2, Brain, Settings2, X } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain, Settings2, X, MapPin } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
@@ -27,6 +27,7 @@ import VideoStatsPanel from './VideoStatsPanel';
 import AnnotationsPanel from './AnnotationsPanel';
 import PlayerTaggingPanel from './PlayerTaggingPanel';
 import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
+import LiveMatchField from './LiveMatchField';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
 import AIProcessingPanel from './AIProcessingPanel';
 import { toast } from 'sonner';
@@ -60,6 +61,11 @@ export default function VideoWorkspace({ video, onBack }: Props) {
 
   const players = useMemo(
     () => playersRaw.map(p => ({ id: p.id, name: p.name })),
+    [playersRaw]
+  );
+
+  const fieldPlayers = useMemo(
+    () => playersRaw.map((p, i) => ({ id: p.id, name: p.name, position: p.position, jersey: i + 1 })),
     [playersRaw]
   );
 
@@ -351,6 +357,9 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               <TabsTrigger value="events" className="flex-1 text-[10px] py-2">Events ({events.length})</TabsTrigger>
               <TabsTrigger value="tracking" className="flex-1 text-[10px] py-2">Tracking</TabsTrigger>
               <TabsTrigger value="stats" className="flex-1 text-[10px] py-2">Stats</TabsTrigger>
+              <TabsTrigger value="live" className="flex-1 text-[10px] py-2">
+                <MapPin className="h-3 w-3 mr-1" />Live Field
+              </TabsTrigger>
               <TabsTrigger value="analytics" className="flex-1 text-[10px] py-2">
                 <BarChart3 className="h-3 w-3 mr-1" />Analytics
               </TabsTrigger>
@@ -358,6 +367,15 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             </TabsList>
             <TabsContent value="events" className="m-0">
               <EventsList events={events} players={players} onSeek={seekTo} />
+            </TabsContent>
+            <TabsContent value="live" className="m-0 p-3">
+              <LiveMatchField
+                tracking={tracking}
+                stats={matchStats}
+                players={fieldPlayers}
+                currentTime={currentTime}
+                duration={duration}
+              />
             </TabsContent>
             <TabsContent value="tracking" className="m-0">
               <PlayerTaggingPanel
