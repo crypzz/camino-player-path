@@ -84,7 +84,7 @@ const roleIcons: Record<UserRole, typeof Shield> = {
 
 export function AppSidebar() {
   const { role, setRole } = useAppContext();
-  const { signOut, profile, updateClubName } = useAuth();
+  const { signOut, profile, roles, updateClubName } = useAuth();
   const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
@@ -255,16 +255,19 @@ export function AppSidebar() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="start" className="w-48">
-            {(['coach', 'player', 'parent', 'director'] as UserRole[]).map((r) => {
-              const Icon = roleIcons[r];
-              return (
-                <DropdownMenuItem key={r} onClick={() => { setRole(r); navigate('/dashboard'); }} className={r === role ? 'bg-accent' : ''}>
-                  <Icon className="h-3.5 w-3.5 mr-2" />
-                  {roleLabels[r]} View
-                </DropdownMenuItem>
-              );
-            })}
+            {(['coach', 'player', 'parent', 'director'] as UserRole[])
+              .filter((r) => roles.includes(r))
+              .map((r) => {
+                const Icon = roleIcons[r];
+                return (
+                  <DropdownMenuItem key={r} onClick={() => { setRole(r); navigate('/dashboard'); }} className={r === role ? 'bg-accent' : ''}>
+                    <Icon className="h-3.5 w-3.5 mr-2" />
+                    {roleLabels[r]} View
+                  </DropdownMenuItem>
+                );
+              })}
           </DropdownMenuContent>
+
         </DropdownMenu>
         <button
           onClick={handleSignOut}
