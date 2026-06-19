@@ -357,6 +357,9 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               <TabsTrigger value="events" className="flex-1 text-[10px] py-2">Events ({events.length})</TabsTrigger>
               <TabsTrigger value="tracking" className="flex-1 text-[10px] py-2">Tracking</TabsTrigger>
               <TabsTrigger value="stats" className="flex-1 text-[10px] py-2">Stats</TabsTrigger>
+              <TabsTrigger value="live" className="flex-1 text-[10px] py-2">
+                <MapPin className="h-3 w-3 mr-1" />Live Field
+              </TabsTrigger>
               <TabsTrigger value="analytics" className="flex-1 text-[10px] py-2">
                 <BarChart3 className="h-3 w-3 mr-1" />Analytics
               </TabsTrigger>
@@ -364,6 +367,15 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             </TabsList>
             <TabsContent value="events" className="m-0">
               <EventsList events={events} players={players} onSeek={seekTo} />
+            </TabsContent>
+            <TabsContent value="live" className="m-0 p-3">
+              <LiveMatchField
+                tracking={tracking}
+                stats={matchStats}
+                players={fieldPlayers}
+                currentTime={currentTime}
+                duration={duration}
+              />
             </TabsContent>
             <TabsContent value="tracking" className="m-0">
               <PlayerTaggingPanel
