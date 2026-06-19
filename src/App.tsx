@@ -29,6 +29,7 @@ import PlayerDashboard from "@/pages/PlayerDashboard";
 import ParentDashboard from "@/pages/ParentDashboard";
 import PlayersPage from "@/pages/PlayersPage";
 import EvaluationsPage from "@/pages/EvaluationsPage";
+import CoachHubPage from "@/pages/CoachHubPage";
 import AttendancePage from "@/pages/AttendancePage";
 import VideoAnalysisPage from "@/pages/VideoAnalysisPage";
 import ReportsPage from "@/pages/ReportsPage";
@@ -76,6 +77,7 @@ function DashboardRoutes() {
         {role === 'coach' && (
           <>
             <Route path="/" element={<CoachDashboard />} />
+            <Route path="/coach-hub" element={<CoachHubPage />} />
             <Route path="/players" element={<PlayersPage />} />
             <Route path="/evaluations" element={<EvaluationsPage />} />
             <Route path="/videos" element={<VideoAnalysisPage />} />

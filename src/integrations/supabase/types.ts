@@ -473,6 +473,64 @@ export type Database = {
           },
         ]
       }
+      coaching_notes: {
+        Row: {
+          coach_id: string
+          created_at: string
+          id: string
+          match_id: string | null
+          note: string
+          player_id: string | null
+          timestamp_seconds: number | null
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          note: string
+          player_id?: string | null
+          timestamp_seconds?: number | null
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          note?: string
+          player_id?: string | null
+          timestamp_seconds?: number | null
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_notes_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "match_videos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_notes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_notes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversation_participants: {
         Row: {
           conversation_id: string
@@ -593,6 +651,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      drills: {
+        Row: {
+          coach_id: string
+          created_at: string
+          description: string | null
+          difficulty_level: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       email_send_log: {
         Row: {
@@ -1474,6 +1562,91 @@ export type Database = {
         }
         Relationships: []
       }
+      session_drills: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          drill_id: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          drill_id: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          drill_id?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_drills_drill_id_fkey"
+            columns: ["drill_id"]
+            isOneToOne: false
+            referencedRelation: "drills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_drills_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "training_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_players: {
+        Row: {
+          created_at: string
+          id: string
+          player_id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          player_id: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          player_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_players_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "training_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -1524,6 +1697,39 @@ export type Database = {
           created_by?: string
           id?: string
           name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      training_sessions: {
+        Row: {
+          coach_id: string
+          created_at: string
+          description: string | null
+          focus_area: string | null
+          id: string
+          name: string
+          session_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          focus_area?: string | null
+          id?: string
+          name: string
+          session_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          focus_area?: string | null
+          id?: string
+          name?: string
+          session_date?: string | null
           updated_at?: string
         }
         Relationships: []

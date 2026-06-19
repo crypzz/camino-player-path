@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BarChart3, Wand2, Brain, Settings2, X, MapPin } from 'lucide-react';
+import { ArrowLeft, BarChart3, Wand2, Brain, Settings2, X, MapPin, MessageSquarePlus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
@@ -30,6 +30,9 @@ import MatchAnalyticsDashboard from './MatchAnalyticsDashboard';
 import LiveMatchField from './LiveMatchField';
 import ProcessingStatusBadge from './ProcessingStatusBadge';
 import AIProcessingPanel from './AIProcessingPanel';
+import CoachingNotesPanel from './CoachingNotesPanel';
+import AddNoteDialog from './AddNoteDialog';
+import { useCoachingNotes, CoachingNote } from '@/hooks/useCoachingNotes';
 import { toast } from 'sonner';
 import { getVideoDisplayStatus, isVideoProcessingStale, isVideoProcessingStatus } from '@/lib/videoProcessing';
 
@@ -52,11 +55,14 @@ export default function VideoWorkspace({ video, onBack }: Props) {
   const [liveStatus, setLiveStatus] = useState(video.status);
   const [processingStartedAt, setProcessingStartedAt] = useState(video.ai_processing_started_at);
   const [liveError, setLiveError] = useState(video.ai_processing_error);
+  const [noteDialogOpen, setNoteDialogOpen] = useState(false);
+  const [editingNote, setEditingNote] = useState<CoachingNote | null>(null);
 
   const { data: events = [] } = useVideoEvents(video.id);
   const { data: annotations = [] } = useVideoAnnotations(video.id);
   const { data: tracking = [] } = usePlayerTracking(video.id);
   const { data: matchStats = [] } = useMatchPlayerStats(video.id);
+  const { data: coachingNotes = [] } = useCoachingNotes(video.id);
   const { data: playersRaw = [] } = usePlayers();
 
   const players = useMemo(
@@ -345,6 +351,13 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               onCanvasClick={handleCanvasClick}
               isTagging={isTagging}
             />
+            <Button
+              size="sm"
+              onClick={() => { setEditingNote(null); setNoteDialogOpen(true); }}
+              className="absolute bottom-3 right-3 z-20 gap-1.5 shadow-lg"
+            >
+              <MessageSquarePlus className="h-4 w-4" /> Add Note
+            </Button>
           </div>
           <VideoTimeline duration={duration} currentTime={currentTime} events={events} onSeek={seekTo} />
           <EventTagger videoId={video.id} currentTime={currentTime} players={players} />
@@ -363,6 +376,7 @@ export default function VideoWorkspace({ video, onBack }: Props) {
               <TabsTrigger value="analytics" className="flex-1 text-[10px] py-2">
                 <BarChart3 className="h-3 w-3 mr-1" />Analytics
               </TabsTrigger>
+              <TabsTrigger value="coach-notes" className="flex-1 text-[10px] py-2">Coach Notes ({coachingNotes.length})</TabsTrigger>
               <TabsTrigger value="notes" className="flex-1 text-[10px] py-2">Notes ({annotations.length})</TabsTrigger>
             </TabsList>
             <TabsContent value="events" className="m-0">
@@ -401,12 +415,31 @@ export default function VideoWorkspace({ video, onBack }: Props) {
             <TabsContent value="analytics" className="m-0">
               <MatchAnalyticsDashboard stats={matchStats} players={players} />
             </TabsContent>
+            <TabsContent value="coach-notes" className="m-0">
+              <CoachingNotesPanel
+                matchId={video.id}
+                notes={coachingNotes}
+                players={players}
+                onSeek={seekTo}
+                onAdd={() => { setEditingNote(null); setNoteDialogOpen(true); }}
+                onEdit={(n) => { setEditingNote(n); setNoteDialogOpen(true); }}
+              />
+            </TabsContent>
             <TabsContent value="notes" className="m-0">
               <AnnotationsPanel videoId={video.id} currentTime={currentTime} annotations={annotations} onSeek={seekTo} />
             </TabsContent>
           </Tabs>
         </div>
       </div>
+
+      <AddNoteDialog
+        open={noteDialogOpen}
+        onOpenChange={setNoteDialogOpen}
+        matchId={video.id}
+        currentTime={currentTime}
+        players={players}
+        editNote={editingNote}
+      />
     </div>
   );
 }

@@ -37,6 +37,7 @@ const sharedLinks = [
 
 const coachLinks = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Coach Hub', url: '/dashboard/coach-hub', icon: ClipboardList },
   { title: 'Players', url: '/dashboard/players', icon: Users },
   { title: 'Evaluations', url: '/dashboard/evaluations', icon: ClipboardList },
   { title: 'Video Analysis', url: '/dashboard/videos', icon: Video },
