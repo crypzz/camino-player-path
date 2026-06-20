@@ -307,7 +307,10 @@ export default function AnalysisDetailPage() {
               </TableBody>
             </Table>
           )}
-        </div>
+      </div>
+
+      <VideoStatsCharts stats={stats} playerName={playerName} />
+
       </div>
 
       {/* Tag Player Modal */}
