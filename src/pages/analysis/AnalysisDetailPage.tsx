@@ -18,6 +18,7 @@ import {
 import {
   MatchRow, TrackRow, PlayerVideoRow, VideoStatRow, statusStyles, API_URL,
 } from "@/lib/videoApi";
+import VideoStatsCharts from "./VideoStatsCharts";
 
 export default function AnalysisDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -306,7 +307,10 @@ export default function AnalysisDetailPage() {
               </TableBody>
             </Table>
           )}
-        </div>
+      </div>
+
+      <VideoStatsCharts stats={stats} playerName={playerName} />
+
       </div>
 
       {/* Tag Player Modal */}
