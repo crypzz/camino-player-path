@@ -18,6 +18,7 @@ import {
 import {
   MatchRow, TrackRow, PlayerVideoRow, VideoStatRow, statusStyles, API_URL,
 } from "@/lib/videoApi";
+import VideoStatsCharts from "./VideoStatsCharts";
 
 export default function AnalysisDetailPage() {
   const { id } = useParams<{ id: string }>();
