@@ -2,7 +2,7 @@ import { useState } from 'react';
 import caminoLogo from '@/assets/camino-logo.png';
 import {
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck,
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle, Pencil, Check, X
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle, Pencil, Check, X, Film
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -41,6 +41,7 @@ const coachLinks = [
   { title: 'Players', url: '/dashboard/players', icon: Users },
   { title: 'Evaluations', url: '/dashboard/evaluations', icon: ClipboardList },
   { title: 'Video Analysis', url: '/dashboard/videos', icon: Video },
+  { title: 'Match Analysis', url: '/dashboard/analysis', icon: Film },
   { title: 'Reports', url: '/dashboard/reports', icon: FileText },
   { title: 'Attendance', url: '/dashboard/attendance', icon: CalendarCheck },
   { title: 'Fitness Tests', url: '/dashboard/fitness', icon: Activity },

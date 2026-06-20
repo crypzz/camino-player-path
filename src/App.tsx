@@ -48,6 +48,9 @@ import DirectorPlayersPage from "@/pages/DirectorPlayersPage";
 import DirectorCoachesPage from "@/pages/DirectorCoachesPage";
 import CommunicationsPage from "@/pages/CommunicationsPage";
 import CVBuilderPage from "@/pages/CVBuilderPage";
+import AnalysisListPage from "@/pages/analysis/AnalysisListPage";
+import AnalysisUploadPage from "@/pages/analysis/AnalysisUploadPage";
+import AnalysisDetailPage from "@/pages/analysis/AnalysisDetailPage";
 import { SolutionsLandingRoute, RegionLandingRoute } from "@/pages/seo/SeoRoutes";
 import NotFound from "@/pages/NotFound";
 
@@ -82,6 +85,9 @@ function DashboardRoutes() {
             <Route path="/players" element={<PlayersPage />} />
             <Route path="/evaluations" element={<EvaluationsPage />} />
             <Route path="/videos" element={<VideoAnalysisPage />} />
+            <Route path="/analysis" element={<AnalysisListPage />} />
+            <Route path="/analysis/upload" element={<AnalysisUploadPage />} />
+            <Route path="/analysis/:id" element={<AnalysisDetailPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/fitness" element={<FitnessTestPage />} />

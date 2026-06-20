@@ -1028,6 +1028,42 @@ export type Database = {
         }
         Relationships: []
       }
+      matches: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          date: string
+          id: string
+          name: string
+          notes: string | null
+          status: string | null
+          team: string | null
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          date: string
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string | null
+          team?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          date?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string | null
+          team?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -1384,6 +1420,33 @@ export type Database = {
           },
         ]
       }
+      players_video: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          id: string
+          name: string
+          position: string | null
+          team: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          position?: string | null
+          team?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          position?: string | null
+          team?: string | null
+        }
+        Relationships: []
+      }
       post_comments: {
         Row: {
           content: string
@@ -1701,6 +1764,45 @@ export type Database = {
         }
         Relationships: []
       }
+      tracks: {
+        Row: {
+          created_at: string | null
+          id: string
+          match_id: string | null
+          player_id: string | null
+          track_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          match_id?: string | null
+          player_id?: string | null
+          track_id: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          match_id?: string | null
+          player_id?: string | null
+          track_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracks_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracks_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players_video"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_sessions: {
         Row: {
           coach_id: string
@@ -1847,6 +1949,54 @@ export type Database = {
             columns: ["video_id"]
             isOneToOne: false
             referencedRelation: "match_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_stats: {
+        Row: {
+          created_at: string | null
+          distance_m: number | null
+          id: string
+          match_id: string | null
+          player_id: string | null
+          possession_seconds: number | null
+          touches: number | null
+          track_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          distance_m?: number | null
+          id?: string
+          match_id?: string | null
+          player_id?: string | null
+          possession_seconds?: number | null
+          touches?: number | null
+          track_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          distance_m?: number | null
+          id?: string
+          match_id?: string | null
+          player_id?: string | null
+          possession_seconds?: number | null
+          touches?: number | null
+          track_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_stats_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players_video"
             referencedColumns: ["id"]
           },
         ]
