@@ -32,7 +32,7 @@ export const MainVideo: React.FC = () => {
           <ProblemReel />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
-          presentation={fade({ outerEnterStyle: { background: COLORS.yellow } })}
+          presentation={fade()}
           timing={linearTiming({ durationInFrames: 10 })}
         />
 
