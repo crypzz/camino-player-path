@@ -4,51 +4,59 @@ import { fade } from "@remotion/transitions/fade";
 import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
 import { PersistentBackground } from "./components/PersistentBackground";
-import { Scene1Problem } from "./scenes/Scene1Problem";
-import { Scene2Camino } from "./scenes/Scene2Camino";
-import { Scene3Transform } from "./scenes/Scene3Transform";
-import { Scene4CTA } from "./scenes/Scene4CTA";
+import { HookReel } from "./scenes/reel/HookReel";
+import { ProblemReel } from "./scenes/reel/ProblemReel";
+import { SolutionReel } from "./scenes/reel/SolutionReel";
+import { ProofReel } from "./scenes/reel/ProofReel";
+import { CloseReel } from "./scenes/reel/CloseReel";
 import { COLORS } from "./theme";
 
-// Yellow flash overlay used between problem -> solution
-const Flash: React.FC = () => (
-  <AbsoluteFill style={{ background: COLORS.yellow }} />
-);
-
+// Viral 30s reel: Hook -> Problem -> Solution -> Proof -> Close.
+// 30fps. Fast cuts, documentary feel.
 export const MainVideo: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: COLORS.bg }}>
       <PersistentBackground />
       <TransitionSeries>
-        <TransitionSeries.Sequence durationInFrames={220}>
-          <Scene1Problem />
+        {/* HOOK 0-3s */}
+        <TransitionSeries.Sequence durationInFrames={95}>
+          <HookReel />
         </TransitionSeries.Sequence>
-
         <TransitionSeries.Transition
           presentation={wipe({ direction: "from-bottom" })}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 22 })}
+          timing={springTiming({ config: { damping: 200 }, durationInFrames: 10 })}
         />
 
-        <TransitionSeries.Sequence durationInFrames={250}>
-          <Scene2Camino />
+        {/* PROBLEM 3-8s */}
+        <TransitionSeries.Sequence durationInFrames={155}>
+          <ProblemReel />
         </TransitionSeries.Sequence>
-
-        <TransitionSeries.Transition
-          presentation={slide({ direction: "from-right" })}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 22 })}
-        />
-
-        <TransitionSeries.Sequence durationInFrames={250}>
-          <Scene3Transform />
-        </TransitionSeries.Sequence>
-
         <TransitionSeries.Transition
           presentation={fade()}
-          timing={linearTiming({ durationInFrames: 18 })}
+          timing={linearTiming({ durationInFrames: 10 })}
         />
 
-        <TransitionSeries.Sequence durationInFrames={240}>
-          <Scene4CTA />
+        {/* SOLUTION 8-14s */}
+        <TransitionSeries.Sequence durationInFrames={185}>
+          <SolutionReel />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={slide({ direction: "from-right" })}
+          timing={springTiming({ config: { damping: 200 }, durationInFrames: 12 })}
+        />
+
+        {/* PROOF 14-22s */}
+        <TransitionSeries.Sequence durationInFrames={245}>
+          <ProofReel />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: 12 })}
+        />
+
+        {/* CLOSE 22-30s */}
+        <TransitionSeries.Sequence durationInFrames={264}>
+          <CloseReel />
         </TransitionSeries.Sequence>
       </TransitionSeries>
     </AbsoluteFill>
