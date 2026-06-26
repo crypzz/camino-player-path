@@ -160,7 +160,9 @@ const App = () => (
               {/* Waitlist mode: lock down public app surfaces */}
               <Route path="/auth" element={<Navigate to="/" replace />} />
               <Route path="/cv/:slug" element={<Navigate to="/" replace />} />
-              <Route path="/player/:id" element={<Navigate to="/" replace />} />
+              {/* Public player discovery */}
+              <Route path="/discover" element={<DiscoverPlayersPage />} />
+              <Route path="/player/:id" element={<PublicProfilePage />} />
               <Route path="/dashboard/*" element={
                 <ProtectedRoute>
                   <DashboardRoutes />
