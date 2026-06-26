@@ -1258,6 +1258,42 @@ export type Database = {
           },
         ]
       }
+      player_follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          id: string
+          player_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          id?: string
+          player_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          id?: string
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_follows_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_follows_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_tracking: {
         Row: {
           bbox_height: number
@@ -1333,15 +1369,19 @@ export type Database = {
       }
       players: {
         Row: {
+          achievements: string[]
           age: number
           age_group: string | null
           attendance: number | null
+          available_for_transfer: boolean
           avatar: string | null
+          bio: string | null
           created_at: string
           created_by: string
           height: number | null
           id: string
           is_public: boolean | null
+          jersey_number: number | null
           join_date: string
           location: string | null
           mental: Json
@@ -1351,23 +1391,29 @@ export type Database = {
           physical: Json
           position: string
           preferred_foot: string | null
+          strengths: string[]
           tactical: Json
           team: string
           team_id: string | null
           technical: Json
           updated_at: string
+          verification_badge: boolean
           weight: number | null
         }
         Insert: {
+          achievements?: string[]
           age: number
           age_group?: string | null
           attendance?: number | null
+          available_for_transfer?: boolean
           avatar?: string | null
+          bio?: string | null
           created_at?: string
           created_by: string
           height?: number | null
           id?: string
           is_public?: boolean | null
+          jersey_number?: number | null
           join_date?: string
           location?: string | null
           mental?: Json
@@ -1377,23 +1423,29 @@ export type Database = {
           physical?: Json
           position: string
           preferred_foot?: string | null
+          strengths?: string[]
           tactical?: Json
           team: string
           team_id?: string | null
           technical?: Json
           updated_at?: string
+          verification_badge?: boolean
           weight?: number | null
         }
         Update: {
+          achievements?: string[]
           age?: number
           age_group?: string | null
           attendance?: number | null
+          available_for_transfer?: boolean
           avatar?: string | null
+          bio?: string | null
           created_at?: string
           created_by?: string
           height?: number | null
           id?: string
           is_public?: boolean | null
+          jersey_number?: number | null
           join_date?: string
           location?: string | null
           mental?: Json
@@ -1403,11 +1455,13 @@ export type Database = {
           physical?: Json
           position?: string
           preferred_foot?: string | null
+          strengths?: string[]
           tactical?: Json
           team?: string
           team_id?: string | null
           technical?: Json
           updated_at?: string
+          verification_badge?: boolean
           weight?: number | null
         }
         Relationships: [
@@ -2035,34 +2089,61 @@ export type Database = {
     Views: {
       public_player_cards: {
         Row: {
+          achievements: string[] | null
+          age: number | null
           age_group: string | null
+          available_for_transfer: boolean | null
           avatar: string | null
+          bio: string | null
           id: string | null
           is_public: boolean | null
+          location: string | null
+          name: string | null
+          nationality: string | null
           overall_rating: number | null
           position: string | null
           preferred_foot: string | null
+          strengths: string[] | null
           team: string | null
+          verification_badge: boolean | null
         }
         Insert: {
+          achievements?: string[] | null
+          age?: number | null
           age_group?: string | null
+          available_for_transfer?: boolean | null
           avatar?: string | null
+          bio?: string | null
           id?: string | null
           is_public?: boolean | null
+          location?: string | null
+          name?: string | null
+          nationality?: string | null
           overall_rating?: number | null
           position?: string | null
           preferred_foot?: string | null
+          strengths?: string[] | null
           team?: string | null
+          verification_badge?: boolean | null
         }
         Update: {
+          achievements?: string[] | null
+          age?: number | null
           age_group?: string | null
+          available_for_transfer?: boolean | null
           avatar?: string | null
+          bio?: string | null
           id?: string | null
           is_public?: boolean | null
+          location?: string | null
+          name?: string | null
+          nationality?: string | null
           overall_rating?: number | null
           position?: string | null
           preferred_foot?: string | null
+          strengths?: string[] | null
           team?: string | null
+          verification_badge?: boolean | null
         }
         Relationships: []
       }
