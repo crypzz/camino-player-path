@@ -16,6 +16,7 @@ const sections: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Platform',
     links: [
+      { label: 'Discover Players', href: '/discover' },
       { label: 'Camino Player Index', href: '/platform/cpi' },
       { label: 'Video Analysis', href: '/platform/video-analysis' },
       { label: 'Evaluations', href: '/platform/evaluations' },
