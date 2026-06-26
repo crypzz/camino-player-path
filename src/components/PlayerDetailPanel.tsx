@@ -281,6 +281,10 @@ export function PlayerDetailPanel({ player, onClose }: Props) {
               </div>
             ))}
           </TabsContent>
+
+          <TabsContent value="profile" className="mt-3">
+            <PlayerDiscoveryEditor playerId={player.id} />
+          </TabsContent>
         </Tabs>
       </motion.div>
     </AnimatePresence>
