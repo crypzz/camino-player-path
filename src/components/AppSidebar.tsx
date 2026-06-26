@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const sharedLinks = [
+  { title: 'Discover Players', url: '/discover', icon: Search },
   { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
   { title: 'CMSA Standings', url: '/dashboard/cmsa-standings', icon: Shield },
   { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
