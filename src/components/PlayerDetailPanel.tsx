@@ -191,6 +191,7 @@ export function PlayerDetailPanel({ player, onClose }: Props) {
             <TabsTrigger value="progress" className="flex-1 text-[11px] h-7">Progress</TabsTrigger>
             <TabsTrigger value="goals" className="flex-1 text-[11px] h-7">Goals</TabsTrigger>
             <TabsTrigger value="videos" className="flex-1 text-[11px] h-7">Videos</TabsTrigger>
+            <TabsTrigger value="profile" className="flex-1 text-[11px] h-7">Profile</TabsTrigger>
           </TabsList>
 
           <TabsContent value="skills" className="space-y-2 mt-3">
