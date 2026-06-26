@@ -40,6 +40,7 @@ import LeaderboardPage from "@/pages/LeaderboardPage";
 import CMSAStandingsPage from "@/pages/CMSAStandingsPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
+import DiscoverPlayersPage from "@/pages/DiscoverPlayersPage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
 import DirectorDashboard from "@/pages/DirectorDashboard";
 import DirectorLeaderboardPage from "@/pages/DirectorLeaderboardPage";
