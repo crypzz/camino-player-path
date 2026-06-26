@@ -40,6 +40,7 @@ import LeaderboardPage from "@/pages/LeaderboardPage";
 import CMSAStandingsPage from "@/pages/CMSAStandingsPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
+import DiscoverPlayersPage from "@/pages/DiscoverPlayersPage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
 import DirectorDashboard from "@/pages/DirectorDashboard";
 import DirectorLeaderboardPage from "@/pages/DirectorLeaderboardPage";
@@ -160,7 +161,9 @@ const App = () => (
               {/* Waitlist mode: lock down public app surfaces */}
               <Route path="/auth" element={<Navigate to="/" replace />} />
               <Route path="/cv/:slug" element={<Navigate to="/" replace />} />
-              <Route path="/player/:id" element={<Navigate to="/" replace />} />
+              {/* Public player discovery */}
+              <Route path="/discover" element={<DiscoverPlayersPage />} />
+              <Route path="/player/:id" element={<PublicProfilePage />} />
               <Route path="/dashboard/*" element={
                 <ProtectedRoute>
                   <DashboardRoutes />

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import caminoLogo from '@/assets/camino-logo.png';
 import {
   LayoutDashboard, Users, ClipboardList, Video, Target, CalendarCheck,
-  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle, Pencil, Check, X, Film
+  User, TrendingUp, Shield, ChevronDown, FileText, LogOut, Trophy, Newspaper, Activity, Building2, Star, MessageCircle, Pencil, Check, X, Film, Search
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const sharedLinks = [
+  { title: 'Discover Players', url: '/discover', icon: Search },
   { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
   { title: 'CMSA Standings', url: '/dashboard/cmsa-standings', icon: Shield },
   { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },

@@ -3,6 +3,7 @@ import { Player, calculateCPI, getCategoryAverage, TechnicalMetrics, TacticalMet
 import { PlayerRadarChart } from '@/components/PlayerRadarChart';
 import { CPIScoreDisplay } from '@/components/CPIScoreDisplay';
 import { CPIProgressChart } from '@/components/CPIProgressChart';
+import { PlayerDiscoveryEditor } from '@/components/player/PlayerDiscoveryEditor';
 import { useUpdatePlayer } from '@/hooks/usePlayers';
 import { X, Pencil, Save, XCircle, Video } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -191,6 +192,7 @@ export function PlayerDetailPanel({ player, onClose }: Props) {
             <TabsTrigger value="progress" className="flex-1 text-[11px] h-7">Progress</TabsTrigger>
             <TabsTrigger value="goals" className="flex-1 text-[11px] h-7">Goals</TabsTrigger>
             <TabsTrigger value="videos" className="flex-1 text-[11px] h-7">Videos</TabsTrigger>
+            <TabsTrigger value="profile" className="flex-1 text-[11px] h-7">Profile</TabsTrigger>
           </TabsList>
 
           <TabsContent value="skills" className="space-y-2 mt-3">
@@ -279,6 +281,10 @@ export function PlayerDetailPanel({ player, onClose }: Props) {
                 </div>
               </div>
             ))}
+          </TabsContent>
+
+          <TabsContent value="profile" className="mt-3">
+            <PlayerDiscoveryEditor playerId={player.id} />
           </TabsContent>
         </Tabs>
       </motion.div>
