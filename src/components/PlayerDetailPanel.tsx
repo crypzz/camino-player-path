@@ -3,6 +3,7 @@ import { Player, calculateCPI, getCategoryAverage, TechnicalMetrics, TacticalMet
 import { PlayerRadarChart } from '@/components/PlayerRadarChart';
 import { CPIScoreDisplay } from '@/components/CPIScoreDisplay';
 import { CPIProgressChart } from '@/components/CPIProgressChart';
+import { PlayerDiscoveryEditor } from '@/components/player/PlayerDiscoveryEditor';
 import { useUpdatePlayer } from '@/hooks/usePlayers';
 import { X, Pencil, Save, XCircle, Video } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
