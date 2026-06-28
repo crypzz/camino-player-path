@@ -192,7 +192,7 @@ export const Scene3AI: React.FC = () => {
               );
             })}
           </div>
-          <Heatmap delay={205 + 30} />
+          <Heatmap delay={30} />
           <div style={{ fontFamily: display, color: WHITE, fontWeight: 800, fontSize: 50, textAlign: "center", marginTop: 8 }}>
             Every touch. <span style={{ color: YELLOW, textShadow: glow(YELLOW, 18) }}>Instantly tracked.</span>
           </div>
