@@ -99,7 +99,7 @@ const Scene3: React.FC = () => {
         The numbers don&apos;t lie
       </div>
       <StatCard delay={14} headline={<><CountUp from={21} to={29} delay={20} suffix="%" /></>} sub="of Canadians now play the game" />
-      <StatCard delay={44} headline={<><CountUp from={0} to={1.2 as unknown as number} delay={50} suffix="M" /></>} sub="registered players nationwide" />
+      <StatCard delay={44} headline={<><CountUp from={0} to={1.2} delay={50} decimals={1} suffix="M" /></>} sub="registered players nationwide" />
       <StatCard delay={74} headline="Soccer > Hockey" sub="It just passed hockey in participation" />
       <StatCard delay={104} headline={<><CountUp from={0} to={50} delay={110} suffix="%+" /></>} sub="of them are under 18" />
     </AbsoluteFill>
