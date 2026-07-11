@@ -39,11 +39,7 @@ const Scene1: React.FC = () => (
     <Sequence from={62} durationInFrames={58}>
       <AbsoluteFill style={{ opacity: useFade(58) }}>
         <PhotoBG src={IMAGES.crowd} duration={58} zoomFrom={1.2} zoomTo={1.3} panY={10} overlay={0.82} align="top" />
-        <Caption delay={4} size={100} align="center" bottom={0} >
-          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 80px" }}>
-            And now it&apos;s over.
-          </div>
-        </Caption>
+        <CenterTitle delay={4} size={104}>And now it&apos;s over.</CenterTitle>
       </AbsoluteFill>
     </Sequence>
   </AbsoluteFill>
