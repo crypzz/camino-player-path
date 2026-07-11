@@ -26,28 +26,28 @@ const VIDEO_SLOTS: { label: string; src?: string }[] = [
 ];
 
 /* ---------- Scene 1: best World Cup ever → and now it's over ---------- */
-const Scene1: React.FC = () => {
-  const frame = useCurrentFrame();
-  return (
-    <AbsoluteFill style={{ backgroundColor: BG }}>
-      {frame < 62 ? (
-        <AbsoluteFill style={{ opacity: useFade(62) }}>
-          <PhotoBG src={IMAGES.crowd} duration={62} zoomFrom={1.08} zoomTo={1.2} panY={-22} overlay={0.5} align="top" />
-          <Caption delay={6} size={82} highlight="best World Cup ever.">
-            Canada just had its
-          </Caption>
-        </AbsoluteFill>
-      ) : (
-        <Sequence from={62} durationInFrames={58}>
-          <AbsoluteFill style={{ opacity: useFade(58) }}>
-            <PhotoBG src={IMAGES.crowd} duration={58} zoomFrom={1.2} zoomTo={1.3} panY={10} overlay={0.82} align="top" />
-            <CenterTitle delay={4} size={104}>And now it&apos;s over.</CenterTitle>
-          </AbsoluteFill>
-        </Sequence>
-      )}
-    </AbsoluteFill>
-  );
-};
+const Scene1Beat2: React.FC = () => (
+  <AbsoluteFill style={{ opacity: useFade(58) }}>
+    <PhotoBG src={IMAGES.crowd} duration={58} zoomFrom={1.2} zoomTo={1.3} panY={10} overlay={0.82} align="top" />
+    <CenterTitle delay={4} size={104}>And now it&apos;s over.</CenterTitle>
+  </AbsoluteFill>
+);
+
+const Scene1Beat1: React.FC = () => (
+  <AbsoluteFill style={{ opacity: useFade(62) }}>
+    <PhotoBG src={IMAGES.crowd} duration={62} zoomFrom={1.08} zoomTo={1.2} panY={-22} overlay={0.5} align="top" />
+    <Caption delay={6} size={82} highlight="best World Cup ever.">
+      Canada just had its
+    </Caption>
+  </AbsoluteFill>
+);
+
+const Scene1: React.FC = () => (
+  <AbsoluteFill style={{ backgroundColor: BG }}>
+    <Sequence durationInFrames={62}><Scene1Beat1 /></Sequence>
+    <Sequence from={62} durationInFrames={58}><Scene1Beat2 /></Sequence>
+  </AbsoluteFill>
+);
 
 /* ---------- Scene 2: the world moves on ---------- */
 const Scene2: React.FC = () => (
