@@ -8,7 +8,7 @@ export const RemotionRoot = () => (
     <Composition
       id="main"
       component={MainVideo}
-      durationInFrames={900}
+      durationInFrames={930}
       fps={30}
       width={1080}
       height={1920}
@@ -24,7 +24,7 @@ export const RemotionRoot = () => (
     <Composition
       id="worldcup-legacy"
       component={WorldCupLegacyReel}
-      durationInFrames={900}
+      durationInFrames={930}
       fps={30}
       width={1080}
       height={1920}
