@@ -21,5 +21,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="worldcup-legacy"
+      component={WorldCupLegacyReel}
+      durationInFrames={900}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
