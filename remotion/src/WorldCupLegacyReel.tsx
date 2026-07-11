@@ -107,24 +107,28 @@ const Scene3: React.FC = () => {
 };
 
 /* ---------- Scene 4: system is broken ---------- */
+const Scene4Beat1: React.FC = () => (
+  <AbsoluteFill style={{ opacity: useFade(92) }}>
+    <PhotoBG src={IMAGES.grassroots} duration={92} zoomFrom={1.06} zoomTo={1.2} panY={16} overlay={0.62} />
+    <Caption delay={8} size={78} highlight="the system to develop them is broken.">
+      Record numbers are playing.<br />But
+    </Caption>
+  </AbsoluteFill>
+);
+
+const Scene4Beat2: React.FC = () => (
+  <AbsoluteFill style={{ opacity: useFade(88) }}>
+    <PhotoBG src={IMAGES.grassroots2} duration={88} zoomFrom={1.08} zoomTo={1.22} panX={20} overlay={0.68} />
+    <Caption delay={6} size={64} highlight="not because of it.">
+      3 coaches. 3 formations. 3 years.<br />We build stars despite the system —
+    </Caption>
+  </AbsoluteFill>
+);
+
 const Scene4: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: BG }}>
-    <Sequence durationInFrames={92}>
-      <AbsoluteFill style={{ opacity: useFade(92) }}>
-        <PhotoBG src={IMAGES.grassroots} duration={92} zoomFrom={1.06} zoomTo={1.2} panY={16} overlay={0.62} />
-        <Caption delay={8} size={78} highlight="the system to develop them is broken.">
-          Record numbers are playing.<br />But
-        </Caption>
-      </AbsoluteFill>
-    </Sequence>
-    <Sequence from={92} durationInFrames={88}>
-      <AbsoluteFill style={{ opacity: useFade(88) }}>
-        <PhotoBG src={IMAGES.grassroots2} duration={88} zoomFrom={1.08} zoomTo={1.22} panX={20} overlay={0.68} />
-        <Caption delay={6} size={64} highlight="not because of it.">
-          3 coaches. 3 formations. 3 years.<br />We build stars despite the system —
-        </Caption>
-      </AbsoluteFill>
-    </Sequence>
+    <Sequence durationInFrames={92}><Scene4Beat1 /></Sequence>
+    <Sequence from={92} durationInFrames={88}><Scene4Beat2 /></Sequence>
   </AbsoluteFill>
 );
 
