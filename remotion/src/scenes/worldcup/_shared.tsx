@@ -118,3 +118,15 @@ export const CountUp: React.FC<{ from: number; to: number; delay?: number; suffi
   const v = interpolate(s, [0, 1], [from, to]);
   return <>{prefix}{v.toFixed(decimals)}{suffix}</>;
 };
+
+// Centered hero title (used for hard-cut statement frames)
+export const CenterTitle: React.FC<{ children: React.ReactNode; delay?: number; size?: number }> = ({ children, delay = 0, size = 100 }) => {
+  const { opacity, transform } = useRise(delay, 30);
+  return (
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: "0 80px" }}>
+      <div style={{ opacity, transform, textAlign: "center", color: WHITE, fontFamily: display, fontWeight: 800, fontSize: size, lineHeight: 1.05, letterSpacing: -2, textShadow: "0 10px 44px rgba(0,0,0,0.9)" }}>
+        {children}
+      </div>
+    </AbsoluteFill>
+  );
+};

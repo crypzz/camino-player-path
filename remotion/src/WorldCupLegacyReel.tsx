@@ -1,5 +1,5 @@
 import { AbsoluteFill, Series, Sequence, staticFile, OffthreadVideo, useCurrentFrame, useVideoConfig, interpolate, spring, Img } from "remotion";
-import { PhotoBG, Caption, CountUp, FilmGrain, useFade, useRise, display, body, BG, YELLOW, WHITE, MUTED, glow } from "./scenes/worldcup/_shared";
+import { PhotoBG, Caption, CountUp, FilmGrain, useFade, useRise, CenterTitle, display, body, BG, YELLOW, WHITE, MUTED, glow } from "./scenes/worldcup/_shared";
 
 /* ============================================================
    SWAP ZONE — change photos / drop in screen recordings here
