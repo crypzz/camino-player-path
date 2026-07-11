@@ -1,6 +1,7 @@
 import { Composition } from "remotion";
 import { MainVideo } from "./MainVideo";
 import { Promo45Video } from "./Promo45Video";
+import { WorldCupLegacyReel } from "./WorldCupLegacyReel";
 
 export const RemotionRoot = () => (
   <>
