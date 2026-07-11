@@ -111,10 +111,10 @@ export const Caption: React.FC<{
 };
 
 // Spring count-up number
-export const CountUp: React.FC<{ from: number; to: number; delay?: number; suffix?: string; prefix?: string }> = ({ from, to, delay = 0, suffix = "", prefix = "" }) => {
+export const CountUp: React.FC<{ from: number; to: number; delay?: number; suffix?: string; prefix?: string; decimals?: number }> = ({ from, to, delay = 0, suffix = "", prefix = "", decimals = 0 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const s = spring({ frame: frame - delay, fps, config: { damping: 18, stiffness: 70, mass: 1.1 } });
-  const v = Math.round(interpolate(s, [0, 1], [from, to]));
-  return <>{prefix}{v}{suffix}</>;
+  const v = interpolate(s, [0, 1], [from, to]);
+  return <>{prefix}{v.toFixed(decimals)}{suffix}</>;
 };
