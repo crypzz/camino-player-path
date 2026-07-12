@@ -30,5 +30,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="comparison-reel"
+      component={ComparisonReel}
+      durationInFrames={990}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
