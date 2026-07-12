@@ -2,6 +2,7 @@ import { Composition } from "remotion";
 import { MainVideo } from "./MainVideo";
 import { Promo45Video } from "./Promo45Video";
 import { WorldCupLegacyReel } from "./WorldCupLegacyReel";
+import { ComparisonReel } from "./ComparisonReel";
 
 export const RemotionRoot = () => (
   <>
@@ -25,6 +26,14 @@ export const RemotionRoot = () => (
       id="worldcup-legacy"
       component={WorldCupLegacyReel}
       durationInFrames={930}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="comparison-reel"
+      component={ComparisonReel}
+      durationInFrames={990}
       fps={30}
       width={1080}
       height={1920}
