@@ -1,7 +1,6 @@
 import {
   AbsoluteFill,
   Series,
-  Sequence,
   useCurrentFrame,
   useVideoConfig,
   interpolate,
