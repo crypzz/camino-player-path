@@ -3,6 +3,7 @@ import { MainVideo } from "./MainVideo";
 import { Promo45Video } from "./Promo45Video";
 import { WorldCupLegacyReel } from "./WorldCupLegacyReel";
 import { ComparisonReel } from "./ComparisonReel";
+import { FounderStatementV2 } from "./FounderStatementV2";
 
 export const RemotionRoot = () => (
   <>
