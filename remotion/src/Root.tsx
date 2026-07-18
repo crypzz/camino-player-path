@@ -3,6 +3,7 @@ import { MainVideo } from "./MainVideo";
 import { Promo45Video } from "./Promo45Video";
 import { WorldCupLegacyReel } from "./WorldCupLegacyReel";
 import { ComparisonReel } from "./ComparisonReel";
+import { FounderStatementV2 } from "./FounderStatementV2";
 
 export const RemotionRoot = () => (
   <>
@@ -34,6 +35,14 @@ export const RemotionRoot = () => (
       id="comparison-reel"
       component={ComparisonReel}
       durationInFrames={990}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="founder-statement-v2"
+      component={FounderStatementV2}
+      durationInFrames={660}
       fps={30}
       width={1080}
       height={1920}
