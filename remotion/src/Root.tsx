@@ -39,5 +39,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="founder-statement-v2"
+      component={FounderStatementV2}
+      durationInFrames={660}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
