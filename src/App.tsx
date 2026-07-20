@@ -52,6 +52,10 @@ import CVBuilderPage from "@/pages/CVBuilderPage";
 import AnalysisListPage from "@/pages/analysis/AnalysisListPage";
 import AnalysisUploadPage from "@/pages/analysis/AnalysisUploadPage";
 import AnalysisDetailPage from "@/pages/analysis/AnalysisDetailPage";
+import AnalyticsMatchesPage from "@/pages/analytics/AnalyticsMatchesPage";
+import AnalyticsUploadPage from "@/pages/analytics/AnalyticsUploadPage";
+import AnalyticsMatchPage from "@/pages/analytics/AnalyticsMatchPage";
+import AnalyticsPlayerPage from "@/pages/analytics/AnalyticsPlayerPage";
 import { SolutionsLandingRoute, RegionLandingRoute } from "@/pages/seo/SeoRoutes";
 import NotFound from "@/pages/NotFound";
 
@@ -89,6 +93,10 @@ function DashboardRoutes() {
             <Route path="/analysis" element={<AnalysisListPage />} />
             <Route path="/analysis/upload" element={<AnalysisUploadPage />} />
             <Route path="/analysis/:id" element={<AnalysisDetailPage />} />
+            <Route path="/analytics" element={<AnalyticsMatchesPage />} />
+            <Route path="/analytics/new" element={<AnalyticsUploadPage />} />
+            <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
+            <Route path="/analytics/:id" element={<AnalyticsMatchPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/fitness" element={<FitnessTestPage />} />
@@ -100,6 +108,7 @@ function DashboardRoutes() {
             <Route path="/progress" element={<PlayerProgressPage />} />
             <Route path="/goals" element={<PlayerGoalsPage />} />
             <Route path="/videos" element={<VideoAnalysisPage />} />
+            <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
           </>
         )}
         {role === 'parent' && (

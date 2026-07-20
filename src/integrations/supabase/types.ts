@@ -14,6 +14,680 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_coaching_insights: {
+        Row: {
+          analytics_player_id: string | null
+          comparison_delta: Json | null
+          created_at: string
+          id: string
+          match_id: string
+          model_used: string | null
+          player_id: string | null
+          strengths: Json | null
+          summary: string | null
+          training_priorities: Json | null
+          trend: string | null
+          weaknesses: Json | null
+        }
+        Insert: {
+          analytics_player_id?: string | null
+          comparison_delta?: Json | null
+          created_at?: string
+          id?: string
+          match_id: string
+          model_used?: string | null
+          player_id?: string | null
+          strengths?: Json | null
+          summary?: string | null
+          training_priorities?: Json | null
+          trend?: string | null
+          weaknesses?: Json | null
+        }
+        Update: {
+          analytics_player_id?: string | null
+          comparison_delta?: Json | null
+          created_at?: string
+          id?: string
+          match_id?: string
+          model_used?: string | null
+          player_id?: string | null
+          strengths?: Json | null
+          summary?: string | null
+          training_priorities?: Json | null
+          trend?: string | null
+          weaknesses?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_coaching_insights_analytics_player_id_fkey"
+            columns: ["analytics_player_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_coaching_insights_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_coaching_insights_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_coaching_insights_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_events: {
+        Row: {
+          analytics_player_id: string | null
+          confidence: number | null
+          created_at: string
+          event_type: Database["public"]["Enums"]["analytics_event_type"]
+          id: string
+          match_id: string
+          meta: Json | null
+          outcome: string | null
+          t_end: number | null
+          t_start: number
+          target_player_id: string | null
+          track_id: number | null
+          x: number | null
+          xg: number | null
+          y: number | null
+        }
+        Insert: {
+          analytics_player_id?: string | null
+          confidence?: number | null
+          created_at?: string
+          event_type: Database["public"]["Enums"]["analytics_event_type"]
+          id?: string
+          match_id: string
+          meta?: Json | null
+          outcome?: string | null
+          t_end?: number | null
+          t_start: number
+          target_player_id?: string | null
+          track_id?: number | null
+          x?: number | null
+          xg?: number | null
+          y?: number | null
+        }
+        Update: {
+          analytics_player_id?: string | null
+          confidence?: number | null
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["analytics_event_type"]
+          id?: string
+          match_id?: string
+          meta?: Json | null
+          outcome?: string | null
+          t_end?: number | null
+          t_start?: number
+          target_player_id?: string | null
+          track_id?: number | null
+          x?: number | null
+          xg?: number | null
+          y?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_analytics_player_id_fkey"
+            columns: ["analytics_player_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_target_player_id_fkey"
+            columns: ["target_player_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_frames: {
+        Row: {
+          frame_number: number
+          has_ball: boolean
+          id: number
+          match_id: string
+          t_seconds: number
+          track_id: number
+          x: number
+          y: number
+        }
+        Insert: {
+          frame_number: number
+          has_ball?: boolean
+          id?: number
+          match_id: string
+          t_seconds: number
+          track_id: number
+          x: number
+          y: number
+        }
+        Update: {
+          frame_number?: number
+          has_ball?: boolean
+          id?: number
+          match_id?: string
+          t_seconds?: number
+          track_id?: number
+          x?: number
+          y?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_frames_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_highlight_clips: {
+        Row: {
+          analytics_player_id: string | null
+          created_at: string
+          event_id: string | null
+          event_type: Database["public"]["Enums"]["analytics_event_type"]
+          id: string
+          match_id: string
+          player_id: string | null
+          storage_path: string
+          t_end: number
+          t_start: number
+          thumbnail_path: string | null
+        }
+        Insert: {
+          analytics_player_id?: string | null
+          created_at?: string
+          event_id?: string | null
+          event_type: Database["public"]["Enums"]["analytics_event_type"]
+          id?: string
+          match_id: string
+          player_id?: string | null
+          storage_path: string
+          t_end: number
+          t_start: number
+          thumbnail_path?: string | null
+        }
+        Update: {
+          analytics_player_id?: string | null
+          created_at?: string
+          event_id?: string | null
+          event_type?: Database["public"]["Enums"]["analytics_event_type"]
+          id?: string
+          match_id?: string
+          player_id?: string | null
+          storage_path?: string
+          t_end?: number
+          t_start?: number
+          thumbnail_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_highlight_clips_analytics_player_id_fkey"
+            columns: ["analytics_player_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_highlight_clips_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_highlight_clips_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_highlight_clips_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_highlight_clips_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_matches: {
+        Row: {
+          away_team: string | null
+          club_id: string | null
+          created_at: string
+          created_by: string
+          duration_seconds: number | null
+          error_message: string | null
+          fps: number | null
+          home_team: string | null
+          id: string
+          match_date: string | null
+          model_version: string | null
+          status: Database["public"]["Enums"]["analytics_match_status"]
+          title: string
+          updated_at: string
+          video_url: string
+          worker_job_id: string | null
+        }
+        Insert: {
+          away_team?: string | null
+          club_id?: string | null
+          created_at?: string
+          created_by: string
+          duration_seconds?: number | null
+          error_message?: string | null
+          fps?: number | null
+          home_team?: string | null
+          id?: string
+          match_date?: string | null
+          model_version?: string | null
+          status?: Database["public"]["Enums"]["analytics_match_status"]
+          title: string
+          updated_at?: string
+          video_url: string
+          worker_job_id?: string | null
+        }
+        Update: {
+          away_team?: string | null
+          club_id?: string | null
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          error_message?: string | null
+          fps?: number | null
+          home_team?: string | null
+          id?: string
+          match_date?: string | null
+          model_version?: string | null
+          status?: Database["public"]["Enums"]["analytics_match_status"]
+          title?: string
+          updated_at?: string
+          video_url?: string
+          worker_job_id?: string | null
+        }
+        Relationships: []
+      }
+      analytics_player_match_stats: {
+        Row: {
+          aerials: number | null
+          aerials_won: number | null
+          analytics_player_id: string
+          assists: number | null
+          clearances: number | null
+          corners: number | null
+          created_at: string
+          crosses: number | null
+          distance_m: number | null
+          dribbles: number | null
+          duels: number | null
+          duels_won: number | null
+          fouls: number | null
+          goals: number | null
+          heatmap: Json | null
+          id: string
+          interceptions: number | null
+          key_passes: number | null
+          match_id: string
+          minutes_played: number | null
+          offsides: number | null
+          pass_accuracy: number | null
+          passes: number | null
+          passes_completed: number | null
+          player_id: string | null
+          rating: number | null
+          recoveries: number | null
+          saves: number | null
+          shot_accuracy: number | null
+          shots: number | null
+          shots_on_target: number | null
+          sprint_count: number | null
+          tackles: number | null
+          throw_ins: number | null
+          touches: number | null
+          touchmap: Json | null
+          updated_at: string
+        }
+        Insert: {
+          aerials?: number | null
+          aerials_won?: number | null
+          analytics_player_id: string
+          assists?: number | null
+          clearances?: number | null
+          corners?: number | null
+          created_at?: string
+          crosses?: number | null
+          distance_m?: number | null
+          dribbles?: number | null
+          duels?: number | null
+          duels_won?: number | null
+          fouls?: number | null
+          goals?: number | null
+          heatmap?: Json | null
+          id?: string
+          interceptions?: number | null
+          key_passes?: number | null
+          match_id: string
+          minutes_played?: number | null
+          offsides?: number | null
+          pass_accuracy?: number | null
+          passes?: number | null
+          passes_completed?: number | null
+          player_id?: string | null
+          rating?: number | null
+          recoveries?: number | null
+          saves?: number | null
+          shot_accuracy?: number | null
+          shots?: number | null
+          shots_on_target?: number | null
+          sprint_count?: number | null
+          tackles?: number | null
+          throw_ins?: number | null
+          touches?: number | null
+          touchmap?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          aerials?: number | null
+          aerials_won?: number | null
+          analytics_player_id?: string
+          assists?: number | null
+          clearances?: number | null
+          corners?: number | null
+          created_at?: string
+          crosses?: number | null
+          distance_m?: number | null
+          dribbles?: number | null
+          duels?: number | null
+          duels_won?: number | null
+          fouls?: number | null
+          goals?: number | null
+          heatmap?: Json | null
+          id?: string
+          interceptions?: number | null
+          key_passes?: number | null
+          match_id?: string
+          minutes_played?: number | null
+          offsides?: number | null
+          pass_accuracy?: number | null
+          passes?: number | null
+          passes_completed?: number | null
+          player_id?: string | null
+          rating?: number | null
+          recoveries?: number | null
+          saves?: number | null
+          shot_accuracy?: number | null
+          shots?: number | null
+          shots_on_target?: number | null
+          sprint_count?: number | null
+          tackles?: number | null
+          throw_ins?: number | null
+          touches?: number | null
+          touchmap?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_player_match_stats_analytics_player_id_fkey"
+            columns: ["analytics_player_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_player_match_stats_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_player_match_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_player_match_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_player_season_stats: {
+        Row: {
+          aerials_won: number | null
+          assists: number | null
+          avg_rating: number | null
+          clearances: number | null
+          crosses: number | null
+          distance_m: number | null
+          dribbles: number | null
+          duels_won: number | null
+          fouls: number | null
+          goals: number | null
+          id: string
+          interceptions: number | null
+          key_passes: number | null
+          matches_played: number | null
+          passes: number | null
+          passes_completed: number | null
+          player_id: string
+          recoveries: number | null
+          saves: number | null
+          season: string
+          shots: number | null
+          tackles: number | null
+          touches: number | null
+          updated_at: string
+        }
+        Insert: {
+          aerials_won?: number | null
+          assists?: number | null
+          avg_rating?: number | null
+          clearances?: number | null
+          crosses?: number | null
+          distance_m?: number | null
+          dribbles?: number | null
+          duels_won?: number | null
+          fouls?: number | null
+          goals?: number | null
+          id?: string
+          interceptions?: number | null
+          key_passes?: number | null
+          matches_played?: number | null
+          passes?: number | null
+          passes_completed?: number | null
+          player_id: string
+          recoveries?: number | null
+          saves?: number | null
+          season: string
+          shots?: number | null
+          tackles?: number | null
+          touches?: number | null
+          updated_at?: string
+        }
+        Update: {
+          aerials_won?: number | null
+          assists?: number | null
+          avg_rating?: number | null
+          clearances?: number | null
+          crosses?: number | null
+          distance_m?: number | null
+          dribbles?: number | null
+          duels_won?: number | null
+          fouls?: number | null
+          goals?: number | null
+          id?: string
+          interceptions?: number | null
+          key_passes?: number | null
+          matches_played?: number | null
+          passes?: number | null
+          passes_completed?: number | null
+          player_id?: string
+          recoveries?: number | null
+          saves?: number | null
+          season?: string
+          shots?: number | null
+          tackles?: number | null
+          touches?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_player_season_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_player_season_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_players: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          jersey_number: number | null
+          match_id: string
+          player_id: string | null
+          position: string | null
+          team_side: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          jersey_number?: number | null
+          match_id: string
+          player_id?: string | null
+          position?: string | null
+          team_side?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          jersey_number?: number | null
+          match_id?: string
+          player_id?: string | null
+          position?: string | null
+          team_side?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_players_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_player_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_tracks: {
+        Row: {
+          analytics_player_id: string | null
+          created_at: string
+          first_frame: number | null
+          frame_count: number | null
+          id: string
+          last_frame: number | null
+          match_id: string
+          track_id: number
+        }
+        Insert: {
+          analytics_player_id?: string | null
+          created_at?: string
+          first_frame?: number | null
+          frame_count?: number | null
+          id?: string
+          last_frame?: number | null
+          match_id: string
+          track_id: number
+        }
+        Update: {
+          analytics_player_id?: string | null
+          created_at?: string
+          first_frame?: number | null
+          frame_count?: number | null
+          id?: string
+          last_frame?: number | null
+          match_id?: string
+          track_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_tracks_analytics_player_id_fkey"
+            columns: ["analytics_player_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_tracks_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcement_reads: {
         Row: {
           announcement_id: string
@@ -2197,6 +2871,29 @@ export type Database = {
       }
     }
     Enums: {
+      analytics_event_type:
+        | "touch"
+        | "pass"
+        | "completed_pass"
+        | "key_pass"
+        | "shot"
+        | "shot_on_target"
+        | "goal"
+        | "assist"
+        | "dribble"
+        | "tackle"
+        | "interception"
+        | "clearance"
+        | "duel"
+        | "aerial_duel"
+        | "recovery"
+        | "foul"
+        | "offside"
+        | "save"
+        | "cross"
+        | "corner"
+        | "throw_in"
+      analytics_match_status: "queued" | "processing" | "done" | "error"
       app_role: "coach" | "player" | "parent" | "director" | "scout"
     }
     CompositeTypes: {
@@ -2325,6 +3022,30 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      analytics_event_type: [
+        "touch",
+        "pass",
+        "completed_pass",
+        "key_pass",
+        "shot",
+        "shot_on_target",
+        "goal",
+        "assist",
+        "dribble",
+        "tackle",
+        "interception",
+        "clearance",
+        "duel",
+        "aerial_duel",
+        "recovery",
+        "foul",
+        "offside",
+        "save",
+        "cross",
+        "corner",
+        "throw_in",
+      ],
+      analytics_match_status: ["queued", "processing", "done", "error"],
       app_role: ["coach", "player", "parent", "director", "scout"],
     },
   },
