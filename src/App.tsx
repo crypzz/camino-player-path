@@ -52,6 +52,10 @@ import CVBuilderPage from "@/pages/CVBuilderPage";
 import AnalysisListPage from "@/pages/analysis/AnalysisListPage";
 import AnalysisUploadPage from "@/pages/analysis/AnalysisUploadPage";
 import AnalysisDetailPage from "@/pages/analysis/AnalysisDetailPage";
+import AnalyticsMatchesPage from "@/pages/analytics/AnalyticsMatchesPage";
+import AnalyticsUploadPage from "@/pages/analytics/AnalyticsUploadPage";
+import AnalyticsMatchPage from "@/pages/analytics/AnalyticsMatchPage";
+import AnalyticsPlayerPage from "@/pages/analytics/AnalyticsPlayerPage";
 import { SolutionsLandingRoute, RegionLandingRoute } from "@/pages/seo/SeoRoutes";
 import NotFound from "@/pages/NotFound";
 
