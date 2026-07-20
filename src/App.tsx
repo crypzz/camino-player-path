@@ -108,6 +108,7 @@ function DashboardRoutes() {
             <Route path="/progress" element={<PlayerProgressPage />} />
             <Route path="/goals" element={<PlayerGoalsPage />} />
             <Route path="/videos" element={<VideoAnalysisPage />} />
+            <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
           </>
         )}
         {role === 'parent' && (
