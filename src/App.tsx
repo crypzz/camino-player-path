@@ -97,10 +97,6 @@ function DashboardRoutes() {
             <Route path="/analysis" element={<AnalysisListPage />} />
             <Route path="/analysis/upload" element={<AnalysisUploadPage />} />
             <Route path="/analysis/:id" element={<AnalysisDetailPage />} />
-            <Route path="/analytics" element={<AnalyticsMatchesPage />} />
-            <Route path="/analytics/new" element={<AnalyticsUploadPage />} />
-            <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
-            <Route path="/analytics/:id" element={<AnalyticsMatchPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/fitness" element={<FitnessTestPage />} />
