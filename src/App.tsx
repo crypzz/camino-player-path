@@ -81,6 +81,10 @@ function DashboardRoutes() {
         <Route path="/communications" element={<CommunicationsPage />} />
         <Route path="/cv-builder" element={<CVBuilderPage />} />
         <Route path="/player/:id" element={<PublicProfilePage />} />
+        <Route path="/videos" element={<VideoAnalysisPage />} />
+        <Route path="/analysis" element={<AnalysisListPage />} />
+        <Route path="/analysis/upload" element={<AnalysisUploadPage />} />
+        <Route path="/analysis/:id" element={<AnalysisDetailPage />} />
         <Route path="/analytics" element={<AnalyticsMatchesPage />} />
         <Route path="/analytics/new" element={<AnalyticsUploadPage />} />
         <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
@@ -93,22 +97,19 @@ function DashboardRoutes() {
             <Route path="/coach-dashboard" element={<CoachHubPage />} />
             <Route path="/players" element={<PlayersPage />} />
             <Route path="/evaluations" element={<EvaluationsPage />} />
-            <Route path="/videos" element={<VideoAnalysisPage />} />
-            <Route path="/analysis" element={<AnalysisListPage />} />
-            <Route path="/analysis/upload" element={<AnalysisUploadPage />} />
-            <Route path="/analysis/:id" element={<AnalysisDetailPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/fitness" element={<FitnessTestPage />} />
           </>
         )}
+
         {role === 'player' && (
           <>
             <Route path="/" element={<PlayerDashboard />} />
             <Route path="/progress" element={<PlayerProgressPage />} />
             <Route path="/goals" element={<PlayerGoalsPage />} />
-            <Route path="/videos" element={<VideoAnalysisPage />} />
             <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
+
           </>
         )}
         {role === 'parent' && (
