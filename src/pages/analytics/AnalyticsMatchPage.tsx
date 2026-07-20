@@ -22,10 +22,10 @@ export default function AnalyticsMatchPage() {
 
   if (!match) return <div className="p-6"><Loader2 className="animate-spin" /></div>;
 
-  const eventCounts = events?.reduce((acc: Record<string, number>, e: any) => {
+  const eventCounts = (events ?? []).reduce((acc: Record<string, number>, e: any) => {
     acc[e.event_type] = (acc[e.event_type] ?? 0) + 1; return acc;
-  }, {} ?? {});
-  const eventChart = Object.entries(eventCounts ?? {}).map(([type, count]) => ({ type, count }));
+  }, {} as Record<string, number>);
+  const eventChart = Object.entries(eventCounts).map(([type, count]) => ({ type, count }));
 
   return (
     <div className="p-6 space-y-6">
