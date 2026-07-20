@@ -43,6 +43,7 @@ const coachLinks = [
   { title: 'Evaluations', url: '/dashboard/evaluations', icon: ClipboardList },
   { title: 'Video Analysis', url: '/dashboard/videos', icon: Video },
   { title: 'Match Analysis', url: '/dashboard/analysis', icon: Film },
+  { title: 'AI Analytics', url: '/dashboard/analytics', icon: Activity },
   { title: 'Reports', url: '/dashboard/reports', icon: FileText },
   { title: 'Attendance', url: '/dashboard/attendance', icon: CalendarCheck },
   { title: 'Fitness Tests', url: '/dashboard/fitness', icon: Activity },
