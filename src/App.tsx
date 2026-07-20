@@ -81,6 +81,10 @@ function DashboardRoutes() {
         <Route path="/communications" element={<CommunicationsPage />} />
         <Route path="/cv-builder" element={<CVBuilderPage />} />
         <Route path="/player/:id" element={<PublicProfilePage />} />
+        <Route path="/analytics" element={<AnalyticsMatchesPage />} />
+        <Route path="/analytics/new" element={<AnalyticsUploadPage />} />
+        <Route path="/analytics/player/:playerId" element={<AnalyticsPlayerPage />} />
+        <Route path="/analytics/:id" element={<AnalyticsMatchPage />} />
 
         {role === 'coach' && (
           <>
