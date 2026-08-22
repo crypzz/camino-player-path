@@ -76,7 +76,7 @@ export const DevelopmentScene: React.FC = () => {
   const frame = useCurrentFrame();
   return (
     <SceneShell duration={DUR} bg={NAVY}>
-      <div style={{ position: "absolute", top: 130, left: 60, right: 60 }}>
+      <div style={{ position: "absolute", top: 380, left: 60, right: 60 }}>
         <Panel delay={4} glow style={{ display: "flex", alignItems: "center", gap: 22, marginBottom: 18 }}>
           <div style={{ width: 78, height: 78, borderRadius: 24, background: "rgba(252,211,77,0.16)", border: `1px solid ${GOLD}55` }} />
           <div style={{ flex: 1 }}>

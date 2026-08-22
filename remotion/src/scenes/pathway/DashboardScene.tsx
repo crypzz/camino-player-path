@@ -62,7 +62,7 @@ export const DashboardScene: React.FC = () => {
         transform: `translateY(${interpolate(frame, [0, DUR], [0, -30])}px)`,
       }} />
 
-      <div style={{ position: "absolute", top: 150, left: 70, right: 70 }}>
+      <div style={{ position: "absolute", top: 400, left: 70, right: 70 }}>
         <div style={{ opacity: ease(frame, 4, 18), display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 26 }}>
           <div style={{ fontFamily: display, fontWeight: 800, fontSize: 34, color: IVORY, letterSpacing: -0.6 }}>
             CAMINO<span style={{ color: GOLD }}>.</span>

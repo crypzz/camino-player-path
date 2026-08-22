@@ -35,7 +35,7 @@ export const FeedbackScene: React.FC = () => {
   const frame = useCurrentFrame();
   return (
     <SceneShell duration={DUR} bg={NAVY}>
-      <div style={{ position: "absolute", top: 140, left: 60, right: 60 }}>
+      <div style={{ position: "absolute", top: 400, left: 60, right: 60 }}>
         <div style={{ opacity: ease(frame, 2, 14), marginBottom: 20 }}>
           <Label color={GOLD}>Match report · D. Nunez</Label>
         </div>
