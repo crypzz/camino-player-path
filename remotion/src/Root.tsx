@@ -5,6 +5,7 @@ import { WorldCupLegacyReel } from "./WorldCupLegacyReel";
 import { ComparisonReel } from "./ComparisonReel";
 import { FounderStatementV2 } from "./FounderStatementV2";
 import { CMSALeagueReel } from "./CMSALeagueReel";
+import { CaminoPathway, PATHWAY_DURATION } from "./CaminoPathway";
 
 export const RemotionRoot = () => (
   <>
@@ -52,6 +53,14 @@ export const RemotionRoot = () => (
       id="cmsa-league-reel"
       component={CMSALeagueReel}
       durationInFrames={840}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="camino-pathway"
+      component={CaminoPathway}
+      durationInFrames={PATHWAY_DURATION}
       fps={30}
       width={1080}
       height={1920}
