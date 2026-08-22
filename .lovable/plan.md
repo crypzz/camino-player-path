@@ -1,77 +1,83 @@
+# Camino Product Film — "Your development. Your pathway."
 
-## Video: CMSA League Tracking Promo
+A 38-second vertical (1080x1920, 30fps, 1140 frames) Remotion film where the **UI is the hero**: a raw game clip transforms into data, highlights, feedback, and a living player development record. With original synthesized score, sound design, and AI voiceover.
 
-**Format:** 9:16 vertical, 1080x1920, 30fps, ~28s (840 frames)
-**Audience:** Calgary soccer community (coaches, players, parents)
-**CTA:** "Log your match. Get on the leaderboard."
-**Composition ID:** `cmsa-league-reel`
+New composition id: `camino-pathway` (all existing reels untouched).
 
-## Visual direction
-
-Reuse Camino brand system from existing reels:
-- Near-black navy `#0A0F1E`, gold accent `#FCD34D`, ivory text
-- Plus Jakarta Sans display + Inter body
-- Editorial motion: springs, staggered row reveals, subtle parallax
-- Persistent grain + radial vignette layer
-
-## Scene breakdown (28s / 840 frames @ 30fps)
+## Story beats
 
 ```text
-1. Hook            0.0s – 3.5s   (105f)
-2. Standings       3.5s – 9.5s   (180f)
-3. Top Scorers     9.5s – 14.5s  (150f)
-4. Team Form       14.5s – 18.5s (120f)
-5. Log Match UI    18.5s – 23.5s (150f)
-6. CTA / Outro     23.5s – 28.0s (135f)
+1. The problem        0:00 – 0:04   (120f)
+2. Meet Camino        0:04 – 0:09   (150f)
+3. Upload + AI        0:09 – 0:17   (240f)
+4. Feedback           0:17 – 0:25   (240f)
+5. Live development   0:25 – 0:32   (210f)
+6. Big ending         0:32 – 0:38   (180f)
 ```
 
-### 1. Hook — "Every CMSA game. One place."
-Kinetic type on navy. Gold "CMSA" chip, headline springs in. Faint Calgary skyline silhouette.
+### 1. The problem
+Desaturated raw footage frame, scattered artifacts drifting past — a paper attendance sheet, a coach text bubble, a lone stat scrap. Type: "Players are constantly developing." / gold: "But most of it isn't being tracked." Everything fades to noise.
 
-### 2. Standings
-Animated recreation of `CMSAStandingsTable`: tier header ("Tier 1 U15"), 6 rows cascade with rank icon, team name, GP/W/T/L/PTS/GD. Top 3 glow gold. Slow downward pan.
+### 2. Meet Camino
+Dark grid snaps into a dashboard that assembles panel by panel (CPI dial, squad list, recent sessions) — the UI literally booting. "Meet Camino. A live development platform for players and coaches."
 
-### 3. Top Scorers
-Recreation of `TopScorersTable`: podium-style top 3 (gold/silver/bronze), rows 4–6 fade in. Goals numbers tick up. Subhead: "Real players. Real numbers."
+### 3. Upload + AI (longest UI beat)
+Three-step transformation in one continuous shot:
+- Upload card with progress bar filling
+- Video frame with AI bounding boxes locking onto players, jersey numbers resolving, confidence ticks
+- Tagged events streaming into a timeline, then highlight thumbnails popping into a grid
+Caption: "Upload your footage. Camino's AI identifies players, tags key moments, builds highlights."
 
-### 4. Team Form
-Grid of 4 teams with W/L/T pills for last 5 (from `TeamFormTable`). Streak flames pop on wins. Subhead: "Momentum, tracked."
+### 4. Feedback
+Split UI: coach feedback card typing itself in, strengths/weaknesses bars filling (green/amber), radar chart drawing, key-moment chips. "Every game becomes actionable feedback."
 
-### 5. Log Match Dialog
-Mock of `LogMatchStatsDialog`: date, opponent, 3 player rows type in with goals/assists counters incrementing. "Log stats" button pulses gold. Subhead: "Coaches: 30 seconds to update."
+### 5. Live development
+Player profile: CPI progression line drawing left to right with a number ticking up, level badge advancing, a vertical timeline of match entries scrolling. "See what's improving. See what needs work. See the path forward."
 
-### 6. CTA
-Full-screen typography:
-- "Log your match."
-- Gold: "Get on the leaderboard."
-- Camino wordmark + `@caminodevelopment` / `caminodevelopment.com`
+### 6. Big ending
+Hard cut to near-black. "Don't just play the game." / gold: "Track your development." → CAMINO wordmark → "Your development. Your pathway." + caminodevelopment.com
+
+## Audio
+
+- **Voiceover**: narration script generated per-scene through the Lovable AI text-to-speech endpoint (`openai/gpt-4o-mini-tts`, calm confident delivery), rendered to WAV files in `remotion/public/audio/vo/`, placed with `<Audio>` inside each scene sequence so lines land on their beats.
+- **Score**: original synthesized bed built with a Python/numpy script — sub-bass pulse, filtered pad chords rising through the acts, percussive ticks on the AI-tagging beat, riser into the ending, tail-out on the wordmark. Written to `remotion/public/audio/score.wav`.
+- **Sound design**: soft whooshes on scene transitions, UI clicks on panel snaps, a low impact on the final cut — synthesized in the same script, mixed into one stem.
+- Music ducks under each voiceover line so narration stays clear.
+- Final render is **not muted**: video renders silent first, then the score + VO stems are mixed and muxed to AAC with ffmpeg.
 
 ## Motion system
-- Entrance: spring `{damping: 18, stiffness: 140}` translate-Y + fade
-- Row stagger: 4-frame delay per row
-- Number ticks: `interpolate` easeOutCubic over 20f
-- Between scenes: `TransitionSeries` fade (12f); slide-from-bottom for CTA
-- Persistent grain + vignette outside TransitionSeries
+
+- Entrance: spring `{damping: 20, stiffness: 140}`, translate-Y + fade + slight blur-off
+- UI panels snap in on a 5-frame stagger; data fills use easeOutCubic over 24f
+- Scene changes: `TransitionSeries` — fast wipe for act changes, fade into the ending
+- Persistent layers outside the series: film grain, radial vignette, subtle scanline drift
 
 ## Files
 
 **New**
-- `remotion/src/CMSALeagueReel.tsx` — composition entry with persistent layer + TransitionSeries
-- `remotion/src/scenes/cmsa/HookScene.tsx`
-- `remotion/src/scenes/cmsa/StandingsScene.tsx`
-- `remotion/src/scenes/cmsa/TopScorersScene.tsx`
-- `remotion/src/scenes/cmsa/TeamFormScene.tsx`
-- `remotion/src/scenes/cmsa/LogMatchScene.tsx`
-- `remotion/src/scenes/cmsa/CTAScene.tsx`
-- `remotion/src/scenes/cmsa/_shared.tsx` — brand token re-exports + mock team/scorer data + decorative SVG helpers
+- `remotion/src/CaminoPathway.tsx` — composition root, persistent layers, `TransitionSeries`, audio tracks
+- `remotion/src/scenes/pathway/_shared.tsx` — brand tokens, UI primitives (Panel, StatBar, Chip, CountUp, TypeOn)
+- `remotion/src/scenes/pathway/ProblemScene.tsx`
+- `remotion/src/scenes/pathway/DashboardScene.tsx`
+- `remotion/src/scenes/pathway/UploadAIScene.tsx`
+- `remotion/src/scenes/pathway/FeedbackScene.tsx`
+- `remotion/src/scenes/pathway/DevelopmentScene.tsx`
+- `remotion/src/scenes/pathway/EndingScene.tsx`
+- `remotion/scripts/make-audio.py` — synthesizes score + SFX stem
+- `remotion/scripts/make-vo.sh` — generates voiceover WAVs via the AI gateway TTS endpoint
+- `remotion/scripts/render-pathway.mjs` — programmatic render, then ffmpeg mux of audio
 
 **Modified**
-- `remotion/src/Root.tsx` — register `cmsa-league-reel` (1080x1920, 840f, 30fps)
+- `remotion/src/Root.tsx` — register `camino-pathway` (1080x1920, 1140f, 30fps)
 
-## Rendering
-Programmatic render via `scripts/render-remotion.mjs` pattern, muted, output to `/mnt/documents/cmsa-league-reel.mp4`.
+## Technical notes
+
+- Brand: near-black `#0A0C12`, gold `#FCD34D`/`#E8B400`, ivory `#F5F5F5`; Plus Jakarta Sans display + Inter body (matches existing reels).
+- Every mock UI is drawn in Remotion (no screen recordings) so it stays perfectly on-brand, per the existing promo architecture.
+- Render pipeline: `renderMedia` with `chromeMode: "chrome-for-testing"`, concurrency 1, no `backdropFilter`; then `ffmpeg -c:a aac` to attach the mixed audio.
+- Frame spot-checks with `remotion still` at key beats before the full render.
+- Final MP4 delivered to `/mnt/documents/camino-pathway.mp4` and copied into `remotion/public/`.
 
 ## Out of scope
-- No audio (silent reel, matches house style)
-- No database or backend changes
-- No modifications to actual CMSA pages/components
+- No app code, database, or backend changes — this is a video build only.
+- No real match footage; all visuals are designed motion graphics.
