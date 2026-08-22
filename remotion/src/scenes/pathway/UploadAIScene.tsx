@@ -71,7 +71,7 @@ export const UploadAIScene: React.FC = () => {
   return (
     <SceneShell duration={DUR} bg={NAVY}>
       {/* Step 1 — upload */}
-      <div style={{ position: "absolute", top: 150, left: 70, right: 70, opacity: uploadOut }}>
+      <div style={{ position: "absolute", top: 380, left: 70, right: 70, opacity: uploadOut }}>
         <Panel delay={2} glow>
           <Label>Upload footage</Label>
           <div style={{ fontFamily: body, fontWeight: 600, fontSize: 26, color: IVORY, marginTop: 12 }}>
@@ -90,7 +90,7 @@ export const UploadAIScene: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          top: 240,
+          top: 380,
           left: 60,
           right: 60,
           height: 620,
@@ -137,7 +137,7 @@ export const UploadAIScene: React.FC = () => {
       </div>
 
       {/* Step 3 — tagged events + highlight grid */}
-      <div style={{ position: "absolute", top: 900, left: 60, right: 60, opacity: ease(frame, 100, 118) }}>
+      <div style={{ position: "absolute", top: 1060, left: 60, right: 60, opacity: ease(frame, 100, 118) }}>
         <Panel delay={100}>
           <Label>Auto-tagged moments</Label>
           <div style={{ marginTop: 12 }}>
