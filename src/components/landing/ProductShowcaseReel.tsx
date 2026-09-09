@@ -329,19 +329,20 @@ export function ProductShowcaseReel() {
         </div>
 
         {/* Frame stage */}
-        <div className="relative aspect-[16/9] bg-gradient-to-b from-background/40 to-background/80">
-          <AnimatePresence mode="wait">
+        <div className="relative aspect-[16/9] bg-gradient-to-b from-background/40 to-background/80 overflow-hidden">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={frames[idx].id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, scale: 1.015, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 0.99, filter: 'blur(6px)' }}
+              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0"
             >
               <Active />
             </motion.div>
           </AnimatePresence>
+          <PlayLines key={`play-${idx}`} play={idx} />
         </div>
       </div>
 
