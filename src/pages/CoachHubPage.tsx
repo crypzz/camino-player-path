@@ -159,19 +159,27 @@ function SessionsTab({ sessions, loading, drills, onNew, onOpen }: {
   );
 }
 
-function DrillsTab({ drills, loading, onNew, onOpen }: {
-  drills: Drill[]; loading: boolean; onNew: () => void; onOpen: (d: Drill) => void;
+function DrillsTab({ drills, loading, onNew, onOpen, onBrowse }: {
+  drills: Drill[]; loading: boolean; onNew: () => void; onOpen: (d: Drill) => void; onBrowse: () => void;
 }) {
   return (
     <>
       <SectionHeader
         title="Drills Library" subtitle="Build a reusable library of training drills"
-        action={<Button onClick={onNew} size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> New Drill</Button>}
+        action={
+          <div className="flex gap-2">
+            <Button onClick={onBrowse} size="sm" variant="outline" className="gap-1.5"><Library className="h-4 w-4" /> Ready-Made Drills</Button>
+            <Button onClick={onNew} size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> New Drill</Button>
+          </div>
+        }
       />
       {loading ? (
         <Loading />
       ) : drills.length === 0 ? (
-        <EmptyState icon={Dumbbell} title="No drills yet" desc="Add drills to assign them to training sessions." />
+        <div className="flex flex-col items-center">
+          <EmptyState icon={Dumbbell} title="No drills yet" desc="Start from our ready-made drill library, or create your own." />
+          <Button onClick={onBrowse} size="sm" className="gap-1.5 -mt-6"><Library className="h-4 w-4" /> Browse Ready-Made Drills</Button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {drills.map((d, i) => {
