@@ -140,14 +140,22 @@ Deno.serve(async (req) => {
       });
     }
     const userId = claimsData.claims.sub as string;
+    const userId = claimsData.claims.sub as string;
     const { data: isCoach } = await supabase.rpc("has_role", { _user_id: userId, _role: "coach" });
     const { data: isDirector } = await supabase.rpc("has_role", { _user_id: userId, _role: "director" });
-    if (!isCoach && !isDirector) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", userId)
+      .maybeSingle();
+    const profileAllowed = profile?.role === "coach" || profile?.role === "director";
+    if (!isCoach && !isDirector && !profileAllowed) {
       return new Response(JSON.stringify({ ok: false, error: "Forbidden" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
   }
 
   let onlyLeague: string | null = null;
