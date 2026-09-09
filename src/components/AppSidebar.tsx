@@ -32,6 +32,7 @@ const sharedLinks = [
   { title: 'Discover Players', url: '/discover', icon: Search },
   { title: 'Leaderboard', url: '/dashboard/leaderboard', icon: Trophy },
   { title: 'CMSA Standings', url: '/dashboard/cmsa-standings', icon: Shield },
+  { title: 'Adult Leagues', url: '/dashboard/adult-leagues', icon: Shield },
   { title: 'Feed', url: '/dashboard/feed', icon: Newspaper },
   { title: 'Comms Hub', url: '/dashboard/communications', icon: MessageCircle },
 ];
