@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Video, ClipboardList, Dumbbell, Users, Plus, Calendar, Target, PencilLine,
+  Video, ClipboardList, Dumbbell, Users, Plus, Calendar, Target, PencilLine, Library,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { useTrainingSessions, TrainingSession } from '@/hooks/useTrainingSession
 import { useDrills, Drill } from '@/hooks/useDrills';
 import SessionDialog from '@/components/coach/SessionDialog';
 import DrillDialog from '@/components/coach/DrillDialog';
+import DrillTemplatesDialog from '@/components/coach/DrillTemplatesDialog';
 
 type Tab = 'sessions' | 'drills' | 'team';
 
@@ -28,6 +29,7 @@ export default function CoachHubPage() {
   const [activeSession, setActiveSession] = useState<TrainingSession | null>(null);
   const [drillDialog, setDrillDialog] = useState(false);
   const [activeDrill, setActiveDrill] = useState<Drill | null>(null);
+  const [templatesDialog, setTemplatesDialog] = useState(false);
 
   const { data: players = [] } = usePlayers();
   const { data: sessions = [], isLoading: sessionsLoading } = useTrainingSessions();
@@ -80,13 +82,14 @@ export default function CoachHubPage() {
           />
         )}
         {tab === 'drills' && (
-          <DrillsTab drills={drills} loading={drillsLoading} onNew={openNewDrill} onOpen={openDrill} />
+          <DrillsTab drills={drills} loading={drillsLoading} onNew={openNewDrill} onOpen={openDrill} onBrowse={() => setTemplatesDialog(true)} />
         )}
         {tab === 'team' && <TeamTab players={players} />}
       </div>
 
       <SessionDialog open={sessionDialog} onOpenChange={setSessionDialog} session={liveActiveSession} players={players} />
       <DrillDialog open={drillDialog} onOpenChange={setDrillDialog} drill={activeDrill} />
+      <DrillTemplatesDialog open={templatesDialog} onOpenChange={setTemplatesDialog} />
     </div>
   );
 }
@@ -156,19 +159,27 @@ function SessionsTab({ sessions, loading, drills, onNew, onOpen }: {
   );
 }
 
-function DrillsTab({ drills, loading, onNew, onOpen }: {
-  drills: Drill[]; loading: boolean; onNew: () => void; onOpen: (d: Drill) => void;
+function DrillsTab({ drills, loading, onNew, onOpen, onBrowse }: {
+  drills: Drill[]; loading: boolean; onNew: () => void; onOpen: (d: Drill) => void; onBrowse: () => void;
 }) {
   return (
     <>
       <SectionHeader
         title="Drills Library" subtitle="Build a reusable library of training drills"
-        action={<Button onClick={onNew} size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> New Drill</Button>}
+        action={
+          <div className="flex gap-2">
+            <Button onClick={onBrowse} size="sm" variant="outline" className="gap-1.5"><Library className="h-4 w-4" /> Ready-Made Drills</Button>
+            <Button onClick={onNew} size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> New Drill</Button>
+          </div>
+        }
       />
       {loading ? (
         <Loading />
       ) : drills.length === 0 ? (
-        <EmptyState icon={Dumbbell} title="No drills yet" desc="Add drills to assign them to training sessions." />
+        <div className="flex flex-col items-center">
+          <EmptyState icon={Dumbbell} title="No drills yet" desc="Start from our ready-made drill library, or create your own." />
+          <Button onClick={onBrowse} size="sm" className="gap-1.5 -mt-6"><Library className="h-4 w-4" /> Browse Ready-Made Drills</Button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {drills.map((d, i) => {
