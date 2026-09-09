@@ -38,6 +38,7 @@ import PlayerGoalsPage from "@/pages/PlayerGoalsPage";
 import SchedulePage from "@/pages/SchedulePage";
 import LeaderboardPage from "@/pages/LeaderboardPage";
 import CMSAStandingsPage from "@/pages/CMSAStandingsPage";
+import AdultLeaguesPage from "@/pages/AdultLeaguesPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
 import DiscoverPlayersPage from "@/pages/DiscoverPlayersPage";
@@ -77,6 +78,7 @@ function DashboardRoutes() {
         {/* Shared routes */}
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/cmsa-standings" element={<CMSAStandingsPage />} />
+        <Route path="/adult-leagues" element={<AdultLeaguesPage />} />
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/communications" element={<CommunicationsPage />} />
         <Route path="/cv-builder" element={<CVBuilderPage />} />
