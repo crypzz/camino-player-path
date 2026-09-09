@@ -82,13 +82,14 @@ export default function CoachHubPage() {
           />
         )}
         {tab === 'drills' && (
-          <DrillsTab drills={drills} loading={drillsLoading} onNew={openNewDrill} onOpen={openDrill} />
+          <DrillsTab drills={drills} loading={drillsLoading} onNew={openNewDrill} onOpen={openDrill} onBrowse={() => setTemplatesDialog(true)} />
         )}
         {tab === 'team' && <TeamTab players={players} />}
       </div>
 
       <SessionDialog open={sessionDialog} onOpenChange={setSessionDialog} session={liveActiveSession} players={players} />
       <DrillDialog open={drillDialog} onOpenChange={setDrillDialog} drill={activeDrill} />
+      <DrillTemplatesDialog open={templatesDialog} onOpenChange={setTemplatesDialog} />
     </div>
   );
 }
