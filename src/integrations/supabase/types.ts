@@ -14,6 +14,329 @@ export type Database = {
   }
   public: {
     Tables: {
+      adult_divisions: {
+        Row: {
+          category_name: string | null
+          created_at: string
+          display_order: number
+          external_catid: string
+          external_did: string
+          id: string
+          league_id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category_name?: string | null
+          created_at?: string
+          display_order?: number
+          external_catid: string
+          external_did: string
+          id?: string
+          league_id: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category_name?: string | null
+          created_at?: string
+          display_order?: number
+          external_catid?: string
+          external_did?: string
+          id?: string
+          league_id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adult_divisions_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "adult_leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      adult_leagues: {
+        Row: {
+          association_id: string
+          created_at: string
+          display_order: number
+          game_type_id: string | null
+          gender: string
+          id: string
+          name: string
+          season_id: string | null
+          season_label: string | null
+          seed_url: string
+          short_name: string
+          site_url: string
+          updated_at: string
+        }
+        Insert: {
+          association_id: string
+          created_at?: string
+          display_order?: number
+          game_type_id?: string | null
+          gender: string
+          id: string
+          name: string
+          season_id?: string | null
+          season_label?: string | null
+          seed_url: string
+          short_name: string
+          site_url: string
+          updated_at?: string
+        }
+        Update: {
+          association_id?: string
+          created_at?: string
+          display_order?: number
+          game_type_id?: string | null
+          gender?: string
+          id?: string
+          name?: string
+          season_id?: string | null
+          season_label?: string | null
+          seed_url?: string
+          short_name?: string
+          site_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      adult_match_results: {
+        Row: {
+          away_score: number | null
+          away_team_id: string | null
+          away_team_name: string | null
+          division_id: string | null
+          game_key: string
+          home_score: number | null
+          home_team_id: string | null
+          home_team_name: string | null
+          id: string
+          league_id: string
+          match_date: string | null
+          played: boolean
+          scraped_at: string
+          venue: string | null
+        }
+        Insert: {
+          away_score?: number | null
+          away_team_id?: string | null
+          away_team_name?: string | null
+          division_id?: string | null
+          game_key: string
+          home_score?: number | null
+          home_team_id?: string | null
+          home_team_name?: string | null
+          id?: string
+          league_id: string
+          match_date?: string | null
+          played?: boolean
+          scraped_at?: string
+          venue?: string | null
+        }
+        Update: {
+          away_score?: number | null
+          away_team_id?: string | null
+          away_team_name?: string | null
+          division_id?: string | null
+          game_key?: string
+          home_score?: number | null
+          home_team_id?: string | null
+          home_team_name?: string | null
+          id?: string
+          league_id?: string
+          match_date?: string | null
+          played?: boolean
+          scraped_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adult_match_results_away_team_id_fkey"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "adult_teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adult_match_results_division_id_fkey"
+            columns: ["division_id"]
+            isOneToOne: false
+            referencedRelation: "adult_divisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adult_match_results_home_team_id_fkey"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "adult_teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adult_match_results_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "adult_leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      adult_scrape_runs: {
+        Row: {
+          divisions_scraped: number | null
+          error_message: string | null
+          id: string
+          league_id: string | null
+          ran_at: string
+          rows_upserted: number | null
+          status: string
+        }
+        Insert: {
+          divisions_scraped?: number | null
+          error_message?: string | null
+          id?: string
+          league_id?: string | null
+          ran_at?: string
+          rows_upserted?: number | null
+          status: string
+        }
+        Update: {
+          divisions_scraped?: number | null
+          error_message?: string | null
+          id?: string
+          league_id?: string | null
+          ran_at?: string
+          rows_upserted?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      adult_standings: {
+        Row: {
+          division_id: string
+          ga: number
+          gd: number
+          gf: number
+          gp: number
+          id: string
+          l: number
+          league_id: string
+          pts: number
+          rank: number | null
+          scraped_at: string
+          season_id: string | null
+          t: number
+          team_id: string
+          w: number
+        }
+        Insert: {
+          division_id: string
+          ga?: number
+          gd?: number
+          gf?: number
+          gp?: number
+          id?: string
+          l?: number
+          league_id: string
+          pts?: number
+          rank?: number | null
+          scraped_at?: string
+          season_id?: string | null
+          t?: number
+          team_id: string
+          w?: number
+        }
+        Update: {
+          division_id?: string
+          ga?: number
+          gd?: number
+          gf?: number
+          gp?: number
+          id?: string
+          l?: number
+          league_id?: string
+          pts?: number
+          rank?: number | null
+          scraped_at?: string
+          season_id?: string | null
+          t?: number
+          team_id?: string
+          w?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adult_standings_division_id_fkey"
+            columns: ["division_id"]
+            isOneToOne: false
+            referencedRelation: "adult_divisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adult_standings_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "adult_leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adult_standings_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "adult_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      adult_teams: {
+        Row: {
+          created_at: string
+          division_id: string | null
+          external_tid: string
+          id: string
+          league_id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          division_id?: string | null
+          external_tid: string
+          id?: string
+          league_id: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          division_id?: string | null
+          external_tid?: string
+          id?: string
+          league_id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adult_teams_division_id_fkey"
+            columns: ["division_id"]
+            isOneToOne: false
+            referencedRelation: "adult_divisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adult_teams_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "adult_leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_coaching_insights: {
         Row: {
           analytics_player_id: string | null
