@@ -372,7 +372,7 @@ export function ProductShowcaseReel() {
                     key={idx}
                     initial={{ width: 0 }}
                     animate={{ width: '100%' }}
-                    transition={{ duration: 4.5, ease: 'linear' }}
+                    transition={{ duration: SLIDE_MS / 1000, ease: 'linear' }}
                     className="h-full bg-primary"
                   />
                 </motion.div>
