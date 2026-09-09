@@ -236,11 +236,71 @@ const FrameIcons = {
   leaderboard: Trophy,
 };
 
+const SLIDE_MS = 9000;
+
+/** Coach's-board play lines that draw themselves on every slide change. */
+const PLAYS: { d: string; delay: number }[][] = [
+  [
+    { d: 'M 90 320 C 200 250, 280 200, 420 190', delay: 0 },
+    { d: 'M 420 190 C 540 180, 620 240, 720 160', delay: 0.35 },
+    { d: 'M 720 160 C 800 120, 860 140, 900 110', delay: 0.7 },
+  ],
+  [
+    { d: 'M 120 120 C 260 160, 300 300, 460 320', delay: 0 },
+    { d: 'M 460 320 C 620 340, 680 220, 820 250', delay: 0.35 },
+    { d: 'M 300 400 C 420 380, 520 400, 640 360', delay: 0.7 },
+  ],
+  [
+    { d: 'M 880 380 C 740 360, 640 280, 500 270', delay: 0 },
+    { d: 'M 500 270 C 360 260, 280 180, 160 170', delay: 0.35 },
+    { d: 'M 220 330 C 380 330, 520 380, 700 330', delay: 0.7 },
+  ],
+];
+
+function PlayLines({ play }: { play: number }) {
+  const lines = PLAYS[play % PLAYS.length];
+  return (
+    <svg
+      viewBox="0 0 1000 460"
+      preserveAspectRatio="none"
+      className="absolute inset-0 h-full w-full pointer-events-none"
+      aria-hidden="true"
+    >
+      <defs>
+        <marker id={`arrow-${play}`} markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 Z" fill="hsl(var(--primary))" />
+        </marker>
+      </defs>
+      {lines.map((l, i) => (
+        <motion.path
+          key={i}
+          d={l.d}
+          fill="none"
+          stroke="hsl(var(--primary))"
+          strokeWidth={1.6}
+          strokeLinecap="round"
+          strokeDasharray="7 7"
+          markerEnd={`url(#arrow-${play})`}
+          style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: [0, 1, 1], opacity: [0, 0.75, 0] }}
+          transition={{
+            duration: 2.6,
+            delay: l.delay,
+            times: [0, 0.45, 1],
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        />
+      ))}
+    </svg>
+  );
+}
+
 export function ProductShowcaseReel() {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setIdx((i) => (i + 1) % frames.length), 4500);
+    const id = setInterval(() => setIdx((i) => (i + 1) % frames.length), SLIDE_MS);
     return () => clearInterval(id);
   }, []);
 
@@ -269,19 +329,20 @@ export function ProductShowcaseReel() {
         </div>
 
         {/* Frame stage */}
-        <div className="relative aspect-[16/9] bg-gradient-to-b from-background/40 to-background/80">
-          <AnimatePresence mode="wait">
+        <div className="relative aspect-[16/9] bg-gradient-to-b from-background/40 to-background/80 overflow-hidden">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={frames[idx].id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, scale: 1.015, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 0.99, filter: 'blur(6px)' }}
+              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0"
             >
               <Active />
             </motion.div>
           </AnimatePresence>
+          <PlayLines key={`play-${idx}`} play={idx} />
         </div>
       </div>
 
@@ -311,7 +372,7 @@ export function ProductShowcaseReel() {
                     key={idx}
                     initial={{ width: 0 }}
                     animate={{ width: '100%' }}
-                    transition={{ duration: 4.5, ease: 'linear' }}
+                    transition={{ duration: SLIDE_MS / 1000, ease: 'linear' }}
                     className="h-full bg-primary"
                   />
                 </motion.div>
