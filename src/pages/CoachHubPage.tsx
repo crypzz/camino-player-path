@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Video, ClipboardList, Dumbbell, Users, Plus, Calendar, Target, PencilLine,
+  Video, ClipboardList, Dumbbell, Users, Plus, Calendar, Target, PencilLine, Library,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { useTrainingSessions, TrainingSession } from '@/hooks/useTrainingSession
 import { useDrills, Drill } from '@/hooks/useDrills';
 import SessionDialog from '@/components/coach/SessionDialog';
 import DrillDialog from '@/components/coach/DrillDialog';
+import DrillTemplatesDialog from '@/components/coach/DrillTemplatesDialog';
 
 type Tab = 'sessions' | 'drills' | 'team';
 
@@ -28,6 +29,7 @@ export default function CoachHubPage() {
   const [activeSession, setActiveSession] = useState<TrainingSession | null>(null);
   const [drillDialog, setDrillDialog] = useState(false);
   const [activeDrill, setActiveDrill] = useState<Drill | null>(null);
+  const [templatesDialog, setTemplatesDialog] = useState(false);
 
   const { data: players = [] } = usePlayers();
   const { data: sessions = [], isLoading: sessionsLoading } = useTrainingSessions();
