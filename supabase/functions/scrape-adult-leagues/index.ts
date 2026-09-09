@@ -140,7 +140,6 @@ Deno.serve(async (req) => {
       });
     }
     const userId = claimsData.claims.sub as string;
-    const userId = claimsData.claims.sub as string;
     const { data: isCoach } = await supabase.rpc("has_role", { _user_id: userId, _role: "coach" });
     const { data: isDirector } = await supabase.rpc("has_role", { _user_id: userId, _role: "director" });
     const { data: profile } = await supabase
