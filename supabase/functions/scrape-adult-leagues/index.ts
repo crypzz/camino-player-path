@@ -132,14 +132,14 @@ Deno.serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } },
     );
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: userData, error: userErr } = await authClient.auth.getUser(token);
+    if (userErr || !userData?.user?.id) {
       return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const userId = claimsData.claims.sub as string;
+    const userId = userData.user.id;
     const { data: isCoach } = await supabase.rpc("has_role", { _user_id: userId, _role: "coach" });
     const { data: isDirector } = await supabase.rpc("has_role", { _user_id: userId, _role: "director" });
     const { data: profile } = await supabase
