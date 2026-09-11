@@ -7,13 +7,50 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { match_id, analytics_player_id } = await req.json();
-    if (!match_id || !analytics_player_id) throw new Error("match_id and analytics_player_id required");
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const token = authHeader.replace("Bearer ", "").trim();
+    if (!token) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const supa = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    const { data: userData, error: userErr } = await supa.auth.getUser(token);
+    const user = userData?.user;
+    if (userErr || !user) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { match_id, analytics_player_id } = await req.json();
+    if (!match_id || !analytics_player_id) throw new Error("match_id and analytics_player_id required");
+
+    // Authorization: caller must own the match, or be a coach/director
+    const { data: match } = await supa.from("analytics_matches")
+      .select("id, created_by").eq("id", match_id).maybeSingle();
+    if (!match) {
+      return new Response(JSON.stringify({ error: "not found" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    let allowed = match.created_by === user.id;
+    if (!allowed) {
+      const { data: roleRows } = await supa.from("user_roles")
+        .select("role").eq("user_id", user.id);
+      allowed = (roleRows ?? []).some((r: { role: string }) => r.role === "coach" || r.role === "director");
+    }
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
 
     const { data: stats } = await supa.from("analytics_player_match_stats")
       .select("*").eq("match_id", match_id).eq("analytics_player_id", analytics_player_id).maybeSingle();
