@@ -6,6 +6,7 @@ import { ComparisonReel } from "./ComparisonReel";
 import { FounderStatementV2 } from "./FounderStatementV2";
 import { CMSALeagueReel } from "./CMSALeagueReel";
 import { CaminoPathway, PATHWAY_DURATION } from "./CaminoPathway";
+import { ApdlValueReel, APDL_DURATION } from "./ApdlValueReel";
 
 export const RemotionRoot = () => (
   <>
@@ -61,6 +62,14 @@ export const RemotionRoot = () => (
       id="camino-pathway"
       component={CaminoPathway}
       durationInFrames={PATHWAY_DURATION}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="apdl-value-reel"
+      component={ApdlValueReel}
+      durationInFrames={APDL_DURATION}
       fps={30}
       width={1080}
       height={1920}
