@@ -6,6 +6,7 @@ import { ComparisonReel } from "./ComparisonReel";
 import { FounderStatementV2 } from "./FounderStatementV2";
 import { CMSALeagueReel } from "./CMSALeagueReel";
 import { CaminoPathway, PATHWAY_DURATION } from "./CaminoPathway";
+import { ApdlValueReel, APDL_DURATION } from "./ApdlValueReel";
 
 export const RemotionRoot = () => (
   <>
