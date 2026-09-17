@@ -10,7 +10,7 @@ import { CloseScene } from "./scenes/apdl/CloseScene";
 import { BG } from "./scenes/apdl/_shared";
 
 const T = 8;
-// 120 + 250 + 190 + 190 + 122 = 872 - (4 * 8) = 840 frames @30fps = 28s
+// 120 + 200 + 215 + 215 + 122 = 872 - (4 * 8) = 840 frames @30fps = 28s
 export const APDL_DURATION = 840;
 
 const trans = (presentation: Parameters<typeof TransitionSeries.Transition>[0]["presentation"]) => (
@@ -30,19 +30,19 @@ export const ApdlValueReel: React.FC = () => {
 
         {trans(fade())}
 
-        <TransitionSeries.Sequence durationInFrames={250}>
+        <TransitionSeries.Sequence durationInFrames={200}>
           <WhatYouGetScene />
         </TransitionSeries.Sequence>
 
         {trans(wipe({ direction: "from-bottom" }))}
 
-        <TransitionSeries.Sequence durationInFrames={190}>
+        <TransitionSeries.Sequence durationInFrames={215}>
           <ParentViewScene />
         </TransitionSeries.Sequence>
 
         {trans(wipe({ direction: "from-right" }))}
 
-        <TransitionSeries.Sequence durationInFrames={190}>
+        <TransitionSeries.Sequence durationInFrames={215}>
           <DevelopmentRecordScene />
         </TransitionSeries.Sequence>
 

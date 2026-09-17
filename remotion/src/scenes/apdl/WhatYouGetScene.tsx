@@ -1,7 +1,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
 import { Shell, Caption, display, body, DULL, MUTED, WHITE, PANEL, LINE, fadeInOut } from "./_shared";
 
-const DUR = 250;
+const DUR = 200;
 
 const DullCard: React.FC<{ delay: number; out: number; rotate: number; children: React.ReactNode }> = ({
   delay,
@@ -40,7 +40,7 @@ export const WhatYouGetScene: React.FC = () => {
   const frame = useCurrentFrame();
 
   const title = interpolate(frame, [4, 22], [0, 1], { extrapolateRight: "clamp" });
-  const titleOut = interpolate(frame, [210, 234], [1, 0], {
+  const titleOut = interpolate(frame, [176, 196], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -67,7 +67,7 @@ export const WhatYouGetScene: React.FC = () => {
         </div>
 
         <div style={{ marginTop: 70, display: "flex", flexDirection: "column", gap: 26 }}>
-          <DullCard delay={26} out={150} rotate={-1.2}>
+          <DullCard delay={26} out={168} rotate={-1.2}>
             <div style={{ fontFamily: body, fontSize: 24, color: DULL, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
               Group chat · 48 unread
             </div>
@@ -76,7 +76,7 @@ export const WhatYouGetScene: React.FC = () => {
             </div>
           </DullCard>
 
-          <DullCard delay={44} out={172} rotate={0.8}>
+          <DullCard delay={44} out={174} rotate={0.8}>
             <div style={{ fontFamily: body, fontSize: 24, color: DULL, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
               Season schedule.pdf
             </div>
@@ -87,7 +87,7 @@ export const WhatYouGetScene: React.FC = () => {
             </div>
           </DullCard>
 
-          <DullCard delay={62} out={194} rotate={-0.6}>
+          <DullCard delay={62} out={180} rotate={-0.6}>
             <div style={{ fontFamily: body, fontSize: 24, color: DULL, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
               Development report
             </div>
@@ -98,7 +98,7 @@ export const WhatYouGetScene: React.FC = () => {
         </div>
       </AbsoluteFill>
 
-      <Caption opacity={fadeInOut(frame - 120, DUR - 120, 14)}>
+      <Caption opacity={fadeInOut(frame - 100, DUR - 100, 14)}>
         A schedule. A group chat. And a guess.
       </Caption>
     </Shell>
