@@ -66,5 +66,13 @@ export const RemotionRoot = () => (
       width={1080}
       height={1920}
     />
+    <Composition
+      id="apdl-value-reel"
+      component={ApdlValueReel}
+      durationInFrames={APDL_DURATION}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
   </>
 );
