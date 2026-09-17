@@ -1,7 +1,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
 import { Shell, Caption, Eyebrow, display, body, GOLD, WHITE, MUTED, PANEL, LINE, glow, fadeInOut } from "./_shared";
 
-const DUR = 190;
+const DUR = 215;
 
 const Panel: React.FC<{ delay: number; children: React.ReactNode }> = ({ delay, children }) => {
   const frame = useCurrentFrame();

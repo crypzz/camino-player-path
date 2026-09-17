@@ -1,7 +1,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
 import { Shell, Caption, Eyebrow, display, body, GOLD, WHITE, MUTED, PANEL, LINE, glow, fadeInOut } from "./_shared";
 
-const DUR = 190;
+const DUR = 215;
 
 // CPI curve points (week -> score)
 const POINTS = [58, 60, 59, 63, 66, 65, 69, 72, 74, 77, 79, 82];
