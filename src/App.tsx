@@ -41,6 +41,7 @@ import CMSAStandingsPage from "@/pages/CMSAStandingsPage";
 import AdultLeaguesPage from "@/pages/AdultLeaguesPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
+import PublicCVPage from "@/pages/PublicCVPage";
 import DiscoverPlayersPage from "@/pages/DiscoverPlayersPage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
 import DirectorDashboard from "@/pages/DirectorDashboard";
