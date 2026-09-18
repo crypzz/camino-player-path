@@ -147,3 +147,70 @@ export function useToggleFollow(playerId: string | undefined) {
     },
   });
 }
+
+/** Category attribute averages — only returns data when the viewer is allowed to read the player row */
+export function usePlayerAttributes(playerId: string | undefined) {
+  return useQuery({
+    queryKey: ['player-attributes', playerId],
+    enabled: !!playerId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('players')
+        .select('technical, tactical, physical, mental')
+        .eq('id', playerId!)
+        .maybeSingle();
+      if (error) return null;
+      if (!data) return null;
+      const avg = (o: unknown) => {
+        const vals = Object.values((o ?? {}) as Record<string, unknown>)
+          .map(Number)
+          .filter((n) => Number.isFinite(n));
+        if (!vals.length) return null;
+        return vals.reduce((a, b) => a + b, 0) / vals.length;
+      };
+      const out = {
+        technical: avg(data.technical),
+        tactical: avg(data.tactical),
+        physical: avg(data.physical),
+        mental: avg(data.mental),
+      };
+      return Object.values(out).some((v) => v != null) ? out : null;
+    },
+  });
+}
+
+/** Latest coach comments for a player (visible to coaches, directors and the player's owner) */
+export function usePlayerCoachComments(playerId: string | undefined, limit = 3) {
+  return useQuery({
+    queryKey: ['player-coach-comments', playerId, limit],
+    enabled: !!playerId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('player_feedback')
+        .select('id, strengths, improvements, notes, created_at')
+        .eq('player_id', playerId!)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (error) return [];
+      return data ?? [];
+    },
+  });
+}
+
+/** Published CV slug for a player, when one exists and is visible to the viewer */
+export function usePlayerPublishedCV(playerId: string | undefined) {
+  return useQuery({
+    queryKey: ['player-published-cv', playerId],
+    enabled: !!playerId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('player_cvs')
+        .select('slug, template, is_published')
+        .eq('player_id', playerId!)
+        .eq('is_published', true)
+        .maybeSingle();
+      if (error) return null;
+      return data;
+    },
+  });
+}

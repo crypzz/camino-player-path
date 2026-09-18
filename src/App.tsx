@@ -41,6 +41,7 @@ import CMSAStandingsPage from "@/pages/CMSAStandingsPage";
 import AdultLeaguesPage from "@/pages/AdultLeaguesPage";
 import FeedPage from "@/pages/FeedPage";
 import PublicProfilePage from "@/pages/PublicProfilePage";
+import PublicCVPage from "@/pages/PublicCVPage";
 import DiscoverPlayersPage from "@/pages/DiscoverPlayersPage";
 import FitnessTestPage from "@/pages/FitnessTestPage";
 import DirectorDashboard from "@/pages/DirectorDashboard";
@@ -172,7 +173,7 @@ const App = () => (
               <Route path="/admin" element={<AuthPage />} />
               {/* Waitlist mode: lock down public app surfaces */}
               <Route path="/auth" element={<Navigate to="/" replace />} />
-              <Route path="/cv/:slug" element={<Navigate to="/" replace />} />
+              <Route path="/cv/:slug" element={<PublicCVPage />} />
               {/* Public player discovery */}
               <Route path="/discover" element={<DiscoverPlayersPage />} />
               <Route path="/player/:id" element={<PublicProfilePage />} />
