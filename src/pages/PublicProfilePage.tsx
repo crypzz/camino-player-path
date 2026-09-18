@@ -1,11 +1,20 @@
 import { useParams, Link } from 'react-router-dom';
-import { useDiscoverPlayer, usePlayerFollowers, useToggleFollow } from '@/hooks/usePlayerDiscovery';
+import {
+  useDiscoverPlayer,
+  usePlayerFollowers,
+  useToggleFollow,
+  usePlayerAttributes,
+  usePlayerCoachComments,
+  usePlayerPublishedCV,
+} from '@/hooks/usePlayerDiscovery';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   ExternalLink, Share2, ShieldCheck, ArrowLeftRight, MapPin, Star, Trophy, Heart, Users,
+  MessageSquareQuote, FileText,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -15,10 +24,25 @@ function initials(name: string | null) {
   return name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
 }
 
+function AttributeBar({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between">
+        <span className="text-[11px] uppercase tracking-widest text-muted-foreground/70">{label}</span>
+        <span className="text-sm font-semibold text-foreground tabular-nums">{value.toFixed(1)}</span>
+      </div>
+      <Progress value={value * 10} className="h-1.5" />
+    </div>
+  );
+}
+
 export default function PublicProfilePage() {
   const { id } = useParams<{ id: string }>();
   const { data: player, isLoading } = useDiscoverPlayer(id);
   const { data: followers } = usePlayerFollowers(id);
+  const { data: attributes } = usePlayerAttributes(id);
+  const { data: comments } = usePlayerCoachComments(id, 3);
+  const { data: cv } = usePlayerPublishedCV(id);
   const toggleFollow = useToggleFollow(id);
 
   if (isLoading) {
@@ -50,37 +74,48 @@ export default function PublicProfilePage() {
     }
   };
 
+  const commentCards = (comments ?? [])
+    .map((c) => ({
+      id: c.id,
+      created_at: c.created_at as string,
+      text: (c.strengths || c.notes || c.improvements || '') as string,
+      tag: c.strengths ? 'Strength' : c.improvements ? 'Focus area' : 'Note',
+    }))
+    .filter((c) => c.text.trim().length > 0)
+    .slice(0, 3);
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="space-y-5 max-w-2xl mx-auto px-4 py-6 pb-16">
+      <div className="space-y-6 max-w-3xl mx-auto px-4 py-6 pb-20">
         <Link to="/discover" className="text-[11px] text-muted-foreground hover:text-foreground">← Browse players</Link>
 
+        {/* Hero */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-primary/25 via-primary/5 to-transparent h-28" />
-            <CardContent className="relative -mt-14 pb-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-                <Avatar className="h-24 w-24 border-4 border-card">
+          <Card className="overflow-hidden border-border/60">
+            <div className="relative bg-gradient-to-br from-primary/30 via-primary/10 to-transparent h-32">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.25),transparent_60%)]" />
+            </div>
+            <CardContent className="relative -mt-16 pb-6">
+              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
+                <Avatar className="h-28 w-28 border-4 border-card shadow-lg">
                   {player.avatar && <AvatarImage src={player.avatar} alt={player.name ?? ''} />}
-                  <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">{initials(player.name)}</AvatarFallback>
+                  <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
+                    {initials(player.name)}
+                  </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-display font-bold tracking-tight text-foreground truncate">
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <h1 className="text-3xl font-display font-bold tracking-tight text-foreground truncate">
                       {player.name ?? 'Player'}
                     </h1>
-                    {player.verification_badge && (
-                      <span className="inline-flex items-center gap-1 text-[10px] text-success font-medium">
-                        <ShieldCheck className="h-4 w-4" />
-                      </span>
-                    )}
+                    {player.verification_badge && <ShieldCheck className="h-5 w-5 text-success shrink-0" />}
                   </div>
-                  <div className="flex items-center gap-2 mt-1.5 text-sm text-muted-foreground flex-wrap">
+                  <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap text-[13px] text-muted-foreground">
                     {player.position && <Badge variant="secondary">{player.position}</Badge>}
-                    {player.team && <span className="text-[13px]">{player.team}</span>}
-                    {player.age_group && <span className="text-[13px]">· {player.age_group}</span>}
+                    {player.team && <span>{player.team}</span>}
+                    {player.age_group && <span>· {player.age_group}</span>}
                   </div>
-                  <div className="flex items-center gap-2 mt-2 flex-wrap text-[11px] text-muted-foreground">
+                  <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap text-[11px] text-muted-foreground">
                     {player.location && (
                       <span className="inline-flex items-center gap-0.5"><MapPin className="h-3 w-3" />{player.location}</span>
                     )}
@@ -96,8 +131,7 @@ export default function PublicProfilePage() {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2 mt-5">
+              <div className="flex items-center gap-2 mt-6">
                 <Button
                   onClick={() => toggleFollow.mutate(!!followers?.isFollowing)}
                   disabled={toggleFollow.isPending}
@@ -113,7 +147,6 @@ export default function PublicProfilePage() {
                 </Button>
               </div>
 
-              {/* Stats row */}
               <div className="grid grid-cols-3 gap-2 mt-5">
                 <div className="rounded-lg bg-secondary/50 py-3 text-center">
                   <p className="text-2xl font-bold text-primary leading-none">
@@ -135,6 +168,71 @@ export default function PublicProfilePage() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Main attributes */}
+        {attributes && (
+          <Card>
+            <CardContent className="py-5">
+              <h2 className="text-[10px] uppercase tracking-widest text-muted-foreground/70 mb-4 inline-flex items-center gap-1">
+                <Star className="h-3 w-3 text-primary" />Main attributes
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-x-6 gap-y-4">
+                {attributes.technical != null && <AttributeBar label="Technical" value={attributes.technical} />}
+                {attributes.tactical != null && <AttributeBar label="Tactical" value={attributes.tactical} />}
+                {attributes.physical != null && <AttributeBar label="Physical" value={attributes.physical} />}
+                {attributes.mental != null && <AttributeBar label="Mental" value={attributes.mental} />}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Coach comments */}
+        {commentCards.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-[10px] uppercase tracking-widest text-muted-foreground/70 inline-flex items-center gap-1">
+              <MessageSquareQuote className="h-3 w-3 text-primary" />Coach comments
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {commentCards.map((c) => (
+                <Card key={c.id} className="bg-secondary/30 border-border/60">
+                  <CardContent className="py-4 space-y-2">
+                    <Badge variant="outline" className="text-[10px]">{c.tag}</Badge>
+                    <p className="text-[13px] leading-relaxed text-foreground/90 line-clamp-5">"{c.text}"</p>
+                    <p className="text-[10px] text-muted-foreground/70">
+                      {new Date(c.created_at).toLocaleDateString()}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Player CV */}
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="py-5 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+            <div className="flex items-start gap-3">
+              <FileText className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">Player CV</p>
+                <p className="text-[12px] text-muted-foreground">
+                  {cv?.slug
+                    ? 'Full football CV with history, achievements and highlights.'
+                    : 'This player hasn’t published a CV yet.'}
+                </p>
+              </div>
+            </div>
+            <Button asChild={!!cv?.slug} size="sm" disabled={!cv?.slug} className="gap-1.5 shrink-0">
+              {cv?.slug ? (
+                <Link to={`/cv/${cv.slug}`}>
+                  View CV<ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+              ) : (
+                <span>View CV</span>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {player.bio && (
           <Card>
