@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "sdk_version": "2.3.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://cilfhtailwwlynunmrqw.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "camino-player-journey",
+      "version": "0.1.0",
+      "title": "Camino: Player Journey"
+    },
+    "tools": [
+      {
+        "name": "list_players",
+        "title": "List players",
+        "description": "List players visible to the signed-in user, optionally filtered by name, team or position.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by player name (partial match). Null for no filter."
+            },
+            "position": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by position, e.g. 'Midfielder'. Null for no filter."
+            },
+            "limit": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Max rows to return (default 25)."
+            }
+          },
+          "required": [
+            "search",
+            "position",
+            "limit"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_player",
+        "title": "Get player profile",
+        "description": "Get one player's full profile: bio, attribute groups (technical, tactical, physical, mental), recent evaluations and fitness tests.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The player's id."
+            }
+          },
+          "required": [
+            "player_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_evaluation",
+        "title": "Record a player evaluation",
+        "description": "Record a new evaluation for a player with technical, tactical, physical and mental ratings (0-100) and optional notes.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The player's id."
+            },
+            "date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Evaluation date as YYYY-MM-DD. Null uses today."
+            },
+            "technical": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Technical rating 0-100."
+            },
+            "tactical": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Tactical rating 0-100."
+            },
+            "physical": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Physical rating 0-100."
+            },
+            "mental": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Mental rating 0-100."
+            },
+            "notes": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Coach notes. Null for none."
+            }
+          },
+          "required": [
+            "player_id",
+            "date",
+            "technical",
+            "tactical",
+            "physical",
+            "mental",
+            "notes"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_player_feedback",
+        "title": "Add coach feedback",
+        "description": "Write coach feedback for a player: strengths, areas to improve and extra notes.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The player's id."
+            },
+            "strengths": {
+              "type": "string",
+              "minLength": 1,
+              "description": "What the player does well."
+            },
+            "improvements": {
+              "type": "string",
+              "minLength": 1,
+              "description": "What the player should work on."
+            },
+            "notes": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Additional notes. Null for none."
+            }
+          },
+          "required": [
+            "player_id",
+            "strengths",
+            "improvements",
+            "notes"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_training_sessions",
+        "title": "List training sessions",
+        "description": "List upcoming or recent training sessions visible to the signed-in user.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "upcoming_only": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True for future sessions only. Null lists all."
+            },
+            "limit": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Max rows to return (default 20)."
+            }
+          },
+          "required": [
+            "upcoming_only",
+            "limit"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
