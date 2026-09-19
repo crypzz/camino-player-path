@@ -10,10 +10,8 @@ import { CPIDial } from '@/components/landing/CPIDial';
 import { FloatingPlayerCards } from '@/components/landing/FloatingPlayerCards';
 import { ScrollReveal } from '@/components/landing/ScrollReveal';
 import { ValueStrip } from '@/components/landing/ValueStrip';
-import { RoleCards } from '@/components/landing/RoleCards';
+import { RoleExplorer } from '@/components/landing/RoleExplorer';
 import { FAQ } from '@/components/landing/FAQ';
-import { FeatureShowcase } from '@/components/landing/FeatureShowcase';
-import { Testimonials } from '@/components/landing/Testimonials';
 import { ProcessSteps } from '@/components/landing/ProcessSteps';
 import { SpotsCounter } from '@/components/landing/SpotsCounter';
 import caminoLogo from '@/assets/camino-logo.png';
@@ -461,24 +459,9 @@ export default function LandingPage() {
         <ScrollReveal><ValueStrip /></ScrollReveal>
       </div>
 
-      {/* FEATURES */}
+      {/* WHO IT'S FOR — interactive */}
       <div id="features" className="scroll-mt-24">
-        <FeatureShowcase />
-      </div>
-
-      <ScrollReveal><RoleCards /></ScrollReveal>
-
-      <div id="rankings" className="scroll-mt-24">
-        <ScrollReveal><RankingsSection /></ScrollReveal>
-      </div>
-      <div id="profiles" className="scroll-mt-24">
-        <ScrollReveal><ProfilesSection /></ScrollReveal>
-      </div>
-      <div id="cpi" className="scroll-mt-24">
-        <ScrollReveal><CPISection /></ScrollReveal>
-      </div>
-      <div id="video" className="scroll-mt-24">
-        <ScrollReveal><VideoTrackingSection /></ScrollReveal>
+        <ScrollReveal><RoleExplorer /></ScrollReveal>
       </div>
 
       {/* HOW IT WORKS */}
@@ -486,16 +469,9 @@ export default function LandingPage() {
         <ProcessSteps />
       </div>
 
-      {/* TESTIMONIALS */}
-      <div id="testimonials" className="scroll-mt-24">
-        <Testimonials />
-      </div>
-
       <div id="faq" className="scroll-mt-24">
         <FAQ />
       </div>
-
-      <SocialProofSection />
 
       {/* PRICING / WAITLIST */}
       <section id="waitlist" className="relative py-32 px-6 lg:px-10 overflow-hidden">
