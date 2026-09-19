@@ -21,6 +21,18 @@ export interface PlayerCV {
   highlight_video_url: string | null;
   template: string;
   is_published: boolean;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  location?: string | null;
+  nationality?: string | null;
+  social_handle?: string | null;
+  cpi?: number | null;
+  technical_score?: number | null;
+  tactical_score?: number | null;
+  physical_score?: number | null;
+  mental_score?: number | null;
+  global_rank?: number | null;
+  local_rank?: number | null;
   created_at: string;
   updated_at: string;
 }

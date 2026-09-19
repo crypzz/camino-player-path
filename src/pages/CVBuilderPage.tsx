@@ -56,6 +56,11 @@ export default function CVBuilderPage() {
     highlight_video_url: '',
     template: 'classic',
     is_published: false,
+    contact_email: '',
+    contact_phone: '',
+    location: '',
+    nationality: '',
+    social_handle: '',
   });
   const [newTeam, setNewTeam] = useState('');
   const [newAchievement, setNewAchievement] = useState('');
@@ -80,6 +85,11 @@ export default function CVBuilderPage() {
         highlight_video_url: existingCV.highlight_video_url || '',
         template: existingCV.template,
         is_published: existingCV.is_published,
+        contact_email: (existingCV as any).contact_email || '',
+        contact_phone: (existingCV as any).contact_phone || '',
+        location: (existingCV as any).location || '',
+        nationality: (existingCV as any).nationality || '',
+        social_handle: (existingCV as any).social_handle || '',
       });
       if (!initialized) {
         setStep('edit');
@@ -133,7 +143,20 @@ export default function CVBuilderPage() {
       bio: form.bio || null,
       current_team: form.current_team || null,
       preferred_foot: form.preferred_foot || null,
-    };
+      contact_email: form.contact_email || null,
+      contact_phone: form.contact_phone || null,
+      location: form.location || null,
+      nationality: form.nationality || null,
+      social_handle: form.social_handle || null,
+      // snapshot of live performance data so the public CV can show real stats
+      cpi,
+      technical_score: techAvg,
+      tactical_score: tacAvg,
+      physical_score: phyAvg,
+      mental_score: menAvg,
+      global_rank: playerRank?.globalRank ?? null,
+      local_rank: playerRank?.localRank ?? null,
+    } as any;
     try {
       if (existingCV) {
         await updateCV.mutateAsync({ id: existingCV.id, ...payload });
@@ -305,6 +328,45 @@ export default function CVBuilderPage() {
                   <div>
                     <Label className="text-xs">Current Team</Label>
                     <Input value={form.current_team} onChange={e => setForm(f => ({ ...f, current_team: e.target.value }))} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contact details */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Contact Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-xs text-muted-foreground">
+                    Shown on your published CV so scouts and coaches can reach you. Leave blank to hide.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">Email</Label>
+                      <Input type="email" value={form.contact_email} placeholder="player@email.com"
+                        onChange={e => setForm(f => ({ ...f, contact_email: e.target.value }))} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Phone</Label>
+                      <Input value={form.contact_phone} placeholder="+1 403 000 0000"
+                        onChange={e => setForm(f => ({ ...f, contact_phone: e.target.value }))} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Location</Label>
+                      <Input value={form.location} placeholder="Calgary, AB"
+                        onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Nationality</Label>
+                      <Input value={form.nationality} placeholder="Canadian"
+                        onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs">Social Handle</Label>
+                    <Input value={form.social_handle} placeholder="@yourhandle"
+                      onChange={e => setForm(f => ({ ...f, social_handle: e.target.value }))} />
                   </div>
                 </CardContent>
               </Card>
