@@ -82,7 +82,8 @@ export default function AuthPage() {
       if (error) {
         toast.error(error.message);
       } else {
-        navigate('/dashboard');
+        if (nextPath) window.location.href = nextPath;
+        else navigate('/dashboard');
       }
     }
     setLoading(false);
