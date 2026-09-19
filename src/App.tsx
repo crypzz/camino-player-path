@@ -59,6 +59,7 @@ import AnalyticsUploadPage from "@/pages/analytics/AnalyticsUploadPage";
 import AnalyticsMatchPage from "@/pages/analytics/AnalyticsMatchPage";
 import AnalyticsPlayerPage from "@/pages/analytics/AnalyticsPlayerPage";
 import { SolutionsLandingRoute, RegionLandingRoute } from "@/pages/seo/SeoRoutes";
+import OAuthConsent from "@/pages/OAuthConsent";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -171,6 +172,7 @@ const App = () => (
               <Route path="/:region/:city/:slug" element={<RegionLandingRoute />} />
               {/* Hidden internal access — not linked publicly */}
               <Route path="/admin" element={<AuthPage />} />
+              <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               {/* Waitlist mode: lock down public app surfaces */}
               <Route path="/auth" element={<Navigate to="/" replace />} />
               <Route path="/cv/:slug" element={<PublicCVPage />} />

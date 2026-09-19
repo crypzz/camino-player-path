@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,10 @@ export default function AuthPage() {
   const [emailStatus, setEmailStatus] = useState<EmailStatus>({ kind: 'idle' });
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Same-origin relative path only, so an OAuth consent flow can return where it started.
+  const rawNext = searchParams.get('next') ?? '';
+  const nextPath = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : null;
 
   // Poll email_send_log via SECURITY DEFINER RPC to surface failures to the user.
   const pollEmailStatus = async (recipient: string) => {
