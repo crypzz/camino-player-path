@@ -2131,19 +2131,31 @@ export type Database = {
           achievements: string[] | null
           age: number | null
           bio: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          cpi: number | null
           created_at: string
           current_team: string | null
           date_of_birth: string | null
           full_name: string
+          global_rank: number | null
           height: number | null
           highlight_video_url: string | null
           id: string
           is_published: boolean
+          local_rank: number | null
+          location: string | null
+          mental_score: number | null
+          nationality: string | null
+          physical_score: number | null
           player_id: string
           position: string
           preferred_foot: string | null
           previous_teams: string[] | null
           slug: string
+          social_handle: string | null
+          tactical_score: number | null
+          technical_score: number | null
           template: string
           updated_at: string
           user_id: string
@@ -2153,19 +2165,31 @@ export type Database = {
           achievements?: string[] | null
           age?: number | null
           bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          cpi?: number | null
           created_at?: string
           current_team?: string | null
           date_of_birth?: string | null
           full_name: string
+          global_rank?: number | null
           height?: number | null
           highlight_video_url?: string | null
           id?: string
           is_published?: boolean
+          local_rank?: number | null
+          location?: string | null
+          mental_score?: number | null
+          nationality?: string | null
+          physical_score?: number | null
           player_id: string
           position?: string
           preferred_foot?: string | null
           previous_teams?: string[] | null
           slug: string
+          social_handle?: string | null
+          tactical_score?: number | null
+          technical_score?: number | null
           template?: string
           updated_at?: string
           user_id: string
@@ -2175,19 +2199,31 @@ export type Database = {
           achievements?: string[] | null
           age?: number | null
           bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          cpi?: number | null
           created_at?: string
           current_team?: string | null
           date_of_birth?: string | null
           full_name?: string
+          global_rank?: number | null
           height?: number | null
           highlight_video_url?: string | null
           id?: string
           is_published?: boolean
+          local_rank?: number | null
+          location?: string | null
+          mental_score?: number | null
+          nationality?: string | null
+          physical_score?: number | null
           player_id?: string
           position?: string
           preferred_foot?: string | null
           previous_teams?: string[] | null
           slug?: string
+          social_handle?: string | null
+          tactical_score?: number | null
+          technical_score?: number | null
           template?: string
           updated_at?: string
           user_id?: string
